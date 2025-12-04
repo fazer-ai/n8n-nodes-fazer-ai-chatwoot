@@ -25,7 +25,8 @@
 		"lint:fix": "n8n-node lint --fix",
 		"release": "n8n-node release",
 		"prepublishOnly": "n8n-node prerelease",
-		"start": "pnpm build && docker restart n8n-dev && docker logs n8n-dev -f"
+		"start": "pnpm build && docker restart n8n-dev",
+		"start:log": "pnpm build && docker restart n8n-dev && docker logs n8n-dev -f"
 	},
 	"files": [
 		"dist"
