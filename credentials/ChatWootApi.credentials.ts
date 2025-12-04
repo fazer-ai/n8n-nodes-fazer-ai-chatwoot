@@ -6,6 +6,9 @@ import {
 	INodeProperties,
 } from 'n8n-workflow';
 
+/**
+ * Credential definition for Chatwoot personal access tokens.
+ */
 export class ChatWootApi implements ICredentialType {
 	name = 'chatwootApi';
 	displayName = 'Chatwoot API';
