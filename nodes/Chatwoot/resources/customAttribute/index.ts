@@ -22,19 +22,19 @@ export const customAttributeOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Create Definition',
+				name: 'Create Custom Attribute',
 				value: 'createDefinition',
 				description: 'Create a custom attribute definition',
 				action: 'Create custom attribute definition',
 			},
 			{
-				name: 'Delete Definition',
+				name: 'Delete Custom Attribute',
 				value: 'deleteDefinition',
 				description: 'Delete a custom attribute definition',
 				action: 'Delete custom attribute definition',
 			},
 			{
-				name: 'Get Definitions',
+				name: 'Get Custom Attribute',
 				value: 'getDefinitions',
 				description: 'Get all custom attribute definitions',
 				action: 'Get custom attribute definitions',
@@ -61,6 +61,29 @@ export const customAttributeFields: INodeProperties[] = [
 		...accountSelector,
 		displayOptions: {
 			show: showOnlyForCustomAttribute,
+		},
+	},
+	{
+		displayName: 'Use Raw JSON',
+		name: 'useRawJson',
+		type: 'boolean',
+		default: false,
+		description: 'Whether to use raw JSON body instead of fields',
+		displayOptions: {
+			show: {
+				...showOnlyForCustomAttribute,
+				operation: ['createDefinition'],
+			},
+		},
+	},
+	{
+		...rawJsonBody,
+		displayOptions: {
+			show: {
+				...showOnlyForCustomAttribute,
+				operation: ['createDefinition'],
+				useRawJson: [true],
+			},
 		},
 	},
 	{
@@ -132,11 +155,30 @@ export const customAttributeFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Attribute Description',
-		name: 'attributeDescription',
+		displayName: 'List Values',
+		name: 'attributeValues',
 		type: 'string',
 		default: '',
-		description: 'Description of the custom attribute',
+		required: true,
+		description: 'Possible values when using the List attribute type',
+		typeOptions: {
+			multipleValues: true,
+		},
+		displayOptions: {
+			show: {
+				...showOnlyForCustomAttribute,
+				operation: ['createDefinition'],
+				useRawJson: [false],
+				attributeType: ['list'],
+			},
+		},
+	},
+	{
+		displayName: 'Additional Fields',
+		name: 'additionalFields',
+		type: 'collection',
+		placeholder: 'Add Field',
+		default: {},
 		displayOptions: {
 			show: {
 				...showOnlyForCustomAttribute,
@@ -144,6 +186,15 @@ export const customAttributeFields: INodeProperties[] = [
 				useRawJson: [false],
 			},
 		},
+		options: [
+			{
+				displayName: 'Attribute Description',
+				name: 'attributeDescription',
+				type: 'string',
+				default: '',
+				description: 'Description of the custom attribute',
+			},
+		],
 	},
 	{
 		...contactSelector,
@@ -174,29 +225,6 @@ export const customAttributeFields: INodeProperties[] = [
 			show: {
 				...showOnlyForCustomAttribute,
 				operation: ['setOnContact', 'setOnConversation'],
-			},
-		},
-	},
-	{
-		displayName: 'Use Raw JSON',
-		name: 'useRawJson',
-		type: 'boolean',
-		default: false,
-		description: 'Whether to use raw JSON body instead of fields',
-		displayOptions: {
-			show: {
-				...showOnlyForCustomAttribute,
-				operation: ['createDefinition'],
-			},
-		},
-	},
-	{
-		...rawJsonBody,
-		displayOptions: {
-			show: {
-				...showOnlyForCustomAttribute,
-				operation: ['createDefinition'],
-				useRawJson: [true],
 			},
 		},
 	},

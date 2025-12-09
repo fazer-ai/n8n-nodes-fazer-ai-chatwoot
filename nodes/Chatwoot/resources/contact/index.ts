@@ -90,6 +90,29 @@ export const contactFields: INodeProperties[] = [
 	// Create Fields
 	// ============================================
 	{
+		displayName: 'Use Raw JSON',
+		name: 'useRawJson',
+		type: 'boolean',
+		default: false,
+		description: 'Whether to use raw JSON body instead of fields',
+		displayOptions: {
+			show: {
+				...showOnlyForContact,
+				operation: ['create', 'update'],
+			},
+		},
+	},
+	{
+		...rawJsonBody,
+		displayOptions: {
+			show: {
+				...showOnlyForContact,
+				operation: ['create', 'update'],
+				useRawJson: [true],
+			},
+		},
+	},
+	{
 		displayName: 'Name',
 		name: 'name',
 		type: 'string',
@@ -242,33 +265,6 @@ export const contactFields: INodeProperties[] = [
 				description: 'Phone number of the contact (for update)',
 			},
 		],
-	},
-
-	// ============================================
-	// Raw JSON Body Option
-	// ============================================
-	{
-		displayName: 'Use Raw JSON',
-		name: 'useRawJson',
-		type: 'boolean',
-		default: false,
-		description: 'Whether to use raw JSON body instead of fields',
-		displayOptions: {
-			show: {
-				...showOnlyForContact,
-				operation: ['create', 'update'],
-			},
-		},
-	},
-	{
-		...rawJsonBody,
-		displayOptions: {
-			show: {
-				...showOnlyForContact,
-				operation: ['create', 'update'],
-				useRawJson: [true],
-			},
-		},
 	},
 
 	// ============================================

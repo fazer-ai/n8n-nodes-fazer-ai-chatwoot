@@ -71,6 +71,29 @@ export const messageFields: INodeProperties[] = [
 		},
 	},
 	{
+		displayName: 'Use Raw JSON',
+		name: 'useRawJson',
+		type: 'boolean',
+		default: false,
+		description: 'Whether to use raw JSON body instead of fields',
+		displayOptions: {
+			show: {
+				...showOnlyForMessage,
+				operation: ['send'],
+			},
+		},
+	},
+	{
+		...rawJsonBody,
+		displayOptions: {
+			show: {
+				...showOnlyForMessage,
+				operation: ['send'],
+				useRawJson: [true],
+			},
+		},
+	},
+	{
 		displayName: 'Message Content',
 		name: 'content',
 		type: 'string',
@@ -206,29 +229,6 @@ export const messageFields: INodeProperties[] = [
 				description: 'Get messages before this message ID',
 			},
 		],
-	},
-	{
-		displayName: 'Use Raw JSON',
-		name: 'useRawJson',
-		type: 'boolean',
-		default: false,
-		description: 'Whether to use raw JSON body instead of fields',
-		displayOptions: {
-			show: {
-				...showOnlyForMessage,
-				operation: ['send'],
-			},
-		},
-	},
-	{
-		...rawJsonBody,
-		displayOptions: {
-			show: {
-				...showOnlyForMessage,
-				operation: ['send'],
-				useRawJson: [true],
-			},
-		},
 	},
 	{
 		...responseFilterFields,

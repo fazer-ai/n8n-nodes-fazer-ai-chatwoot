@@ -584,19 +584,26 @@ export class Chatwoot implements INodeType {
 						switch (operation) {
 							case 'create': {
 								const accountId = getAccountId.call(this, i);
-								const webhookUrl = this.getNodeParameter('webhookUrl', i) as string;
-								const events = this.getNodeParameter('events', i) as string[];
+								const useRawJson = this.getNodeParameter('useRawJson', i, false) as boolean;
 
-								const body: IDataObject = {
-									url: webhookUrl,
-									subscriptions: events,
-								};
+								let body: IDataObject;
+								if (useRawJson) {
+									body = JSON.parse(this.getNodeParameter('jsonBody', i, '{}') as string);
+								} else {
+									const webhookUrl = this.getNodeParameter('webhookUrl', i) as string;
+									const events = this.getNodeParameter('events', i) as string[];
 
-								const filterByInbox = this.getNodeParameter('filterByInbox', i, false) as boolean;
-								if (filterByInbox) {
-									const inboxId = getInboxId.call(this, i);
-									if (inboxId) {
-										body.inbox_id = inboxId;
+									body = {
+										url: webhookUrl,
+										subscriptions: events,
+									};
+
+									const filterByInbox = this.getNodeParameter('filterByInbox', i, false) as boolean;
+									if (filterByInbox) {
+										const inboxId = getInboxId.call(this, i);
+										if (inboxId) {
+											body.inbox_id = inboxId;
+										}
 									}
 								}
 
@@ -621,19 +628,26 @@ export class Chatwoot implements INodeType {
 							case 'update': {
 								const accountId = getAccountId.call(this, i);
 								const webhookId = getWebhookId.call(this, i);
-								const webhookUrl = this.getNodeParameter('webhookUrl', i) as string;
-								const events = this.getNodeParameter('events', i) as string[];
+								const useRawJson = this.getNodeParameter('useRawJson', i, false) as boolean;
 
-								const body: IDataObject = {
-									url: webhookUrl,
-									subscriptions: events,
-								};
+								let body: IDataObject;
+								if (useRawJson) {
+									body = JSON.parse(this.getNodeParameter('jsonBody', i, '{}') as string);
+								} else {
+									const webhookUrl = this.getNodeParameter('webhookUrl', i) as string;
+									const events = this.getNodeParameter('events', i) as string[];
 
-								const filterByInbox = this.getNodeParameter('filterByInbox', i, false) as boolean;
-								if (filterByInbox) {
-									const inboxId = getInboxId.call(this, i);
-									if (inboxId) {
-										body.inbox_id = inboxId;
+									body = {
+										url: webhookUrl,
+										subscriptions: events,
+									};
+
+									const filterByInbox = this.getNodeParameter('filterByInbox', i, false) as boolean;
+									if (filterByInbox) {
+										const inboxId = getInboxId.call(this, i);
+										if (inboxId) {
+											body.inbox_id = inboxId;
+										}
 									}
 								}
 
@@ -673,7 +687,7 @@ export class Chatwoot implements INodeType {
 									const attributeDisplayName = this.getNodeParameter('attributeDisplayName', i) as string;
 									const attributeKey = this.getNodeParameter('attributeKey', i) as string;
 									const attributeType = this.getNodeParameter('attributeType', i) as string;
-									const attributeDescription = this.getNodeParameter('attributeDescription', i, '') as string;
+									const additionalFields = this.getNodeParameter('additionalFields', i, {}) as IDataObject;
 
 									body = {
 										attribute_display_name: attributeDisplayName,
@@ -682,6 +696,22 @@ export class Chatwoot implements INodeType {
 										attribute_model: attributeModel === 'contact_attribute' ? 0 : 1,
 									};
 
+									if (attributeType === 'list') {
+										const attributeValuesInput = this.getNodeParameter('attributeValues', i) as
+											| string
+											| string[];
+										const attributeValues = (
+											Array.isArray(attributeValuesInput)
+												? attributeValuesInput
+												: [attributeValuesInput]
+										).filter((value) => value !== '');
+
+										if (attributeValues.length) {
+											body.attribute_values = attributeValues;
+										}
+									}
+
+									const attributeDescription = additionalFields.attributeDescription as string | undefined;
 									if (attributeDescription) {
 										body.attribute_description = attributeDescription;
 									}
@@ -761,16 +791,23 @@ export class Chatwoot implements INodeType {
 						switch (operation) {
 							case 'create': {
 								const accountId = getAccountId.call(this, i);
-								const title = this.getNodeParameter('title', i) as string;
-								const additionalFields = this.getNodeParameter(
-									'additionalFields',
-									i,
-								) as IDataObject;
+								const useRawJson = this.getNodeParameter('useRawJson', i, false) as boolean;
 
-								const body: IDataObject = {
-									title,
-									...additionalFields,
-								};
+								let body: IDataObject;
+								if (useRawJson) {
+									body = JSON.parse(this.getNodeParameter('jsonBody', i, '{}') as string);
+								} else {
+									const title = this.getNodeParameter('title', i) as string;
+									const additionalFields = this.getNodeParameter(
+										'additionalFields',
+										i,
+									) as IDataObject;
+
+									body = {
+										title,
+										...additionalFields,
+									};
+								}
 
 								responseData = (await chatwootApiRequest.call(
 									this,
@@ -794,16 +831,20 @@ export class Chatwoot implements INodeType {
 							case 'update': {
 								const accountId = getAccountId.call(this, i);
 								const labelId = this.getNodeParameter('labelId', i) as string;
-								const additionalFields = this.getNodeParameter(
-									'additionalFields',
-									i,
-								) as IDataObject;
+								const useRawJson = this.getNodeParameter('useRawJson', i, false) as boolean;
+
+								let body: IDataObject;
+								if (useRawJson) {
+									body = JSON.parse(this.getNodeParameter('jsonBody', i, '{}') as string);
+								} else {
+									body = this.getNodeParameter('additionalFields', i, {}) as IDataObject;
+								}
 
 								responseData = (await chatwootApiRequest.call(
 									this,
 									'PATCH',
 									`/api/v1/accounts/${accountId}/labels/${labelId}`,
-									additionalFields,
+									body,
 								)) as IDataObject;
 								break;
 							}

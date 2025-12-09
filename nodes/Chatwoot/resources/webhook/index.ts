@@ -4,6 +4,7 @@ import {
 	inboxSelector,
 	webhookSelector,
 	webhookEventsSelect,
+	rawJsonBody,
 	responseFilterFields,
 } from '../../shared/descriptions';
 
@@ -67,6 +68,29 @@ export const webhookFields: INodeProperties[] = [
 		},
 	},
 	{
+		displayName: 'Use Raw JSON',
+		name: 'useRawJson',
+		type: 'boolean',
+		default: false,
+		description: 'Whether to use raw JSON body instead of fields',
+		displayOptions: {
+			show: {
+				...showOnlyForWebhook,
+				operation: ['create', 'update'],
+			},
+		},
+	},
+	{
+		...rawJsonBody,
+		displayOptions: {
+			show: {
+				...showOnlyForWebhook,
+				operation: ['create', 'update'],
+				useRawJson: [true],
+			},
+		},
+	},
+	{
 		displayName: 'Webhook URL',
 		name: 'webhookUrl',
 		type: 'string',
@@ -78,6 +102,7 @@ export const webhookFields: INodeProperties[] = [
 			show: {
 				...showOnlyForWebhook,
 				operation: ['create', 'update'],
+				useRawJson: [false],
 			},
 		},
 	},
@@ -87,6 +112,7 @@ export const webhookFields: INodeProperties[] = [
 			show: {
 				...showOnlyForWebhook,
 				operation: ['create', 'update'],
+				useRawJson: [false],
 			},
 		},
 	},
@@ -100,6 +126,7 @@ export const webhookFields: INodeProperties[] = [
 			show: {
 				...showOnlyForWebhook,
 				operation: ['create', 'update'],
+				useRawJson: [false],
 			},
 		},
 	},
@@ -111,6 +138,7 @@ export const webhookFields: INodeProperties[] = [
 				...showOnlyForWebhook,
 				operation: ['create', 'update'],
 				filterByInbox: [true],
+				useRawJson: [false],
 			},
 		},
 	},
@@ -124,6 +152,7 @@ export const webhookFields: INodeProperties[] = [
 			show: {
 				...showOnlyForWebhook,
 				operation: ['create'],
+				useRawJson: [false],
 			},
 		},
 	},
