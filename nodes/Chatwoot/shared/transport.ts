@@ -127,10 +127,10 @@ export function getAccountId(this: IExecuteFunctions, itemIndex: number): number
 		| { mode: string; value: string };
 
 	if (typeof param === 'object' && param.value !== undefined) {
-		return parseInt(param.value, 10);
+		return Number(param.value);
 	}
 	if (typeof param === 'string') {
-		return parseInt(param, 10);
+		return Number(param);
 	}
 	return param as number;
 }
@@ -145,10 +145,10 @@ export function getInboxId(this: IExecuteFunctions, itemIndex: number): number {
 		| { mode: string; value: string };
 
 	if (typeof param === 'object' && param.value !== undefined) {
-		return parseInt(param.value, 10);
+		return Number(param.value);
 	}
 	if (typeof param === 'string') {
-		return parseInt(param, 10);
+		return Number(param);
 	}
 	return param as number;
 }
@@ -163,10 +163,10 @@ export function getConversationId(this: IExecuteFunctions, itemIndex: number): n
 		| { mode: string; value: string };
 
 	if (typeof param === 'object' && param.value !== undefined) {
-		return parseInt(param.value, 10);
+		return Number(param.value);
 	}
 	if (typeof param === 'string') {
-		return parseInt(param, 10);
+		return Number(param);
 	}
 	return param as number;
 }
@@ -181,10 +181,10 @@ export function getContactId(this: IExecuteFunctions, itemIndex: number): number
 		| { mode: string; value: string };
 
 	if (typeof param === 'object' && param.value !== undefined) {
-		return parseInt(param.value, 10);
+		return Number(param.value);
 	}
 	if (typeof param === 'string') {
-		return parseInt(param, 10);
+		return Number(param);
 	}
 	return param as number;
 }
@@ -199,10 +199,10 @@ export function getWebhookId(this: IExecuteFunctions, itemIndex: number): number
 		| { mode: string; value: string };
 
 	if (typeof param === 'object' && param.value !== undefined) {
-		return parseInt(param.value, 10);
+		return Number(param.value);
 	}
 	if (typeof param === 'string') {
-		return parseInt(param, 10);
+		return Number(param);
 	}
 	return param as number;
 }

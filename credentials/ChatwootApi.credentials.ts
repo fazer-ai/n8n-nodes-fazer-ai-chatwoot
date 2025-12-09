@@ -9,9 +9,9 @@ import {
 /**
  * Credential definition for Chatwoot personal access tokens.
  */
-export class ChatWootApi implements ICredentialType {
+export class ChatwootApi implements ICredentialType {
 	name = 'chatwootApi';
-	displayName = 'Chatwoot API';
+	displayName = 'Chatwoot fazer.ai API';
 	documentationUrl = 'https://developers.chatwoot.com/api-reference/introduction#application-apis';
 
 	properties: INodeProperties[] = [
@@ -21,9 +21,9 @@ export class ChatWootApi implements ICredentialType {
 			type: 'string',
 			default: '',
 			required: true,
-			placeholder: 'https://app.chatwoot.com',
+			placeholder: 'https://app.chatwoot.fazer.ai',
 			description:
-				'Base URL of your Chatwoot instance. E.g.: https://chatwoot.fazerai.com',
+				'Base URL of your Chatwoot instance. E.g.: https://app.chatwoot.fazer.ai',
 		},
 		{
 			displayName: 'For enhanced features and optimal performance, we recommend using <a href="https://github.com/fazer-ai/chatwoot" target="_blank">fazer.ai\'s Chatwoot</a>.',
@@ -37,11 +37,11 @@ export class ChatWootApi implements ICredentialType {
 			type: 'string',
 			default: '',
 			required: true,
-			placeholder: '00000000-0000-0000-0000-000000000000',
+			placeholder: 'your-access-token',
 			typeOptions: {
 				password: true,
 			},
-			description: 'Personal Access Token from your Chatwoot account. Generate it in Profile settings > Access Token.',
+			description: 'Personal Access Token from your Chatwoot profile. Generate it in Profile settings > Access Token.',
 		},
 	];
 

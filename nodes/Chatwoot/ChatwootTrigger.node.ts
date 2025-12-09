@@ -13,20 +13,20 @@ import { chatwootApiRequest } from './shared/transport';
 import { accountSelector } from './shared/descriptions';
 import { getAccounts, getInboxes } from './listSearch';
 
+// eslint-disable-next-line @n8n/community-nodes/node-usable-as-tool
 export class ChatwootTrigger implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Chatwoot Trigger',
+		displayName: 'Chatwoot fazer.ai Trigger',
 		name: 'chatwootTrigger',
 		icon: 'file:../../icons/chatwoot.svg',
 		group: ['trigger'],
 		version: 1,
 		description: 'Handle Chatwoot events via webhooks',
 		defaults: {
-			name: 'Chatwoot Trigger',
+			name: 'Chatwoot fazer.ai Trigger',
 		},
 		inputs: [],
 		outputs: ['main'],
-		usableAsTool: true,
 		credentials: [
 			{
 				name: 'chatwootApi',
@@ -34,7 +34,7 @@ export class ChatwootTrigger implements INodeType {
 			},
 		],
 		codex: {
-			categories: ['Messaging', 'Customer Support'],
+			categories: ['Communication', 'Utility'],
 		},
 		webhooks: [
 			{
@@ -101,48 +101,39 @@ export class ChatwootTrigger implements INodeType {
 				description: 'The events to listen for',
 			},
 			{
-				displayName: 'Additional Fields',
-				name: 'additionalFields',
-				type: 'collection',
-				placeholder: 'Add Field',
-				default: {},
-				options: [
+				displayName: 'Inbox',
+				name: 'inboxId',
+				type: 'resourceLocator',
+				default: { mode: 'list', value: '' },
+				description: 'The ID of the inbox to filter events for. If not selected, triggers for all inboxes.',
+				modes: [
 					{
-						displayName: 'Inbox',
-						name: 'inboxId',
-						type: 'resourceLocator',
-						default: { mode: 'list', value: '' },
-						description: 'The ID of the inbox to filter events for. If not selected, triggers for all inboxes.',
-						modes: [
+						displayName: 'From List',
+						name: 'list',
+						type: 'list',
+						placeholder: 'All Inboxes',
+						typeOptions: {
+							searchListMethod: 'getInboxes',
+							searchable: true,
+						},
+					},
+					{
+						displayName: 'By ID',
+						name: 'id',
+						type: 'string',
+						placeholder: 'e.g. 1',
+						validation: [
 							{
-								displayName: 'From List',
-								name: 'list',
-								type: 'list',
-								placeholder: 'Select an inbox...',
-								typeOptions: {
-									searchListMethod: 'getInboxes',
-									searchable: true,
+								type: 'regex',
+								properties: {
+									regex: '^[0-9]+$',
+									errorMessage: 'The ID must be a number',
 								},
-							},
-							{
-								displayName: 'By ID',
-								name: 'id',
-								type: 'string',
-								placeholder: 'e.g. 1',
-								validation: [
-									{
-										type: 'regex',
-										properties: {
-											regex: '^[0-9]+$',
-											errorMessage: 'The ID must be a number',
-										},
-									},
-								],
 							},
 						],
 					},
 				],
-			},
+			}
 		],
 	};
 
@@ -161,9 +152,9 @@ export class ChatwootTrigger implements INodeType {
 				const accountIdParam = this.getNodeParameter('accountId') as string | number | { mode: string; value: string };
 				let accountId: number;
 				if (typeof accountIdParam === 'object' && accountIdParam.value !== undefined) {
-					accountId = parseInt(accountIdParam.value, 10);
+					accountId = Number(accountIdParam.value);
 				} else {
-					accountId = parseInt(accountIdParam as string, 10);
+					accountId = Number(accountIdParam);
 				}
 
 				const events = this.getNodeParameter('events') as string[];
@@ -217,19 +208,18 @@ export class ChatwootTrigger implements INodeType {
 				const accountIdParam = this.getNodeParameter('accountId') as string | number | { mode: string; value: string };
 				let accountId: number;
 				if (typeof accountIdParam === 'object' && accountIdParam.value !== undefined) {
-					accountId = parseInt(accountIdParam.value, 10);
+					accountId = Number(accountIdParam.value);
 				} else {
-					accountId = parseInt(accountIdParam as string, 10);
+					accountId = Number(accountIdParam);
 				}
 
-				const additionalFields = this.getNodeParameter('additionalFields', {}) as IDataObject;
-				const inboxIdParam = additionalFields.inboxId as string | number | { mode: string; value: string } | undefined;
+				const inboxIdParam = this.getNodeParameter('inboxId') as string | number | { mode: string; value: string } | undefined;
 				let inboxId: number | undefined;
 				if (inboxIdParam) {
 					if (typeof inboxIdParam === 'object' && inboxIdParam.value !== undefined) {
-						inboxId = parseInt(inboxIdParam.value, 10);
+						inboxId = Number(inboxIdParam.value);
 					} else {
-						inboxId = parseInt(inboxIdParam as string, 10);
+						inboxId = Number(inboxIdParam);
 					}
 				}
 
@@ -267,9 +257,9 @@ export class ChatwootTrigger implements INodeType {
 				const accountIdParam = this.getNodeParameter('accountId') as string | number | { mode: string; value: string };
 				let accountId: number;
 				if (typeof accountIdParam === 'object' && accountIdParam.value !== undefined) {
-					accountId = parseInt(accountIdParam.value, 10);
+					accountId = Number(accountIdParam.value);
 				} else {
-					accountId = parseInt(accountIdParam as string, 10);
+					accountId = Number(accountIdParam);
 				}
 
 				const webhookData = this.getWorkflowStaticData('node');
