@@ -9,9 +9,46 @@ import {
 	JsonObject,
 } from 'n8n-workflow';
 
-import { chatwootApiRequest } from './shared/transport';
 import { accountSelector } from './shared/descriptions';
 import { getAccounts, getInboxes } from './listSearch';
+import {
+	fetchWebhooks,
+	createWebhook,
+	deleteWebhook,
+} from './resources/webhook';
+
+function extractAccountId(context: IHookFunctions): number {
+	const accountIdParam = context.getNodeParameter('accountId') as
+		| string
+		| number
+		| { mode: string; value: string };
+
+	if (typeof accountIdParam === 'object' && accountIdParam.value !== undefined) {
+		return Number(accountIdParam.value);
+	}
+	return Number(accountIdParam);
+}
+
+function extractInboxId(context: IHookFunctions): number | undefined {
+	const inboxIdParam = context.getNodeParameter('inboxId') as
+		| string
+		| number
+		| { mode: string; value: string }
+		| undefined;
+
+	if (!inboxIdParam) return undefined;
+
+	if (typeof inboxIdParam === 'object' && inboxIdParam.value !== undefined) {
+		return Number(inboxIdParam.value);
+	}
+	return Number(inboxIdParam);
+}
+
+function getWebhookName(context: IHookFunctions): string {
+	const nodeName = context.getNode().name;
+	const mode = context.getActivationMode();
+	return mode === 'manual' ? `[N8N-TEST] ${nodeName}` : `[N8N] ${nodeName}`;
+}
 
 // eslint-disable-next-line @n8n/community-nodes/node-usable-as-tool
 export class ChatwootTrigger implements INodeType {
@@ -148,28 +185,11 @@ export class ChatwootTrigger implements INodeType {
 		default: {
 			async checkExists(this: IHookFunctions): Promise<boolean> {
 				const webhookUrl = this.getNodeWebhookUrl('default');
-
-				const accountIdParam = this.getNodeParameter('accountId') as string | number | { mode: string; value: string };
-				let accountId: number;
-				if (typeof accountIdParam === 'object' && accountIdParam.value !== undefined) {
-					accountId = Number(accountIdParam.value);
-				} else {
-					accountId = Number(accountIdParam);
-				}
-
+				const accountId = extractAccountId(this);
 				const events = this.getNodeParameter('events') as string[];
+				const expectedName = getWebhookName(this);
 
-				const endpoint = `/api/v1/accounts/${accountId}/webhooks`;
-				const response = await chatwootApiRequest.call(this, 'GET', endpoint);
-
-				let webhooks: IDataObject[] = [];
-				const responseData = response as IDataObject;
-
-				if (Array.isArray(response)) {
-					webhooks = response as IDataObject[];
-				} else if (responseData && Array.isArray(responseData.payload)) {
-					webhooks = responseData.payload as IDataObject[];
-				}
+				const webhooks = await fetchWebhooks(this, accountId);
 
 				for (const webhook of webhooks) {
 					if (webhook.url === webhookUrl) {
@@ -177,74 +197,44 @@ export class ChatwootTrigger implements INodeType {
 						const sortedCurrent = [...currentSubscriptions].sort();
 						const sortedExpected = [...events].sort();
 
-						const currentName = webhook.name;
-						const nodeName = this.getNode().name;
-						const mode = this.getActivationMode();
-						const expectedName = mode === 'manual' ? `[N8N-TEST] ${nodeName}` : `[N8N] ${nodeName}`;
-
 						if (
 							JSON.stringify(sortedCurrent) === JSON.stringify(sortedExpected) &&
-							currentName === expectedName
+							webhook.name === expectedName
 						) {
 							const webhookData = this.getWorkflowStaticData('node');
 							webhookData.webhookId = webhook.id;
 							return true;
-						} else {
-							const deleteEndpoint = `/api/v1/accounts/${accountId}/webhooks/${webhook.id}`;
-							try {
-								await chatwootApiRequest.call(this, 'DELETE', deleteEndpoint);
-							} catch (error) {
-								throw new NodeApiError(this.getNode(), error as JsonObject);
-							}
-							return false;
 						}
+
+						// Webhook exists but with different config, delete it
+						try {
+							await deleteWebhook(this, accountId, webhook.id as number);
+						} catch (error) {
+							throw new NodeApiError(this.getNode(), error as JsonObject);
+						}
+						return false;
 					}
 				}
 				return false;
 			},
+
 			async create(this: IHookFunctions): Promise<boolean> {
 				const webhookUrl = this.getNodeWebhookUrl('default');
-
-				const accountIdParam = this.getNodeParameter('accountId') as string | number | { mode: string; value: string };
-				let accountId: number;
-				if (typeof accountIdParam === 'object' && accountIdParam.value !== undefined) {
-					accountId = Number(accountIdParam.value);
-				} else {
-					accountId = Number(accountIdParam);
-				}
-
-				const inboxIdParam = this.getNodeParameter('inboxId') as string | number | { mode: string; value: string } | undefined;
-				let inboxId: number | undefined;
-				if (inboxIdParam) {
-					if (typeof inboxIdParam === 'object' && inboxIdParam.value !== undefined) {
-						inboxId = Number(inboxIdParam.value);
-					} else {
-						inboxId = Number(inboxIdParam);
-					}
-				}
-
+				const accountId = extractAccountId(this);
+				const inboxId = extractInboxId(this);
 				const events = this.getNodeParameter('events');
-				const nodeName = this.getNode().name;
-				const mode = this.getActivationMode();
-				const webhookName = mode === 'manual' ? `[N8N-TEST] ${nodeName}` : `[N8N] ${nodeName}`;
-
-				const endpoint = `/api/v1/accounts/${accountId}/webhooks`;
+				const webhookName = getWebhookName(this);
 
 				const body: IDataObject = {
 					webhook: {
 						name: webhookName,
 						url: webhookUrl,
 						subscriptions: events,
-					}
+						inbox_id: inboxId ?? null,
+					},
 				};
 
-				if (inboxId) {
-					(body.webhook as IDataObject).inbox_id = inboxId;
-				} else {
-					(body.webhook as IDataObject).inbox_id = null;
-				}
-
-				const response = await chatwootApiRequest.call(this, 'POST', endpoint, body);
+				const response = await createWebhook(this, accountId, body);
 				const webhookData = this.getWorkflowStaticData('node');
 
 				const payload = (response as IDataObject).payload as IDataObject;
@@ -253,21 +243,14 @@ export class ChatwootTrigger implements INodeType {
 
 				return true;
 			},
-			async delete(this: IHookFunctions): Promise<boolean> {
-				const accountIdParam = this.getNodeParameter('accountId') as string | number | { mode: string; value: string };
-				let accountId: number;
-				if (typeof accountIdParam === 'object' && accountIdParam.value !== undefined) {
-					accountId = Number(accountIdParam.value);
-				} else {
-					accountId = Number(accountIdParam);
-				}
 
+			async delete(this: IHookFunctions): Promise<boolean> {
+				const accountId = extractAccountId(this);
 				const webhookData = this.getWorkflowStaticData('node');
 
 				if (webhookData.webhookId) {
-					const endpoint = `/api/v1/accounts/${accountId}/webhooks/${webhookData.webhookId}`;
 					try {
-						await chatwootApiRequest.call(this, 'DELETE', endpoint);
+						await deleteWebhook(this, accountId, webhookData.webhookId as number);
 					} catch (error) {
 						throw new NodeApiError(this.getNode(), error as JsonObject);
 					}

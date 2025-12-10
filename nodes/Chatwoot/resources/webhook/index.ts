@@ -1,2 +1,7 @@
 export { webhookDescription } from './description';
-export { executeWebhookOperation } from './operations';
+export {
+	executeWebhookOperation,
+	fetchWebhooks,
+	createWebhook,
+	deleteWebhook,
+} from './operations';

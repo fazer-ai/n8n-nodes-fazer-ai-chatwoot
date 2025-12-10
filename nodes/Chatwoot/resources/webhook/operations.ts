@@ -1,4 +1,4 @@
-import type { IDataObject, IExecuteFunctions } from 'n8n-workflow';
+import type { IDataObject, IExecuteFunctions, IHookFunctions } from 'n8n-workflow';
 import {
 	chatwootApiRequest,
 	getAccountId,
@@ -6,53 +6,31 @@ import {
 	getWebhookId,
 } from '../../shared/transport';
 
-export async function executeWebhookOperation(
-	context: IExecuteFunctions,
-	operation: string,
-	itemIndex: number,
-): Promise<IDataObject | IDataObject[] | undefined> {
-  if (operation === 'create') {
-    return createWebhook(context, itemIndex);
-  } else if (operation === 'getAll') {
-    return getAllWebhooks(context, itemIndex);
-  } else if (operation === 'update') {
-    return updateWebhook(context, itemIndex);
-  } else if (operation === 'delete') {
-    return deleteWebhook(context, itemIndex);
-  }
+type WebhookContext = IExecuteFunctions | IHookFunctions;
 
-  return undefined;
+// Low-level API functions for reuse in both node and trigger
+
+export async function fetchWebhooks(
+	context: WebhookContext,
+	accountId: number,
+): Promise<IDataObject[]> {
+	const response = (await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/webhooks`,
+	)) as IDataObject;
+
+	if (Array.isArray(response)) {
+		return response as IDataObject[];
+	}
+	return (response.payload as IDataObject[]) || [];
 }
 
-
-async function createWebhook(
-	context: IExecuteFunctions,
-	itemIndex: number,
+export async function createWebhook(
+	context: WebhookContext,
+	accountId: number,
+	body: IDataObject,
 ): Promise<IDataObject> {
-	const accountId = getAccountId.call(context, itemIndex);
-	const useRawJson = context.getNodeParameter('useRawJson', itemIndex, false) as boolean;
-
-	let body: IDataObject;
-	if (useRawJson) {
-		body = JSON.parse(context.getNodeParameter('jsonBody', itemIndex, '{}') as string);
-	} else {
-		const webhookUrl = context.getNodeParameter('webhookUrl', itemIndex) as string;
-		const events = context.getNodeParameter('events', itemIndex) as string[];
-
-		body = {
-			url: webhookUrl,
-			subscriptions: events,
-		};
-
-		const filterByInbox = context.getNodeParameter('filterByInbox', itemIndex, false) as boolean;
-		if (filterByInbox) {
-			const inboxId = getInboxId.call(context, itemIndex);
-			if (inboxId) {
-				body.inbox_id = inboxId;
-			}
-		}
-	}
-
 	return (await chatwootApiRequest.call(
 		context,
 		'POST',
@@ -61,50 +39,24 @@ async function createWebhook(
 	)) as IDataObject;
 }
 
-async function getAllWebhooks(
-	context: IExecuteFunctions,
-	itemIndex: number,
-): Promise<IDataObject | IDataObject[]> {
-	const accountId = getAccountId.call(context, itemIndex);
-
-	const response = (await chatwootApiRequest.call(
+export async function deleteWebhook(
+	context: WebhookContext,
+	accountId: number,
+	webhookId: number,
+): Promise<void> {
+	await chatwootApiRequest.call(
 		context,
-		'GET',
-		`/api/v1/accounts/${accountId}/webhooks`,
-	)) as IDataObject;
-
-	return (response.payload as IDataObject[]) || response;
+		'DELETE',
+		`/api/v1/accounts/${accountId}/webhooks/${webhookId}`,
+	);
 }
 
-async function updateWebhook(
-	context: IExecuteFunctions,
-	itemIndex: number,
+export async function updateWebhook(
+	context: WebhookContext,
+	accountId: number,
+	webhookId: number,
+	body: IDataObject,
 ): Promise<IDataObject> {
-	const accountId = getAccountId.call(context, itemIndex);
-	const webhookId = getWebhookId.call(context, itemIndex);
-	const useRawJson = context.getNodeParameter('useRawJson', itemIndex, false) as boolean;
-
-	let body: IDataObject;
-	if (useRawJson) {
-		body = JSON.parse(context.getNodeParameter('jsonBody', itemIndex, '{}') as string);
-	} else {
-		const webhookUrl = context.getNodeParameter('webhookUrl', itemIndex) as string;
-		const events = context.getNodeParameter('events', itemIndex) as string[];
-
-		body = {
-			url: webhookUrl,
-			subscriptions: events,
-		};
-
-		const filterByInbox = context.getNodeParameter('filterByInbox', itemIndex, false) as boolean;
-		if (filterByInbox) {
-			const inboxId = getInboxId.call(context, itemIndex);
-			if (inboxId) {
-				body.inbox_id = inboxId;
-			}
-		}
-	}
-
 	return (await chatwootApiRequest.call(
 		context,
 		'PUT',
@@ -113,18 +65,94 @@ async function updateWebhook(
 	)) as IDataObject;
 }
 
-async function deleteWebhook(
+// High-level operations for the Chatwoot node
+
+export async function executeWebhookOperation(
+	context: IExecuteFunctions,
+	operation: string,
+	itemIndex: number,
+): Promise<IDataObject | IDataObject[] | undefined> {
+	if (operation === 'create') {
+		return createWebhookOperation(context, itemIndex);
+	}
+	if (operation === 'getAll') {
+		return getAllWebhooksOperation(context, itemIndex);
+	}
+	if (operation === 'update') {
+		return updateWebhookOperation(context, itemIndex);
+	}
+	if (operation === 'delete') {
+		return deleteWebhookOperation(context, itemIndex);
+	}
+
+	return undefined;
+}
+
+async function createWebhookOperation(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): Promise<IDataObject> {
+	const accountId = getAccountId.call(context, itemIndex);
+	const body = buildWebhookBody(context, itemIndex);
+
+	return createWebhook(context, accountId, body);
+}
+
+async function getAllWebhooksOperation(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): Promise<IDataObject[]> {
+	const accountId = getAccountId.call(context, itemIndex);
+	return fetchWebhooks(context, accountId);
+}
+
+async function updateWebhookOperation(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): Promise<IDataObject> {
+	const accountId = getAccountId.call(context, itemIndex);
+	const webhookId = getWebhookId.call(context, itemIndex);
+	const body = buildWebhookBody(context, itemIndex);
+
+	return updateWebhook(context, accountId, webhookId, body);
+}
+
+async function deleteWebhookOperation(
 	context: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<IDataObject> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const webhookId = getWebhookId.call(context, itemIndex);
 
-	await chatwootApiRequest.call(
-		context,
-		'DELETE',
-		`/api/v1/accounts/${accountId}/webhooks/${webhookId}`,
-	);
-
+	await deleteWebhook(context, accountId, webhookId);
 	return { success: true };
+}
+
+function buildWebhookBody(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): IDataObject {
+	const useRawJson = context.getNodeParameter('useRawJson', itemIndex, false) as boolean;
+
+	if (useRawJson) {
+		return JSON.parse(context.getNodeParameter('jsonBody', itemIndex, '{}') as string);
+	}
+
+	const webhookUrl = context.getNodeParameter('webhookUrl', itemIndex) as string;
+	const events = context.getNodeParameter('events', itemIndex) as string[];
+
+	const body: IDataObject = {
+		url: webhookUrl,
+		subscriptions: events,
+	};
+
+	const filterByInbox = context.getNodeParameter('filterByInbox', itemIndex, false) as boolean;
+	if (filterByInbox) {
+		const inboxId = getInboxId.call(context, itemIndex);
+		if (inboxId) {
+			body.inbox_id = inboxId;
+		}
+	}
+
+	return body;
 }
