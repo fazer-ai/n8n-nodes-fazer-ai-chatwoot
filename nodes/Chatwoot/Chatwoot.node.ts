@@ -19,6 +19,7 @@ import { executeConversationOperation } from './resources/conversation/operation
 import { messageDescription } from './resources/message';
 import { executeMessageOperation } from './resources/message/operations';
 import { webhookDescription } from './resources/webhook';
+import { executeWebhookOperation } from './resources/webhook/operations';
 import { customAttributeDescription } from './resources/customAttribute';
 import { labelDescription } from './resources/label';
 
@@ -188,97 +189,7 @@ export class Chatwoot implements INodeType {
 					responseData = await executeMessageOperation(this, operation, i);
 					break;
 				case 'webhook':
-					switch (operation) {
-					case 'create': {
-						const accountId = getAccountId.call(this, i);
-						const useRawJson = this.getNodeParameter('useRawJson', i, false) as boolean;
-
-						let body: IDataObject;
-						if (useRawJson) {
-							body = JSON.parse(this.getNodeParameter('jsonBody', i, '{}') as string);
-						} else {
-							const webhookUrl = this.getNodeParameter('webhookUrl', i) as string;
-							const events = this.getNodeParameter('events', i) as string[];
-
-							body = {
-								url: webhookUrl,
-								subscriptions: events,
-							};
-
-							const filterByInbox = this.getNodeParameter('filterByInbox', i, false) as boolean;
-							if (filterByInbox) {
-								const inboxId = getInboxId.call(this, i);
-								if (inboxId) {
-									body.inbox_id = inboxId;
-								}
-							}
-						}
-
-						responseData = (await chatwootApiRequest.call(
-							this,
-							'POST',
-							`/api/v1/accounts/${accountId}/webhooks`,
-							body,
-						)) as IDataObject;
-						break;
-					}
-					case 'getAll': {
-						const accountId = getAccountId.call(this, i);
-						const response = (await chatwootApiRequest.call(
-							this,
-							'GET',
-							`/api/v1/accounts/${accountId}/webhooks`,
-						)) as IDataObject;
-						responseData = (response.payload as IDataObject[]) || response;
-						break;
-					}
-					case 'update': {
-						const accountId = getAccountId.call(this, i);
-						const webhookId = getWebhookId.call(this, i);
-						const useRawJson = this.getNodeParameter('useRawJson', i, false) as boolean;
-
-						let body: IDataObject;
-						if (useRawJson) {
-							body = JSON.parse(this.getNodeParameter('jsonBody', i, '{}') as string);
-						} else {
-							const webhookUrl = this.getNodeParameter('webhookUrl', i) as string;
-							const events = this.getNodeParameter('events', i) as string[];
-
-							body = {
-								url: webhookUrl,
-								subscriptions: events,
-							};
-
-							const filterByInbox = this.getNodeParameter('filterByInbox', i, false) as boolean;
-							if (filterByInbox) {
-								const inboxId = getInboxId.call(this, i);
-								if (inboxId) {
-									body.inbox_id = inboxId;
-								}
-							}
-						}
-
-						responseData = (await chatwootApiRequest.call(
-							this,
-							'PUT',
-							`/api/v1/accounts/${accountId}/webhooks/${webhookId}`,
-							body,
-						)) as IDataObject;
-						break;
-					}
-					case 'delete': {
-						const accountId = getAccountId.call(this, i);
-						const webhookId = getWebhookId.call(this, i);
-
-						await chatwootApiRequest.call(
-							this,
-							'DELETE',
-							`/api/v1/accounts/${accountId}/webhooks/${webhookId}`,
-						);
-						responseData = { success: true };
-						break;
-					}
-					}
+					responseData = await executeWebhookOperation(this, operation, i);
 					break;
 				case 'customAttribute':
 					switch (operation) {
