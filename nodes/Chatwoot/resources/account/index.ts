@@ -57,3 +57,5 @@ export const accountDescription: INodeProperties[] = [
 	...accountOperations,
 	...accountFields,
 ];
+
+export { executeAccountOperation } from './operations';

@@ -42,3 +42,5 @@ export const profileDescription: INodeProperties[] = [
 	...profileOperations,
 	...profileFields,
 ];
+
+export { executeProfileOperation } from './operations';

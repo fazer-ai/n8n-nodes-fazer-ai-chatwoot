@@ -285,3 +285,5 @@ export const contactDescription: INodeProperties[] = [
 	...contactOperations,
 	...contactFields,
 ];
+
+export { executeContactOperation } from './operations';

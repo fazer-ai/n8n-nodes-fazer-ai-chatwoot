@@ -245,3 +245,5 @@ export const messageDescription: INodeProperties[] = [
 	...messageOperations,
 	...messageFields,
 ];
+
+export { executeMessageOperation } from './operations';

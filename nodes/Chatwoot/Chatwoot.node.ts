@@ -6,24 +6,15 @@ import type {
 	INodeTypeDescription,
 } from 'n8n-workflow';
 
-import { profileDescription } from './resources/profile';
-import { executeProfileOperation } from './resources/profile/operations';
-import { accountDescription } from './resources/account';
-import { executeAccountOperation } from './resources/account/operations';
-import { inboxDescription } from './resources/inbox';
-import { executeInboxOperation } from './resources/inbox/operations';
-import { contactDescription } from './resources/contact';
-import { executeContactOperation } from './resources/contact/operations';
-import { conversationDescription } from './resources/conversation';
-import { executeConversationOperation } from './resources/conversation/operations';
-import { messageDescription } from './resources/message';
-import { executeMessageOperation } from './resources/message/operations';
-import { webhookDescription } from './resources/webhook';
-import { executeWebhookOperation } from './resources/webhook/operations';
-import { customAttributeDescription } from './resources/customAttribute';
-import { executeCustomAttributeOperation } from './resources/customAttribute/operations';
-import { labelDescription } from './resources/label';
-import { executeLabelOperation } from './resources/label/operations';
+import { profileDescription, executeProfileOperation } from './resources/profile';
+import { accountDescription, executeAccountOperation } from './resources/account';
+import { inboxDescription, executeInboxOperation } from './resources/inbox';
+import { contactDescription, executeContactOperation } from './resources/contact';
+import { conversationDescription, executeConversationOperation } from './resources/conversation';
+import { messageDescription, executeMessageOperation } from './resources/message';
+import { webhookDescription, executeWebhookOperation } from './resources/webhook';
+import { customAttributeDescription, executeCustomAttributeOperation } from './resources/customAttribute';
+import { labelDescription, executeLabelOperation } from './resources/label';
 
 import {
 	getAccounts,

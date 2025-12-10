@@ -172,3 +172,5 @@ export const labelDescription: INodeProperties[] = [
 	...labelOperations,
 	...labelFields,
 ];
+
+export { executeLabelOperation } from './operations';

@@ -289,3 +289,5 @@ export const conversationDescription: INodeProperties[] = [
 	...conversationOperations,
 	...conversationFields,
 ];
+
+export { executeConversationOperation } from './operations';

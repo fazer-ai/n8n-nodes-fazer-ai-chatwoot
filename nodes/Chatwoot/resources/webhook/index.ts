@@ -171,3 +171,5 @@ export const webhookDescription: INodeProperties[] = [
 	...webhookOperations,
 	...webhookFields,
 ];
+
+export { executeWebhookOperation } from './operations';

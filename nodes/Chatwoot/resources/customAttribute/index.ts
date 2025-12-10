@@ -243,3 +243,5 @@ export const customAttributeDescription: INodeProperties[] = [
 	...customAttributeOperations,
 	...customAttributeFields,
 ];
+
+export { executeCustomAttributeOperation } from './operations';

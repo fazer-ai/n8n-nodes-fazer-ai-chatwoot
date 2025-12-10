@@ -63,3 +63,5 @@ export const inboxDescription: INodeProperties[] = [
 	...inboxOperations,
 	...inboxFields,
 ];
+
+export { executeInboxOperation } from './operations';
