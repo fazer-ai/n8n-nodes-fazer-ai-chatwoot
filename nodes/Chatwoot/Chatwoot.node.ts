@@ -9,6 +9,7 @@ import type {
 import { profileDescription } from './resources/profile';
 import { executeProfileOperation } from './resources/profile/operations';
 import { accountDescription } from './resources/account';
+import { executeAccountOperation } from './resources/account/operations';
 import { inboxDescription } from './resources/inbox';
 import { contactDescription } from './resources/contact';
 import { conversationDescription } from './resources/conversation';
@@ -168,26 +169,7 @@ export class Chatwoot implements INodeType {
 					responseData = await executeProfileOperation(this, operation);
 					break;
 				case 'account':
-					switch (operation) {
-					case 'getAll': {
-						const profile = (await chatwootApiRequest.call(
-							this,
-							'GET',
-							'/api/v1/profile',
-						)) as IDataObject;
-						responseData = (profile.accounts as IDataObject[]) || [];
-						break;
-					}
-					case 'get': {
-						const accountId = getAccountId.call(this, i);
-						responseData = (await chatwootApiRequest.call(
-							this,
-							'GET',
-							`/api/v1/accounts/${accountId}`,
-						)) as IDataObject;
-						break;
-					}
-					}
+					responseData = await executeAccountOperation(this, operation, i);
 					break;
 				case 'inbox':
 					switch (operation) {
