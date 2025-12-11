@@ -6,6 +6,19 @@ import type {
 	INodeTypeDescription,
 } from 'n8n-workflow';
 
+import type {
+	ChatwootResources,
+	AccountOperation,
+	ContactOperation,
+	ConversationOperation,
+	CustomAttributeOperation,
+	InboxOperation,
+	LabelOperation,
+	MessageOperation,
+	ProfileOperation,
+	WebhookOperation,
+} from './resources/types';
+
 import { profileDescription, executeProfileOperation } from './resources/profile';
 import { accountDescription, executeAccountOperation } from './resources/account';
 import { inboxDescription, executeInboxOperation } from './resources/inbox';
@@ -146,65 +159,72 @@ export class Chatwoot implements INodeType {
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
-		const resource = this.getNodeParameter('resource', 0) as string;
-		const operation = this.getNodeParameter('operation', 0) as string;
+		const resource = this.getNodeParameter('resource', 0) as ChatwootResources;
+		const operation = this.getNodeParameter('operation', 0);
 
 		for (let i = 0; i < items.length; i++) {
 			try {
-				let responseData: IDataObject | IDataObject[] | null;
+				let responseData: IDataObject | IDataObject[];
+				switch (resource) {
+					case 'profile':
+						responseData = await executeProfileOperation(this, operation as ProfileOperation);
+						break;
+					case 'account':
+						responseData = await executeAccountOperation(this, operation as AccountOperation, i);
+						break;
+					case 'inbox':
+						responseData = await executeInboxOperation(this, operation as InboxOperation, i);
+						break;
+					case 'contact':
+						responseData = await executeContactOperation(this, operation as ContactOperation, i);
+						break;
+					case 'conversation':
+						responseData = await executeConversationOperation(this, operation as ConversationOperation, i);
+						break;
+					case 'message':
+						responseData = await executeMessageOperation(this, operation as MessageOperation, i);
+						break;
+					case 'webhook':
+						responseData = await executeWebhookOperation(this, operation as WebhookOperation, i);
+						break;
+					case 'customAttribute':
+						responseData = await executeCustomAttributeOperation(this, operation as CustomAttributeOperation, i);
+						break;
+					case 'label':
+						responseData = await executeLabelOperation(this, operation as LabelOperation, i);
+						break;
+					case 'kanban':
+						responseData = await executeKanbanOperation(this, operation as KanbanOperation, i);
+						break;
+				}
+				const responseFilters = this.getNodeParameter(
+					'responseFilters.fieldFiltering',
+					i,
+					{},
+				) as IDataObject;
 
-				if (resource === 'profile') {
-					responseData = await executeProfileOperation(this, operation);
-				} else if (resource === 'account') {
-					responseData = await executeAccountOperation(this, operation, i);
-				} else if (resource === 'inbox') {
-					responseData = await executeInboxOperation(this, operation, i);
-				} else if (resource === 'contact') {
-					responseData = await executeContactOperation(this, operation, i);
-				} else if (resource === 'conversation') {
-					responseData = await executeConversationOperation(this, operation, i);
-				} else if (resource === 'message') {
-					responseData = await executeMessageOperation(this, operation, i);
-				} else if (resource === 'webhook') {
-					responseData = await executeWebhookOperation(this, operation, i);
-				} else if (resource === 'customAttribute') {
-					responseData = await executeCustomAttributeOperation(this, operation, i);
-				} else if (resource === 'label') {
-					responseData = await executeLabelOperation(this, operation, i);
-				} else {
-					responseData = null;
+				const fieldFilterMode = responseFilters.fieldFilterMode as string;
+
+				if (fieldFilterMode === 'select') {
+					const selectFields = responseFilters.selectFields as string[];
+					responseData = filterResponseFields(
+						responseData,
+						selectFields,
+						undefined,
+					) as IDataObject | IDataObject[];
+				} else if (fieldFilterMode === 'except') {
+					const exceptFields = responseFilters.exceptFields as string[];
+					responseData = filterResponseFields(
+						responseData,
+						undefined,
+						exceptFields,
+					) as IDataObject | IDataObject[];
 				}
 
-				if (responseData) {
-					const responseFilters = this.getNodeParameter(
-						'responseFilters.fieldFiltering',
-						i,
-						{},
-					) as IDataObject;
-
-					const fieldFilterMode = responseFilters.fieldFilterMode as string;
-
-					if (fieldFilterMode === 'select') {
-						const selectFields = responseFilters.selectFields as string[];
-						responseData = filterResponseFields(
-							responseData,
-							selectFields,
-							undefined,
-						) as IDataObject | IDataObject[];
-					} else if (fieldFilterMode === 'except') {
-						const exceptFields = responseFilters.exceptFields as string[];
-						responseData = filterResponseFields(
-							responseData,
-							undefined,
-							exceptFields,
-						) as IDataObject | IDataObject[];
-					}
-
-					if (Array.isArray(responseData)) {
-						returnData.push(...responseData.map((item) => ({ json: item })));
-					} else {
-						returnData.push({ json: responseData });
-					}
+				if (Array.isArray(responseData)) {
+					returnData.push(...responseData.map((item) => ({ json: item })));
+				} else {
+					returnData.push({ json: responseData });
 				}
 
 			} catch (error) {
