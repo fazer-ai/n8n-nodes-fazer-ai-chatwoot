@@ -3,7 +3,6 @@ import {
 	accountSelector,
 	contactSelector,
 	conversationSelector,
-	rawJsonBody,
 	responseFilterFields,
 } from '../../shared/descriptions';
 
@@ -64,29 +63,6 @@ const customAttributeFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Use Raw JSON',
-		name: 'useRawJson',
-		type: 'boolean',
-		default: false,
-		description: 'Whether to use raw JSON body instead of fields',
-		displayOptions: {
-			show: {
-				...showOnlyForCustomAttribute,
-				operation: ['createDefinition'],
-			},
-		},
-	},
-	{
-		...rawJsonBody,
-		displayOptions: {
-			show: {
-				...showOnlyForCustomAttribute,
-				operation: ['createDefinition'],
-				useRawJson: [true],
-			},
-		},
-	},
-	{
 		displayName: 'Attribute Model',
 		name: 'attributeModel',
 		type: 'options',
@@ -114,7 +90,6 @@ const customAttributeFields: INodeProperties[] = [
 			show: {
 				...showOnlyForCustomAttribute,
 				operation: ['createDefinition'],
-				useRawJson: [false],
 			},
 		},
 	},
@@ -129,7 +104,6 @@ const customAttributeFields: INodeProperties[] = [
 			show: {
 				...showOnlyForCustomAttribute,
 				operation: ['createDefinition', 'deleteDefinition'],
-				useRawJson: [false],
 			},
 		},
 	},
@@ -150,7 +124,6 @@ const customAttributeFields: INodeProperties[] = [
 			show: {
 				...showOnlyForCustomAttribute,
 				operation: ['createDefinition'],
-				useRawJson: [false],
 			},
 		},
 	},
@@ -168,7 +141,6 @@ const customAttributeFields: INodeProperties[] = [
 			show: {
 				...showOnlyForCustomAttribute,
 				operation: ['createDefinition'],
-				useRawJson: [false],
 				attributeType: ['list'],
 			},
 		},
@@ -183,7 +155,6 @@ const customAttributeFields: INodeProperties[] = [
 			show: {
 				...showOnlyForCustomAttribute,
 				operation: ['createDefinition'],
-				useRawJson: [false],
 			},
 		},
 		options: [
