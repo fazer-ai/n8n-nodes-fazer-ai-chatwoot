@@ -241,17 +241,6 @@ export const additionalFieldsCollection: INodeProperties = {
 };
 
 /**
- * Raw JSON body - para enviar JSON customizado
- */
-export const rawJsonBody: INodeProperties = {
-	displayName: 'JSON Body',
-	name: 'jsonBody',
-	type: 'json',
-	default: '{}',
-	description: 'Raw JSON body to send with the request',
-};
-
-/**
  * Conversation status options
  */
 export const conversationStatusOptions: INodeProperties = {

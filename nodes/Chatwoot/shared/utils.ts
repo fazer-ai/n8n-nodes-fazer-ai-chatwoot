@@ -12,17 +12,6 @@ export function parseCustomAttributes(customAttributes: string): Record<string, 
 }
 
 /**
- * Parse raw JSON body
- */
-export function parseJsonBody(jsonBody: string): Record<string, unknown> {
-	try {
-		return JSON.parse(jsonBody) as Record<string, unknown>;
-	} catch {
-		return {};
-	}
-}
-
-/**
  * Build query params from additional fields
  */
 export function buildQueryParams(additionalFields: Record<string, unknown>): Record<string, unknown> {
