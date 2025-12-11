@@ -4,27 +4,27 @@ import {
 	getAccountId,
 	getContactId,
 } from '../../shared/transport';
+import { ContactOperation } from './types';
 
 export async function executeContactOperation(
   context: IExecuteFunctions,
-  operation: string,
+  operation: ContactOperation,
   itemIndex: number,
-): Promise<IDataObject | IDataObject[] | null> {
-  if (operation === 'create') {
-    return createContact(context, itemIndex);
-  } else if (operation === 'get') {
-    return getContact(context, itemIndex);
-  } else if (operation === 'getAll') {
-    return getAllContacts(context, itemIndex);
-  } else if (operation === 'update') {
-    return updateContact(context, itemIndex);
-  } else if (operation === 'delete') {
-    return deleteContact(context, itemIndex);
-  } else if (operation === 'search') {
-    return searchContacts(context, itemIndex);
-  }
-
-  return null;
+): Promise<IDataObject | IDataObject[]> {
+  switch (operation) {
+    case 'create':
+      return createContact(context, itemIndex);
+    case 'get':
+      return getContact(context, itemIndex);
+    case 'getAll':
+      return getAllContacts(context, itemIndex);
+    case 'update':
+      return updateContact(context, itemIndex);
+    case 'delete':
+      return deleteContact(context, itemIndex);
+    case 'search':
+      return searchContacts(context, itemIndex);
+    }
 }
 
 async function createContact(
