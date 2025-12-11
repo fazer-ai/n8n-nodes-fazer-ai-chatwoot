@@ -6,7 +6,6 @@ import {
 	contactSelector,
 	conversationStatusOptions,
 	customAttributesField,
-	rawJsonBody,
 	responseFilterFields,
 } from '../../shared/descriptions';
 
@@ -154,29 +153,6 @@ const conversationFields: INodeProperties[] = [
 		],
 	},
 	{
-		displayName: 'Use Raw JSON',
-		name: 'useRawJson',
-		type: 'boolean',
-		default: false,
-		description: 'Whether to use raw JSON body instead of fields',
-		displayOptions: {
-			show: {
-				...showOnlyForConversation,
-				operation: ['create'],
-			},
-		},
-	},
-	{
-		...rawJsonBody,
-		displayOptions: {
-			show: {
-				...showOnlyForConversation,
-				operation: ['create'],
-				useRawJson: [true],
-			},
-		},
-	},
-	{
 		displayName: 'Agent Name or ID',
 		name: 'agentId',
 		type: 'options',
@@ -234,7 +210,6 @@ const conversationFields: INodeProperties[] = [
 			show: {
 				...showOnlyForConversation,
 				operation: ['create'],
-				useRawJson: [false],
 			},
 		},
 	},
@@ -244,7 +219,6 @@ const conversationFields: INodeProperties[] = [
 			show: {
 				...showOnlyForConversation,
 				operation: ['create'],
-				useRawJson: [false],
 			},
 		},
 	},
@@ -258,7 +232,6 @@ const conversationFields: INodeProperties[] = [
 			show: {
 				...showOnlyForConversation,
 				operation: ['create'],
-				useRawJson: [false],
 			},
 		},
 		options: [
