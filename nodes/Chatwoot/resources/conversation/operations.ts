@@ -6,31 +6,30 @@ import {
 	getConversationId,
 	getContactId,
 } from '../../shared/transport';
+import { ConversationOperation } from './types';
 
 export async function executeConversationOperation(
 	context: IExecuteFunctions,
-	operation: string,
+	operation: ConversationOperation,
 	itemIndex: number,
-): Promise<IDataObject | IDataObject[] | null> {
-  if (operation === 'create') {
-    return createConversation(context, itemIndex);
-  } else if (operation === 'get') {
-    return getConversation(context, itemIndex);
-  } else if (operation === 'getAll') {
-    return getAllConversations(context, itemIndex);
-  } else if (operation === 'toggleStatus') {
-    return toggleConversationStatus(context, itemIndex);
-  } else if (operation === 'assignAgent') {
-    return assignAgent(context, itemIndex);
-  } else if (operation === 'assignTeam') {
-    return assignTeam(context, itemIndex);
-  } else if (operation === 'addLabels') {
-    return addLabels(context, itemIndex);
+): Promise<IDataObject | IDataObject[]> {
+  switch (operation) {
+    case 'create':
+      return createConversation(context, itemIndex);
+    case 'get':
+      return getConversation(context, itemIndex);
+    case 'getAll':
+      return getAllConversations(context, itemIndex);
+    case 'toggleStatus':
+      return toggleConversationStatus(context, itemIndex);
+    case 'assignAgent':
+      return assignAgent(context, itemIndex);
+    case 'assignTeam':
+      return assignTeam(context, itemIndex);
+    case 'addLabels':
+      return addLabels(context, itemIndex);
   }
-
-  return null;
 }
-
 
 async function createConversation(
 	context: IExecuteFunctions,
