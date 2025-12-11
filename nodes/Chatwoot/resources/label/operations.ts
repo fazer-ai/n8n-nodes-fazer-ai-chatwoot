@@ -24,20 +24,14 @@ async function createLabel(
 	itemIndex: number,
 ): Promise<IDataObject> {
 	const accountId = getAccountId.call(context, itemIndex);
-	const useRawJson = context.getNodeParameter('useRawJson', itemIndex, false) as boolean;
 
-	let body: IDataObject;
-	if (useRawJson) {
-		body = JSON.parse(context.getNodeParameter('jsonBody', itemIndex, '{}') as string);
-	} else {
-		const title = context.getNodeParameter('title', itemIndex) as string;
-		const additionalFields = context.getNodeParameter('additionalFields', itemIndex) as IDataObject;
+	const title = context.getNodeParameter('title', itemIndex) as string;
+	const additionalFields = context.getNodeParameter('additionalFields', itemIndex) as IDataObject;
 
-		body = {
-			title,
-			...additionalFields,
-		};
-	}
+	const body: IDataObject = {
+		title,
+		...additionalFields,
+	};
 
 	return (await chatwootApiRequest.call(
 		context,
@@ -68,14 +62,8 @@ async function updateLabel(
 ): Promise<IDataObject> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const labelId = context.getNodeParameter('labelId', itemIndex) as string;
-	const useRawJson = context.getNodeParameter('useRawJson', itemIndex, false) as boolean;
 
-	let body: IDataObject;
-	if (useRawJson) {
-		body = JSON.parse(context.getNodeParameter('jsonBody', itemIndex, '{}') as string);
-	} else {
-		body = context.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
-	}
+	const body: IDataObject = context.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
 
 	return (await chatwootApiRequest.call(
 		context,
