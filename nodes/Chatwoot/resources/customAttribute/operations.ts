@@ -5,27 +5,26 @@ import {
 	getContactId,
 	getConversationId,
 } from '../../shared/transport';
+import { CustomAttributeOperation } from './types';
 
 export async function executeCustomAttributeOperation(
 	context: IExecuteFunctions,
-	operation: string,
+	operation: CustomAttributeOperation,
 	itemIndex: number,
-): Promise<IDataObject | IDataObject[] | null> {
-  if (operation === 'createDefinition') {
-    return createDefinition(context, itemIndex);
-  } else if (operation === 'getDefinitions') {
-    return getDefinitions(context, itemIndex);
-  } else if (operation === 'setOnContact') {
-    return setOnContact(context, itemIndex);
-  } else if (operation === 'setOnConversation') {
-    return setOnConversation(context, itemIndex);
-  } else if (operation === 'deleteDefinition') {
-    return deleteDefinition(context, itemIndex);
+): Promise<IDataObject | IDataObject[]> {
+  switch (operation) {
+    case 'createDefinition':
+      return createDefinition(context, itemIndex);
+    case 'getDefinitions':
+      return getDefinitions(context, itemIndex);
+    case 'setOnContact':
+      return setOnContact(context, itemIndex);
+    case 'setOnConversation':
+      return setOnConversation(context, itemIndex);
+    case 'deleteDefinition':
+      return deleteDefinition(context, itemIndex);
   }
-
-  return null;
 }
-
 
 async function createDefinition(
 	context: IExecuteFunctions,
