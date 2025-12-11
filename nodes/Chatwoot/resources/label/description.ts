@@ -1,5 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { accountSelector, rawJsonBody, responseFilterFields } from '../../shared/descriptions';
+import { accountSelector, responseFilterFields } from '../../shared/descriptions';
 
 const showOnlyForLabel = {
 	resource: ['label'],
@@ -70,29 +70,6 @@ const labelFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Use Raw JSON',
-		name: 'useRawJson',
-		type: 'boolean',
-		default: false,
-		description: 'Whether to use raw JSON body instead of fields',
-		displayOptions: {
-			show: {
-				...showOnlyForLabel,
-				operation: ['create', 'update'],
-			},
-		},
-	},
-	{
-		...rawJsonBody,
-		displayOptions: {
-			show: {
-				...showOnlyForLabel,
-				operation: ['create', 'update'],
-				useRawJson: [true],
-			},
-		},
-	},
-	{
 		displayName: 'Title',
 		name: 'title',
 		type: 'string',
@@ -103,7 +80,6 @@ const labelFields: INodeProperties[] = [
 			show: {
 				...showOnlyForLabel,
 				operation: ['create'],
-				useRawJson: [false],
 			},
 		},
 	},
@@ -117,7 +93,6 @@ const labelFields: INodeProperties[] = [
 			show: {
 				...showOnlyForLabel,
 				operation: ['create', 'update'],
-				useRawJson: [false],
 			},
 		},
 		options: [
@@ -151,7 +126,6 @@ const labelFields: INodeProperties[] = [
 				displayOptions: {
 					show: {
 						'/operation': ['update'],
-						'/useRawJson': [false],
 					},
 				},
 			},
