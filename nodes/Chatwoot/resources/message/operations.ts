@@ -4,25 +4,25 @@ import {
 	getAccountId,
 	getConversationId,
 } from '../../shared/transport';
+import { MessageOperation } from './types';
 
 export async function executeMessageOperation(
   context: IExecuteFunctions,
-  operation: string,
+  operation: MessageOperation,
   itemIndex: number,
-): Promise<IDataObject | IDataObject[] | null> {
-  if (operation === 'send') {
-    return sendMessage(context, itemIndex);
-  } else if (operation === 'getAll') {
-    return getAllMessages(context, itemIndex);
-  } else if (operation === 'delete') {
-    return deleteMessage(context, itemIndex);
-  } else if (operation === 'setTyping') {
-    return setTypingStatus(context, itemIndex);
-  } else if (operation === 'updatePresence') {
-    return updatePresence(context, itemIndex);
+): Promise<IDataObject | IDataObject[]> {
+  switch (operation) {
+    case 'send':
+      return sendMessage(context, itemIndex);
+    case 'getAll':
+      return getAllMessages(context, itemIndex);
+    case 'delete':
+      return deleteMessage(context, itemIndex);
+    case 'setTyping':
+      return setTypingStatus(context, itemIndex);
+    case 'updatePresence':
+      return updatePresence(context, itemIndex);
   }
-
-  return null;
 }
 
 async function sendMessage(
