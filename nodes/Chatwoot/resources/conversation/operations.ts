@@ -36,29 +36,23 @@ async function createConversation(
 	itemIndex: number,
 ): Promise<IDataObject> {
 	const accountId = getAccountId.call(context, itemIndex);
-	const useRawJson = context.getNodeParameter('useRawJson', itemIndex, false) as boolean;
+	const contactId = getContactId.call(context, itemIndex);
 
-	let body: IDataObject;
-	if (useRawJson) {
-		body = JSON.parse(context.getNodeParameter('jsonBody', itemIndex, '{}') as string);
-	} else {
-		const contactId = getContactId.call(context, itemIndex);
-		body = {
-			contact_id: contactId,
-		};
+	const body: IDataObject = {
+		contact_id: contactId,
+	};
 
-		const inboxId = getInboxId.call(context, itemIndex);
-		if (inboxId) {
-			body.inbox_id = inboxId;
-		}
+	const inboxId = getInboxId.call(context, itemIndex);
+	if (inboxId) {
+		body.inbox_id = inboxId;
+	}
 
-		const additionalFields = context.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
-		Object.assign(body, additionalFields);
+	const additionalFields = context.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
+	Object.assign(body, additionalFields);
 
-		if (typeof body.customAttributes === 'string') {
-			body.custom_attributes = JSON.parse(body.customAttributes as string);
-			delete body.customAttributes;
-		}
+	if (typeof body.customAttributes === 'string') {
+		body.custom_attributes = JSON.parse(body.customAttributes as string);
+		delete body.customAttributes;
 	}
 
 	return (await chatwootApiRequest.call(
