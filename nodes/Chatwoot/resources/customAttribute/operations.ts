@@ -31,44 +31,38 @@ async function createDefinition(
 	itemIndex: number,
 ): Promise<IDataObject> {
 	const accountId = getAccountId.call(context, itemIndex);
-	const useRawJson = context.getNodeParameter('useRawJson', itemIndex, false) as boolean;
 
-	let body: IDataObject;
-	if (useRawJson) {
-		body = JSON.parse(context.getNodeParameter('jsonBody', itemIndex, '{}') as string);
-	} else {
-		const attributeModel = context.getNodeParameter('attributeModel', itemIndex) as string;
-		const attributeDisplayName = context.getNodeParameter('attributeDisplayName', itemIndex) as string;
-		const attributeKey = context.getNodeParameter('attributeKey', itemIndex) as string;
-		const attributeType = context.getNodeParameter('attributeType', itemIndex) as string;
-		const additionalFields = context.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
+	const attributeModel = context.getNodeParameter('attributeModel', itemIndex) as string;
+	const attributeDisplayName = context.getNodeParameter('attributeDisplayName', itemIndex) as string;
+	const attributeKey = context.getNodeParameter('attributeKey', itemIndex) as string;
+	const attributeType = context.getNodeParameter('attributeType', itemIndex) as string;
+	const additionalFields = context.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
 
-		body = {
-			attribute_display_name: attributeDisplayName,
-			attribute_key: attributeKey,
-			attribute_display_type: attributeType,
-			attribute_model: attributeModel === 'contact_attribute' ? 0 : 1,
-		};
+	const body: IDataObject = {
+		attribute_display_name: attributeDisplayName,
+		attribute_key: attributeKey,
+		attribute_display_type: attributeType,
+		attribute_model: attributeModel === 'contact_attribute' ? 0 : 1,
+	};
 
-		if (attributeType === 'list') {
-			const attributeValuesInput = context.getNodeParameter('attributeValues', itemIndex) as
-				| string
-				| string[];
-			const attributeValues = (
-				Array.isArray(attributeValuesInput)
-					? attributeValuesInput
-					: [attributeValuesInput]
-			).filter((value) => value !== '');
+	if (attributeType === 'list') {
+		const attributeValuesInput = context.getNodeParameter('attributeValues', itemIndex) as
+			| string
+			| string[];
+		const attributeValues = (
+			Array.isArray(attributeValuesInput)
+				? attributeValuesInput
+				: [attributeValuesInput]
+		).filter((value) => value !== '');
 
-			if (attributeValues.length) {
-				body.attribute_values = attributeValues;
-			}
+		if (attributeValues.length) {
+			body.attribute_values = attributeValues;
 		}
+	}
 
-		const attributeDescription = additionalFields.attributeDescription as string | undefined;
-		if (attributeDescription) {
-			body.attribute_description = attributeDescription;
-		}
+	const attributeDescription = additionalFields.attributeDescription as string | undefined;
+	if (attributeDescription) {
+		body.attribute_description = attributeDescription;
 	}
 
 	return (await chatwootApiRequest.call(
