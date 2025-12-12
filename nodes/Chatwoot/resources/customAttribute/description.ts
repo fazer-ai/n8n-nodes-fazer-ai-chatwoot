@@ -22,19 +22,19 @@ const customAttributeOperations: INodeProperties[] = [
 		options: [
 			{
 				name: 'Create Custom Attribute',
-				value: 'createDefinition',
+				value: 'createCustomAttribute',
 				description: 'Create a custom attribute definition',
 				action: 'Create custom attribute definition',
 			},
 			{
 				name: 'Delete Custom Attribute',
-				value: 'deleteDefinition',
+				value: 'removeCustomAttribute',
 				description: 'Delete a custom attribute definition',
 				action: 'Delete custom attribute definition',
 			},
 			{
 				name: 'Get Custom Attribute',
-				value: 'getDefinitions',
+				value: 'getCustomAttribute',
 				description: 'Get all custom attribute definitions',
 				action: 'Get custom attribute definitions',
 			},
@@ -51,7 +51,7 @@ const customAttributeOperations: INodeProperties[] = [
 				action: 'Set custom attributes on conversation',
 			},
 		],
-		default: 'getDefinitions',
+		default: 'createCustomAttribute',
 	},
 ];
 
@@ -75,7 +75,7 @@ const customAttributeFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForCustomAttribute,
-				operation: ['createDefinition', 'getDefinitions', 'deleteDefinition'],
+				operation: ['createCustomAttribute', 'getCustomAttribute', 'removeCustomAttribute'],
 			},
 		},
 	},
@@ -89,7 +89,7 @@ const customAttributeFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForCustomAttribute,
-				operation: ['createDefinition'],
+				operation: ['createCustomAttribute'],
 			},
 		},
 	},
@@ -103,7 +103,7 @@ const customAttributeFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForCustomAttribute,
-				operation: ['createDefinition', 'deleteDefinition'],
+				operation: ['createCustomAttribute', 'removeCustomAttribute'],
 			},
 		},
 	},
@@ -123,7 +123,7 @@ const customAttributeFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForCustomAttribute,
-				operation: ['createDefinition'],
+				operation: ['createCustomAttribute'],
 			},
 		},
 	},
@@ -140,7 +140,7 @@ const customAttributeFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForCustomAttribute,
-				operation: ['createDefinition'],
+				operation: ['createCustomAttribute'],
 				attributeType: ['list'],
 			},
 		},
@@ -154,7 +154,7 @@ const customAttributeFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForCustomAttribute,
-				operation: ['createDefinition'],
+				operation: ['createCustomAttribute'],
 			},
 		},
 		options: [
@@ -204,7 +204,7 @@ const customAttributeFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForCustomAttribute,
-				operation: ['getDefinitions'],
+				operation: ['getCustomAttribute'],
 			},
 		},
 	},

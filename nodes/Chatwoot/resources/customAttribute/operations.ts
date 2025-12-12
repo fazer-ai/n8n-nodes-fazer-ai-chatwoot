@@ -13,20 +13,20 @@ export async function executeCustomAttributeOperation(
 	itemIndex: number,
 ): Promise<IDataObject | IDataObject[]> {
   switch (operation) {
-    case 'createDefinition':
-      return createDefinition(context, itemIndex);
-    case 'getDefinitions':
-      return getDefinitions(context, itemIndex);
+    case 'createCustomAttribute':
+      return createCustomAttribute(context, itemIndex);
+    case 'getCustomAttribute':
+      return getCustomAttribute(context, itemIndex);
     case 'setOnContact':
       return setOnContact(context, itemIndex);
     case 'setOnConversation':
       return setOnConversation(context, itemIndex);
-    case 'deleteDefinition':
-      return deleteDefinition(context, itemIndex);
+    case 'removeCustomAttribute':
+      return removeCustomAttribute(context, itemIndex);
   }
 }
 
-async function createDefinition(
+async function createCustomAttribute(
 	context: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<IDataObject> {
@@ -73,7 +73,7 @@ async function createDefinition(
 	)) as IDataObject;
 }
 
-async function getDefinitions(
+async function getCustomAttribute(
 	context: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<IDataObject[]> {
@@ -129,7 +129,7 @@ async function setOnConversation(
 	)) as IDataObject;
 }
 
-async function deleteDefinition(
+async function removeCustomAttribute(
 	context: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<IDataObject> {

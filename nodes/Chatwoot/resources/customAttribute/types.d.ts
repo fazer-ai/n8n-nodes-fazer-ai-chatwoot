@@ -1,6 +1,6 @@
 export type CustomAttributeOperation =
-	| 'createDefinition'
-	| 'getDefinitions'
+	| 'createCustomAttribute'
+	| 'getCustomAttribute'
 	| 'setOnContact'
 	| 'setOnConversation'
-	| 'deleteDefinition';
+	| 'removeCustomAttribute';
