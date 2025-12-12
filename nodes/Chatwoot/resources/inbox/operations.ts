@@ -8,14 +8,14 @@ export async function executeInboxOperation(
   itemIndex: number,
 ): Promise<IDataObject | IDataObject[]> {
   switch (operation) {
-  case 'list':
-    return listInboxes(context, itemIndex);
+  case 'getAll':
+    return getAll(context, itemIndex);
   case 'get':
     return getInbox(context, itemIndex);
   }
 }
 
-async function listInboxes(
+async function getAll(
 	context: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<IDataObject | IDataObject[]> {

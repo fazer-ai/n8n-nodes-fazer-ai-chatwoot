@@ -23,12 +23,12 @@ const inboxOperations: INodeProperties[] = [
 			},
 			{
 				name: 'Get Many',
-				value: 'list',
-				description: 'List all inboxes in an account',
+				value: 'getAll',
+				description: 'List many inboxes in an account',
 				action: 'List inboxes',
 			},
 		],
-		default: 'list',
+		default: 'getAll',
 	},
 ];
 
@@ -53,7 +53,7 @@ const inboxFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForInbox,
-				operation: ['get', 'list'],
+				operation: ['get', 'getAll'],
 			},
 		},
 	},

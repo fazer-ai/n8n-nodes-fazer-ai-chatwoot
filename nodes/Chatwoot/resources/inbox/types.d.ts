@@ -1,1 +1,1 @@
-export type InboxOperation = 'list' | 'get';
+export type InboxOperation = 'getAll' | 'get';
