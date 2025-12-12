@@ -60,6 +60,12 @@ const conversationOperations: INodeProperties[] = [
 				action: 'Get many conversations',
 			},
 			{
+				name: 'Set Custom Attribute',
+				value: 'setCustomAttribute',
+				description: 'Set custom attributes on a conversation',
+				action: 'Set custom attribute on conversation',
+			},
+			{
 				name: 'Toggle Status',
 				value: 'toggleStatus',
 				description: 'Toggle conversation status (resolved/open)',
@@ -93,7 +99,7 @@ const conversationFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForConversation,
-				operation: ['get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels'],
+				operation: ['get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'setCustomAttribute'],
 			},
 		},
 	},
@@ -248,11 +254,25 @@ const conversationFields: INodeProperties[] = [
 		],
 	},
 	{
+		displayName: 'Custom Attributes',
+		name: 'customAttributes',
+		type: 'json',
+		default: '{}',
+		required: true,
+		description: 'Custom attributes as JSON object (key-value pairs)',
+		displayOptions: {
+			show: {
+				...showOnlyForConversation,
+				operation: ['setCustomAttribute'],
+			},
+		},
+	},
+	{
 		...responseFilterFields,
 		displayOptions: {
 			show: {
 				...showOnlyForConversation,
-				operation: ['get', 'getAll'],
+				operation: ['get', 'getAll', 'setCustomAttribute'],
 			},
 		},
 	},

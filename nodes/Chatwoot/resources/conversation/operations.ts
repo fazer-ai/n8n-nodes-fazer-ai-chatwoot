@@ -28,6 +28,8 @@ export async function executeConversationOperation(
       return assignTeam(context, itemIndex);
     case 'addLabels':
       return addLabels(context, itemIndex);
+    case 'setCustomAttribute':
+      return setCustomAttribute(context, itemIndex);
   }
 }
 
@@ -169,5 +171,23 @@ async function addLabels(
 		'POST',
 		`/api/v1/accounts/${accountId}/conversations/${conversationId}/labels`,
 		{ labels },
+	)) as IDataObject;
+}
+
+async function setCustomAttribute(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): Promise<IDataObject> {
+	const accountId = getAccountId.call(context, itemIndex);
+	const conversationId = getConversationId.call(context, itemIndex);
+	const customAttributes = JSON.parse(
+		context.getNodeParameter('customAttributes', itemIndex) as string,
+	);
+
+	return (await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}/custom_attributes`,
+		{ custom_attributes: customAttributes },
 	)) as IDataObject;
 }

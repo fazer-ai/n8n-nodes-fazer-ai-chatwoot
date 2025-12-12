@@ -2,7 +2,6 @@ import type { IDataObject, IExecuteFunctions } from 'n8n-workflow';
 import {
 	chatwootApiRequest,
 	getAccountId,
-	getConversationId,
 } from '../../shared/transport';
 import { CustomAttributeOperation } from './types';
 
@@ -16,8 +15,6 @@ export async function executeCustomAttributeOperation(
       return createCustomAttribute(context, itemIndex);
     case 'getCustomAttribute':
       return getCustomAttribute(context, itemIndex);
-    case 'setOnConversation':
-      return setOnConversation(context, itemIndex);
     case 'removeCustomAttribute':
       return removeCustomAttribute(context, itemIndex);
   }
@@ -88,24 +85,6 @@ async function getCustomAttribute(
 		undefined,
 		query,
 	)) as IDataObject[];
-}
-
-async function setOnConversation(
-	context: IExecuteFunctions,
-	itemIndex: number,
-): Promise<IDataObject> {
-	const accountId = getAccountId.call(context, itemIndex);
-	const conversationId = getConversationId.call(context, itemIndex);
-	const customAttributes = JSON.parse(
-		context.getNodeParameter('customAttributes', itemIndex) as string,
-	);
-
-	return (await chatwootApiRequest.call(
-		context,
-		'POST',
-		`/api/v1/accounts/${accountId}/conversations/${conversationId}/custom_attributes`,
-		{ custom_attributes: customAttributes },
-	)) as IDataObject;
 }
 
 async function removeCustomAttribute(

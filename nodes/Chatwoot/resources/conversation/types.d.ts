@@ -5,4 +5,5 @@ export type ConversationOperation =
 	| 'toggleStatus'
 	| 'assignAgent'
 	| 'assignTeam'
-	| 'addLabels';
+	| 'addLabels'
+	| 'setCustomAttribute';
