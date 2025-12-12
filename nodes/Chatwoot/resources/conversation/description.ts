@@ -25,7 +25,7 @@ const conversationOperations: INodeProperties[] = [
 		options: [
 			{
 				name: 'Add Labels',
-				value: 'addLabels',
+				value: 'setLabels',
 				description: 'Add labels to a conversation',
 				action: 'Add labels to conversation',
 			},
@@ -99,7 +99,7 @@ const conversationFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForConversation,
-				operation: ['get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'setCustomAttribute'],
+				operation: ['get', 'toggleStatus', 'assignAgent', 'assignTeam', 'setLabels', 'setCustomAttribute'],
 			},
 		},
 	},
@@ -204,7 +204,7 @@ const conversationFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForConversation,
-				operation: ['addLabels'],
+				operation: ['setLabels'],
 			},
 		},
 	},

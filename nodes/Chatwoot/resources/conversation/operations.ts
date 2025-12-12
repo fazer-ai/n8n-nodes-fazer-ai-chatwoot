@@ -23,13 +23,13 @@ export async function executeConversationOperation(
     case 'toggleStatus':
       return toggleConversationStatus(context, itemIndex);
     case 'assignAgent':
-      return assignAgent(context, itemIndex);
+      return assignConversationAgent(context, itemIndex);
     case 'assignTeam':
-      return assignTeam(context, itemIndex);
-    case 'addLabels':
-      return addLabels(context, itemIndex);
+      return assignConversationTeam(context, itemIndex);
+    case 'setLabels':
+      return setConversationLabels(context, itemIndex);
     case 'setCustomAttribute':
-      return setCustomAttribute(context, itemIndex);
+      return setConversationCustomAttributes(context, itemIndex);
   }
 }
 
@@ -126,7 +126,7 @@ async function toggleConversationStatus(
 	)) as IDataObject;
 }
 
-async function assignAgent(
+async function assignConversationAgent(
 	context: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<IDataObject> {
@@ -142,7 +142,7 @@ async function assignAgent(
 	)) as IDataObject;
 }
 
-async function assignTeam(
+async function assignConversationTeam(
 	context: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<IDataObject> {
@@ -158,7 +158,7 @@ async function assignTeam(
 	)) as IDataObject;
 }
 
-async function addLabels(
+async function setConversationLabels(
 	context: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<IDataObject> {
@@ -174,7 +174,7 @@ async function addLabels(
 	)) as IDataObject;
 }
 
-async function setCustomAttribute(
+async function setConversationCustomAttributes(
 	context: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<IDataObject> {
