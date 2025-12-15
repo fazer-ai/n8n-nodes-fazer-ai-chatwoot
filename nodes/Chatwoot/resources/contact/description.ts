@@ -21,10 +21,10 @@ const contactOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Create',
+				name: 'Create Contact',
 				value: 'create',
 				description: 'Create a new contact',
-				action: 'Create contact',
+				action: 'Create a contact',
 			},
 			{
 				name: 'Delete',
@@ -88,21 +88,8 @@ const contactFields: INodeProperties[] = [
 		name: 'name',
 		type: 'string',
 		default: '',
+		required: true,
 		description: 'Name of the contact',
-		displayOptions: {
-			show: {
-				...showOnlyForContact,
-				operation: ['create'],
-			},
-		},
-	},
-	{
-		displayName: 'Email',
-		name: 'email',
-		type: 'string',
-		placeholder: 'name@email.com',
-		default: '',
-		description: 'Email of the contact',
 		displayOptions: {
 			show: {
 				...showOnlyForContact,
@@ -115,7 +102,22 @@ const contactFields: INodeProperties[] = [
 		name: 'phoneNumber',
 		type: 'string',
 		default: '',
-		description: 'Phone number of the contact (with country code)',
+		placeholder: '+5511999999999',
+		description: 'Phone number of the contact in E.164 format (e.g., +5511999999999)',
+		displayOptions: {
+			show: {
+				...showOnlyForContact,
+				operation: ['create'],
+			},
+		},
+	},
+	{
+		displayName: 'Email',
+		name: 'email',
+		type: 'string',
+		default: '',
+		placeholder: 'name@email.com',
+		description: 'Email of the contact',
 		displayOptions: {
 			show: {
 				...showOnlyForContact,
@@ -167,6 +169,7 @@ const contactFields: INodeProperties[] = [
 			},
 		},
 	},
+	// Additional Fields for CREATE operation
 	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',
@@ -176,7 +179,113 @@ const contactFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForContact,
-				operation: ['create', 'update'],
+				operation: ['create'],
+			},
+		},
+		options: [
+			{
+				displayName: 'City',
+				name: 'city',
+				type: 'string',
+				default: '',
+				description: 'City of the contact',
+			},
+			{
+				displayName: 'Company Name',
+				name: 'company_name',
+				type: 'string',
+				default: '',
+				description: 'Company name of the contact',
+			},
+			{
+				displayName: 'Country',
+				name: 'country',
+				type: 'string',
+				default: '',
+				description: 'Country of the contact',
+			},
+			{
+				displayName: 'Country Code',
+				name: 'country_code',
+				type: 'string',
+				default: '',
+				placeholder: 'BR',
+				description: 'ISO country code of the contact (e.g., BR, US)',
+			},
+			{
+				displayName: 'Description',
+				name: 'description',
+				type: 'string',
+				default: '',
+				description: 'Description or notes about the contact',
+			},
+			{
+				displayName: 'Social Profiles',
+				name: 'socialProfiles',
+				type: 'fixedCollection',
+				default: {},
+				placeholder: 'Add Social Profile',
+				typeOptions: {
+					multipleValues: false,
+				},
+				options: [
+					{
+						displayName: 'Profiles',
+						name: 'profiles',
+						values: [
+							{
+								displayName: 'Facebook',
+								name: 'facebook',
+								type: 'string',
+								default: '',
+								description: 'Facebook profile URL or username',
+							},
+							{
+								displayName: 'GitHub',
+								name: 'github',
+								type: 'string',
+								default: '',
+								description: 'GitHub profile URL or username',
+							},
+							{
+								displayName: 'Instagram',
+								name: 'instagram',
+								type: 'string',
+								default: '',
+								description: 'Instagram profile URL or username',
+							},
+							{
+								displayName: 'LinkedIn',
+								name: 'linkedin',
+								type: 'string',
+								default: '',
+								description: 'LinkedIn profile URL or username',
+							},
+							{
+								displayName: 'Twitter',
+								name: 'twitter',
+								type: 'string',
+								default: '',
+								description: 'Twitter/X profile URL or username',
+							},
+						],
+					},
+				],
+				description: 'Social media profiles of the contact',
+			},
+		],
+	},
+	// Additional Fields for UPDATE operation
+	{
+		displayName: 'Additional Fields',
+		name: 'additionalFields',
+		type: 'collection',
+		placeholder: 'Add Field',
+		default: {},
+		displayOptions: {
+			show: {
+				...showOnlyForContact,
+				operation: ['update'],
 			},
 		},
 		options: [
