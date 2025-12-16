@@ -1,7 +1,7 @@
 export type ContactOperation =
 	| 'create'
 	| 'get'
-	| 'getAll'
+	| 'list'
 	| 'update'
 	| 'delete'
 	| 'search'

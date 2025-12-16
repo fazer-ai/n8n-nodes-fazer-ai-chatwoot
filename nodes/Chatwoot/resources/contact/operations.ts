@@ -20,8 +20,8 @@ export async function executeContactOperation(
       return createContact(context, itemIndex);
     case 'get':
       return getContact(context, itemIndex);
-    case 'getAll':
-      return getAllContacts(context, itemIndex);
+    case 'list':
+      return listContacts(context, itemIndex);
     case 'update':
       return updateContact(context, itemIndex);
     case 'delete':
@@ -101,28 +101,20 @@ async function getContact(
 	)) as IDataObject;
 }
 
-async function getAllContacts(
+async function listContacts(
 	context: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<IDataObject | IDataObject[]> {
 	const accountId = getAccountId.call(context, itemIndex);
-	const returnAll = context.getNodeParameter('returnAll', itemIndex, false) as boolean;
-	const limit = context.getNodeParameter('limit', itemIndex, 50) as number;
+	const page = context.getNodeParameter('page', itemIndex, 1);
 
-	const query: IDataObject = {};
-	if (!returnAll) {
-		query.per_page = limit;
-	}
-
-	const response = (await chatwootApiRequest.call(
+	return (await chatwootApiRequest.call(
 		context,
 		'GET',
 		`/api/v1/accounts/${accountId}/contacts`,
 		undefined,
-		query,
+		{ page },
 	)) as IDataObject;
-
-	return (response.payload as IDataObject[]) || response;
 }
 
 async function updateContact(
