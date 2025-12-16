@@ -122,13 +122,11 @@ async function deleteContact(
 	const accountId = getAccountId.call(context, itemIndex);
 	const contactId = getContactId.call(context, itemIndex);
 
-	await chatwootApiRequest.call(
+	return (await chatwootApiRequest.call(
 		context,
 		'DELETE',
 		`/api/v1/accounts/${accountId}/contacts/${contactId}`,
-	);
-
-	return { success: true };
+	)) as IDataObject;
 }
 
 async function searchContacts(
