@@ -2,7 +2,6 @@ import type { INodeProperties } from 'n8n-workflow';
 import {
 	accountSelector,
 	contactSelector,
-	customAttributesField,
 } from '../../shared/descriptions';
 
 const showOnlyForContact = {
@@ -54,12 +53,6 @@ const contactOperations: INodeProperties[] = [
 				value: 'setCustomAttribute',
 				description: 'Set custom attributes on a contact',
 				action: 'Set custom attribute on contact',
-			},
-			{
-				name: 'Update',
-				value: 'update',
-				description: 'Update a contact',
-				action: 'Update contact',
 			},
 		],
 		default: 'create',
@@ -151,7 +144,6 @@ const contactFields: INodeProperties[] = [
 			},
 		},
 	},
-	// Additional Fields for CREATE operation
 	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',
@@ -254,61 +246,6 @@ const contactFields: INodeProperties[] = [
 					},
 				],
 				description: 'Social media profiles of the contact',
-			},
-		],
-	},
-	// Additional Fields for UPDATE operation
-	{
-		displayName: 'Additional Fields',
-		name: 'additionalFields',
-		type: 'collection',
-		placeholder: 'Add Field',
-		default: {},
-		displayOptions: {
-			show: {
-				...showOnlyForContact,
-				operation: ['update'],
-			},
-		},
-		options: [
-			{
-				displayName: 'Avatar URL',
-				name: 'avatar_url',
-				type: 'string',
-				default: '',
-				description: 'URL of the contact avatar',
-			},
-			{
-				...customAttributesField,
-			},
-			{
-				displayName: 'Email',
-				name: 'email',
-				type: 'string',
-				placeholder: 'name@email.com',
-				default: '',
-				description: 'Email of the contact (for update)',
-			},
-			{
-				displayName: 'Identifier',
-				name: 'identifier',
-				type: 'string',
-				default: '',
-				description: 'External identifier for the contact (unique per inbox)',
-			},
-			{
-				displayName: 'Name',
-				name: 'name',
-				type: 'string',
-				default: '',
-				description: 'Name of the contact (for update)',
-			},
-			{
-				displayName: 'Phone Number',
-				name: 'phone_number',
-				type: 'string',
-				default: '',
-				description: 'Phone number of the contact (for update)',
 			},
 		],
 	},

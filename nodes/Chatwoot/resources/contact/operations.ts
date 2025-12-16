@@ -22,8 +22,6 @@ export async function executeContactOperation(
       return getContact(context, itemIndex);
     case 'list':
       return listContacts(context, itemIndex);
-    case 'update':
-      return updateContact(context, itemIndex);
     case 'delete':
       return deleteContact(context, itemIndex);
     case 'search':
@@ -114,30 +112,6 @@ async function listContacts(
 		`/api/v1/accounts/${accountId}/contacts`,
 		undefined,
 		{ page },
-	)) as IDataObject;
-}
-
-async function updateContact(
-	context: IExecuteFunctions,
-	itemIndex: number,
-): Promise<IDataObject> {
-	const accountId = getAccountId.call(context, itemIndex);
-	const contactId = getContactId.call(context, itemIndex);
-
-	const body: IDataObject = {};
-	const additionalFields = context.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
-	Object.assign(body, additionalFields);
-
-	if (typeof body.customAttributes === 'string') {
-		body.custom_attributes = JSON.parse(body.customAttributes as string);
-		delete body.customAttributes;
-	}
-
-	return (await chatwootApiRequest.call(
-		context,
-		'PUT',
-		`/api/v1/accounts/${accountId}/contacts/${contactId}`,
-		body,
 	)) as IDataObject;
 }
 
