@@ -237,7 +237,7 @@ const conversationFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForConversation,
-				operation: ['create'],
+				operation: [],
 			},
 		},
 		options: [
