@@ -26,6 +26,8 @@ export async function executeContactOperation(
       return deleteContact(context, itemIndex);
     case 'search':
       return searchContacts(context, itemIndex);
+    case 'setCustomAttributes':
+      return setCustomAttributes(context, itemIndex);
     case 'destroyCustomAttributes':
 			return destroyCustomAttributes(context, itemIndex);
 }
@@ -147,20 +149,46 @@ async function searchContacts(
 	)) as IDataObject;
 }
 
-async function setCustomAttribute(
+async function setCustomAttributes(
 	context: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<IDataObject> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const contactId = getContactId.call(context, itemIndex);
-	const customAttributes = JSON.parse(
-		context.getNodeParameter('customAttributes', itemIndex) as string,
-	);
+	const specifyMode = context.getNodeParameter('specifyCustomAttributes', itemIndex) as string;
+
+	let customAttributes: IDataObject;
+
+	if (specifyMode === 'keypair') {
+		const attributeParameters = context.getNodeParameter(
+			'customAttributesParameters.attributes',
+			itemIndex,
+			[],
+		) as Array<{ name: string; value: string }>;
+
+		customAttributes = {};
+		for (const attr of attributeParameters) {
+			if (attr.name) {
+				customAttributes[attr.name] = attr.value;
+			}
+		}
+	} else {
+		const jsonValue = context.getNodeParameter('customAttributesJson', itemIndex) as string;
+		customAttributes = JSON.parse(jsonValue);
+	}
 
 	return (await chatwootApiRequest.call(
 		context,
-		'PUT',
+		'PATCH',
 		`/api/v1/accounts/${accountId}/contacts/${contactId}`,
+		{
+			custom_attributes: {
+				...customAttributes
+			}
+		},
+	)) as IDataObject;
+}
+
 async function destroyCustomAttributes(
 	context: IExecuteFunctions,
 	itemIndex: number,

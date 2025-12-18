@@ -56,10 +56,10 @@ const contactOperations: INodeProperties[] = [
 			},
 			{
 				name: 'Set Custom Attribute',
-				value: 'setCustomAttribute',
+				value: 'setCustomAttributes',
 				description: 'Set custom attributes on a contact',
 				action: 'Set custom attribute on contact',
-			},
+			}
 		],
 		default: 'create',
 	},
@@ -150,6 +150,7 @@ const contactFields: INodeProperties[] = [
 			},
 		},
 	},
+
 	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',
@@ -256,15 +257,86 @@ const contactFields: INodeProperties[] = [
 		],
 	},
 	{
+		displayName: 'Specify Custom Attributes',
+		name: 'specifyCustomAttributes',
+		type: 'options',
+		displayOptions: {
+			show: {
+				...showOnlyForContact,
+				operation: ['setCustomAttributes'],
+			},
+		},
+		options: [
+			{
+				name: 'Using Fields Below',
+				value: 'keypair',
+			},
+			{
+				name: 'Using JSON',
+				value: 'json',
+			},
+		],
+		default: 'keypair',
+	},
+	{
 		displayName: 'Custom Attributes',
-		name: 'customAttributes',
+		name: 'customAttributesParameters',
+		type: 'fixedCollection',
+		displayOptions: {
+			show: {
+				...showOnlyForContact,
+				operation: ['setCustomAttributes'],
+				specifyCustomAttributes: ['keypair'],
+			},
+		},
+		typeOptions: {
+			multipleValues: true,
+		},
+		placeholder: 'Add Attribute',
+		default: {
+			attributes: [
+				{
+					name: '',
+					value: '',
+				},
+			],
+		},
+		options: [
+			{
+				name: 'attributes',
+				displayName: 'Attribute',
+				values: [
+					{
+						displayName: 'Name',
+						name: 'name',
+						type: 'string',
+						default: '',
+						description: 'Name of the custom attribute',
+					},
+					{
+						displayName: 'Value',
+						name: 'value',
+						type: 'string',
+						default: '',
+						description: 'Value of the custom attribute',
+					},
+				],
+			},
+		],
+	},
+	{
+		displayName: 'JSON',
+		name: 'customAttributesJson',
 		type: 'json',
 		default: '{}',
-		required: true,
 		description: 'Custom attributes as JSON object (key-value pairs)',
 		displayOptions: {
 			show: {
 				...showOnlyForContact,
+				operation: ['setCustomAttributes'],
+				specifyCustomAttributes: ['json'],
+			},
+		},
 	},
 	{
 		displayName: 'Custom Attributes to Destroy',
