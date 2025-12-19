@@ -23,21 +23,21 @@ const conversationOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Add Labels',
-				value: 'setLabels',
-				description: 'Add labels to a conversation',
-				action: 'Add labels to conversation',
+				name: 'Add Label',
+				value: 'addLabel',
+				description: 'Append a label to conversation',
+				action: 'Append a label to conversation',
 			},
 			{
 				name: 'Assign Agent',
 				value: 'assignAgent',
-				description: 'Assign an agent to a conversation',
+				description: 'Assign an agent to conversation',
 				action: 'Assign agent to conversation',
 			},
 			{
 				name: 'Assign Team',
 				value: 'assignTeam',
-				description: 'Assign a team to a conversation',
+				description: 'Assign a team to conversation',
 				action: 'Assign team to conversation',
 			},
 			{
@@ -61,13 +61,13 @@ const conversationOperations: INodeProperties[] = [
 			{
 				name: 'Set Custom Attribute',
 				value: 'setCustomAttribute',
-				description: 'Set custom attributes on a conversation',
+				description: 'Set custom attributes on conversation',
 				action: 'Set custom attribute on conversation',
 			},
 			{
 				name: 'Set Priority',
 				value: 'setPriority',
-				description: 'Set priority for a conversation',
+				description: 'Set priority for conversation',
 				action: 'Set conversation priority',
 			},
 			{
