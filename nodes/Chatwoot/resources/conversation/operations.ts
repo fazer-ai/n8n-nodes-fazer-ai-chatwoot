@@ -30,6 +30,8 @@ export async function executeConversationOperation(
       return setConversationLabels(context, itemIndex);
     case 'setCustomAttribute':
       return setConversationCustomAttributes(context, itemIndex);
+    case 'setPriority':
+      return setConversationPriority(context, itemIndex);
   }
 }
 
@@ -184,5 +186,23 @@ async function setConversationCustomAttributes(
 		'POST',
 		`/api/v1/accounts/${accountId}/conversations/${conversationId}/custom_attributes`,
 		{ custom_attributes: customAttributes },
+	)) as IDataObject;
+}
+
+async function setConversationPriority(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): Promise<IDataObject> {
+	const accountId = getAccountId.call(context, itemIndex);
+	const conversationId = getConversationId.call(context, itemIndex);
+	const priorityValue = context.getNodeParameter('priority', itemIndex) as string;
+
+	const priority = priorityValue === 'null' ? null : priorityValue;
+
+	return (await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}/toggle_priority`,
+		{ priority },
 	)) as IDataObject;
 }

@@ -65,6 +65,12 @@ const conversationOperations: INodeProperties[] = [
 				action: 'Set custom attribute on conversation',
 			},
 			{
+				name: 'Set Priority',
+				value: 'setPriority',
+				description: 'Set priority for a conversation',
+				action: 'Set conversation priority',
+			},
+			{
 				name: 'Toggle Status',
 				value: 'toggleStatus',
 				description: 'Toggle conversation status (resolved/open)',
@@ -98,7 +104,7 @@ const conversationFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForConversation,
-				operation: ['get', 'toggleStatus', 'assignAgent', 'assignTeam', 'setLabels', 'setCustomAttribute'],
+				operation: ['get', 'toggleStatus', 'assignAgent', 'assignTeam', 'setLabels', 'setCustomAttribute', 'setPriority'],
 			},
 		},
 	},
@@ -263,6 +269,28 @@ const conversationFields: INodeProperties[] = [
 			show: {
 				...showOnlyForConversation,
 				operation: ['setCustomAttribute'],
+			},
+		},
+	},
+	{
+		displayName: 'Priority',
+		name: 'priority',
+		type: 'options',
+		default: 'null',
+		required: true,
+		// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
+		options: [
+			{ name: 'None', value: 'null' },
+			{ name: 'Low', value: 'low' },
+			{ name: 'Medium', value: 'medium' },
+			{ name: 'High', value: 'high' },
+			{ name: 'Urgent', value: 'urgent' },
+		],
+		description: 'Priority level for the conversation',
+		displayOptions: {
+			show: {
+				...showOnlyForConversation,
+				operation: ['setPriority'],
 			},
 		},
 	},

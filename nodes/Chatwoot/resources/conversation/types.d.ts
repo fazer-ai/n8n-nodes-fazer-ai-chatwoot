@@ -6,4 +6,5 @@ export type ConversationOperation =
 	| 'assignAgent'
 	| 'assignTeam'
 	| 'setLabels'
-	| 'setCustomAttribute';
+	| 'setCustomAttribute'
+	| 'setPriority';
