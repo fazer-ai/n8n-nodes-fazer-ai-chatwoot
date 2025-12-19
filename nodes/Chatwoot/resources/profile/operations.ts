@@ -7,12 +7,12 @@ export async function executeProfileOperation(
   operation: ProfileOperation,
 ): Promise<IDataObject | IDataObject[]> {
   switch (operation) {
-    case 'fetch':
-      return fetchProfile(context);
+    case 'get':
+      return getProfile(context);
   }
 }
 
-async function fetchProfile(
+async function getProfile(
 	context: IExecuteFunctions,
 ): Promise<IDataObject> {
 	return (await chatwootApiRequest.call(

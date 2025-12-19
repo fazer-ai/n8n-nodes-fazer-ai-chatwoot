@@ -1,1 +1,1 @@
-export type ProfileOperation = 'fetch';
+export type ProfileOperation = 'get';
