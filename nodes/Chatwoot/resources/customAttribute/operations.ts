@@ -11,11 +11,11 @@ export async function executeCustomAttributeOperation(
 	itemIndex: number,
 ): Promise<IDataObject | IDataObject[]> {
   switch (operation) {
-    case 'createCustomAttribute':
+    case 'create':
       return createCustomAttribute(context, itemIndex);
-    case 'getCustomAttribute':
-      return getCustomAttribute(context, itemIndex);
-    case 'removeCustomAttribute':
+    case 'list':
+      return listCustomAttributes(context, itemIndex);
+    case 'remove':
       return removeCustomAttribute(context, itemIndex);
   }
 }
@@ -26,17 +26,23 @@ async function createCustomAttribute(
 ): Promise<IDataObject> {
 	const accountId = getAccountId.call(context, itemIndex);
 
-	const attributeModel = context.getNodeParameter('attributeModel', itemIndex) as string;
-	const attributeDisplayName = context.getNodeParameter('attributeDisplayName', itemIndex) as string;
-	const attributeKey = context.getNodeParameter('attributeKey', itemIndex) as string;
-	const attributeType = context.getNodeParameter('attributeType', itemIndex) as string;
-	const additionalFields = context.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
+	const attributeModel = context.getNodeParameter('attributeModel', itemIndex);
+	const attributeDisplayName = context.getNodeParameter('attributeDisplayName', itemIndex);
+	const attributeType = context.getNodeParameter('attributeType', itemIndex) ;
+	const additionalFields = context.getNodeParameter('additionalFields', itemIndex, {});
+
+	const attributeKey = String(attributeDisplayName)
+			.normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '')
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, '_')
+			.replace(/^_+|_+$/g, '');
 
 	const body: IDataObject = {
 		attribute_display_name: attributeDisplayName,
 		attribute_key: attributeKey,
 		attribute_display_type: attributeType,
-		attribute_model: attributeModel === 'contact_attribute' ? 0 : 1,
+		attribute_model: attributeModel === 'conversation_attribute' ? 0 : 1,
 	};
 
 	if (attributeType === 'list') {
@@ -54,7 +60,7 @@ async function createCustomAttribute(
 		}
 	}
 
-	const attributeDescription = additionalFields.attributeDescription as string | undefined;
+	const attributeDescription = additionalFields.attributeDescription;
 	if (attributeDescription) {
 		body.attribute_description = attributeDescription;
 	}
@@ -67,12 +73,12 @@ async function createCustomAttribute(
 	)) as IDataObject;
 }
 
-async function getCustomAttribute(
+async function listCustomAttributes(
 	context: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<IDataObject[]> {
 	const accountId = getAccountId.call(context, itemIndex);
-	const attributeModel = context.getNodeParameter('attributeModel', itemIndex) as string;
+	const attributeModel = context.getNodeParameter('attributeModel', itemIndex);
 
 	const query: IDataObject = {
 		attribute_model: attributeModel,
@@ -92,7 +98,7 @@ async function removeCustomAttribute(
 	itemIndex: number,
 ): Promise<IDataObject> {
 	const accountId = getAccountId.call(context, itemIndex);
-	const attributeKey = context.getNodeParameter('attributeKey', itemIndex) as string;
+	const attributeKey = context.getNodeParameter('attributeKeyToDelete', itemIndex);
 
 	await chatwootApiRequest.call(
 		context,

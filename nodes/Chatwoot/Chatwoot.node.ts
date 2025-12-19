@@ -53,6 +53,7 @@ import {
 	searchKanbanSteps,
 	searchKanbanTasks,
 	loadContactCustomAttributeDefinitionsOptions,
+	loadCustomAttributeDefinitionsOptions,
 	searchTeamMembers,
 	loadTeamMembersOptions,
 } from './listSearch';
@@ -197,6 +198,7 @@ export class Chatwoot implements INodeType {
 			loadLabelsOptions,
 			loadResponseFieldsOptions,
 			loadContactCustomAttributeDefinitionsOptions,
+			loadCustomAttributeDefinitionsOptions,
 			loadTeamMembersOptions,
 		},
 	};

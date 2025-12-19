@@ -505,6 +505,33 @@ export async function loadContactCustomAttributeDefinitionsOptions(
 }
 
 /**
+ * Get custom attribute definitions based on selected model
+ */
+export async function loadCustomAttributeDefinitionsOptions(
+	this: ILoadOptionsFunctions,
+): Promise<INodePropertyOptions[]> {
+	const accountId = extractResourceLocatorValue(this, 'accountId');
+	if (!accountId) {
+		return [];
+	}
+
+	const attributeModel = this.getNodeParameter('attributeModel', 0) as string;
+
+	const response = (await chatwootApiRequest.call(
+		this,
+		'GET',
+		`/api/v1/accounts/${accountId}/custom_attribute_definitions`,
+		undefined,
+		{ attribute_model: attributeModel },
+	)) as ChatwootCustomAttributeDefinition[];
+
+	return (response || []).map((attr: ChatwootCustomAttributeDefinition) => ({
+		name: attr.attribute_display_name,
+		value: attr.id,
+	}));
+}
+
+/**
  * Get all webhooks for the selected account (for resourceLocator)
  */
 export async function searchWebhooks(

@@ -1,7 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 import {
 	accountSelector,
-	responseFilterFields,
 } from '../../shared/descriptions';
 
 const showOnlyForCustomAttribute = {
@@ -20,24 +19,24 @@ const customAttributeOperations: INodeProperties[] = [
 		options: [
 			{
 				name: 'Create Custom Attribute',
-				value: 'createCustomAttribute',
+				value: 'create',
 				description: 'Create a custom attribute definition',
 				action: 'Create custom attribute definition',
 			},
 			{
 				name: 'Delete Custom Attribute',
-				value: 'removeCustomAttribute',
+				value: 'delete',
 				description: 'Delete a custom attribute definition',
 				action: 'Delete custom attribute definition',
 			},
 			{
-				name: 'Get Custom Attribute',
-				value: 'getCustomAttribute',
-				description: 'Get all custom attribute definitions',
-				action: 'Get custom attribute definitions',
+				name: 'List Custom Attributes',
+				value: 'list',
+				description: 'List all custom attribute definitions',
+				action: 'List custom attribute definitions',
 			},
 		],
-		default: 'createCustomAttribute',
+		default: 'create',
 	},
 ];
 
@@ -45,7 +44,10 @@ const customAttributeFields: INodeProperties[] = [
 	{
 		...accountSelector,
 		displayOptions: {
-			show: showOnlyForCustomAttribute,
+			show: {
+				...showOnlyForCustomAttribute,
+				operation: ['create', 'list', 'delete'],
+			},
 		},
 	},
 	{
@@ -61,7 +63,7 @@ const customAttributeFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForCustomAttribute,
-				operation: ['createCustomAttribute', 'getCustomAttribute', 'removeCustomAttribute'],
+				operation: ['create', 'list', 'delete'],
 			},
 		},
 	},
@@ -75,21 +77,7 @@ const customAttributeFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForCustomAttribute,
-				operation: ['createCustomAttribute'],
-			},
-		},
-	},
-	{
-		displayName: 'Attribute Key',
-		name: 'attributeKey',
-		type: 'string',
-		default: '',
-		required: true,
-		description: 'Key/identifier for the custom attribute (snake_case recommended)',
-		displayOptions: {
-			show: {
-				...showOnlyForCustomAttribute,
-				operation: ['createCustomAttribute', 'removeCustomAttribute'],
+				operation: ['create'],
 			},
 		},
 	},
@@ -109,7 +97,7 @@ const customAttributeFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForCustomAttribute,
-				operation: ['createCustomAttribute'],
+				operation: ['create'],
 			},
 		},
 	},
@@ -117,16 +105,17 @@ const customAttributeFields: INodeProperties[] = [
 		displayName: 'List Values',
 		name: 'attributeValues',
 		type: 'string',
-		default: '',
+		default: [],
 		required: true,
 		description: 'Possible values when using the List attribute type',
 		typeOptions: {
 			multipleValues: true,
+			multipleValueButtonText: 'Add Value',
 		},
 		displayOptions: {
 			show: {
 				...showOnlyForCustomAttribute,
-				operation: ['createCustomAttribute'],
+				operation: ['create'],
 				attributeType: ['list'],
 			},
 		},
@@ -140,7 +129,7 @@ const customAttributeFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForCustomAttribute,
-				operation: ['createCustomAttribute'],
+				operation: ['create'],
 			},
 		},
 		options: [
@@ -150,15 +139,24 @@ const customAttributeFields: INodeProperties[] = [
 				type: 'string',
 				default: '',
 				description: 'Description of the custom attribute',
-			},
+			}
 		],
 	},
 	{
-		...responseFilterFields,
+		displayName: 'Attribute Name or ID',
+		name: 'attributeKeyToDelete',
+		type: 'options',
+		default: '',
+		required: true,
+		description: 'Select the custom attribute to delete. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		typeOptions: {
+			loadOptionsMethod: 'loadCustomAttributeDefinitionsOptions',
+			loadOptionsDependsOn: ['attributeModel'],
+		},
 		displayOptions: {
 			show: {
 				...showOnlyForCustomAttribute,
-				operation: ['getCustomAttribute'],
+				operation: ['delete'],
 			},
 		},
 	},

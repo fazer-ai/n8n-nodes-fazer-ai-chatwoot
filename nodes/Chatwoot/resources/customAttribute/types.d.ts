@@ -1,4 +1,4 @@
 export type CustomAttributeOperation =
-	| 'createCustomAttribute'
-	| 'getCustomAttribute'
-	| 'removeCustomAttribute';
+	| 'create'
+	| 'list'
+	| 'remove';
