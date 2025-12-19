@@ -22,7 +22,7 @@ const webhookInboxSelector: INodeProperties = {
 			type: 'list',
 			placeholder: 'Select an inbox...',
 			typeOptions: {
-        searchListMethod: 'getInboxes',
+        searchListMethod: 'searchInboxes',
 				searchable: true,
 			},
 		},

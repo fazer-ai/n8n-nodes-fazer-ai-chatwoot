@@ -38,10 +38,21 @@ import { kanbanTaskDescription, executeKanbanTaskOperation } from './resources/k
 import { teamDescription, executeTeamOperation } from './resources/team';
 
 import {
+	searchAccounts,
+	searchInboxes,
+	searchConversations,
+	searchContacts,
 	searchAgents,
 	loadAgentsOptions,
 	searchTeams,
 	loadTeamsOptions,
+	loadLabelsOptions,
+	searchWebhooks,
+	loadResponseFieldsOptions,
+	searchKanbanBoards,
+	searchKanbanSteps,
+	searchKanbanTasks,
+	loadContactCustomAttributeDefinitionsOptions,
 	searchTeamMembers,
 	loadTeamMembersOptions,
 } from './listSearch';
@@ -168,6 +179,14 @@ export class Chatwoot implements INodeType {
 
 	methods = {
 		listSearch: {
+			searchAccounts,
+			searchInboxes,
+			searchConversations,
+			searchContacts,
+			searchWebhooks,
+			searchKanbanBoards,
+			searchKanbanSteps,
+			searchKanbanTasks,
 			searchAgents,
 			searchTeams,
 			searchTeamMembers,
@@ -175,6 +194,9 @@ export class Chatwoot implements INodeType {
 		loadOptions: {
 			loadAgentsOptions,
 			loadTeamsOptions,
+			loadLabelsOptions,
+			loadResponseFieldsOptions,
+			loadContactCustomAttributeDefinitionsOptions,
 			loadTeamMembersOptions,
 		},
 	};

@@ -74,7 +74,7 @@ const boardIdField: INodeProperties = {
 			type: 'list',
 			placeholder: 'Select a board...',
 			typeOptions: {
-				searchListMethod: 'getKanbanBoards',
+				searchListMethod: 'searchKanbanBoards',
 				searchable: true,
 			},
 		},

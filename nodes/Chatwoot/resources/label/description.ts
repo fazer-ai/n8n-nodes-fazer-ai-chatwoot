@@ -60,7 +60,7 @@ const labelFields: INodeProperties[] = [
 		description:
 			'Select the label. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 		typeOptions: {
-			loadOptionsMethod: 'getLabels',
+			loadOptionsMethod: 'loadLabelsOptions',
 		},
 		displayOptions: {
 			show: {

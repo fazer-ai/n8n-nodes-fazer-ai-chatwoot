@@ -98,7 +98,7 @@ function extractResourceLocatorValue(
 /**
  * Get all accounts available to the user (for resourceLocator)
  */
-export async function getAccounts(
+export async function searchAccounts(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {
@@ -129,7 +129,7 @@ export async function getAccounts(
 /**
  * Get all inboxes for the selected account (for resourceLocator)
  */
-export async function getInboxes(
+export async function searchInboxes(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {
@@ -174,7 +174,7 @@ export async function getInboxes(
 /**
  * Get all conversations for the selected account/inbox (for resourceLocator)
  */
-export async function getConversations(
+export async function searchConversations(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {
@@ -222,7 +222,7 @@ export async function getConversations(
 /**
  * Get all contacts for the selected account (for resourceLocator)
  */
-export async function getContacts(
+export async function searchContacts(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {
@@ -451,7 +451,7 @@ export async function searchTeamMembers(
 /**
  * Get all labels for the selected account (for loadOptions)
  */
-export async function getLabels(
+export async function loadLabelsOptions(
 	this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
 	const accountId = extractResourceLocatorValue(this, 'accountId');
@@ -482,7 +482,7 @@ interface ChatwootCustomAttributeDefinition {
 	attribute_model: number;
 }
 
-export async function getContactCustomAttributeDefinitions(
+export async function loadContactCustomAttributeDefinitionsOptions(
 	this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
 	const accountId = extractResourceLocatorValue(this, 'accountId');
@@ -507,7 +507,7 @@ export async function getContactCustomAttributeDefinitions(
 /**
  * Get all webhooks for the selected account (for resourceLocator)
  */
-export async function getWebhooks(
+export async function searchWebhooks(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {
@@ -549,7 +549,7 @@ export async function getWebhooks(
  * Get all response fields dynamically based on resource and operation
  * Makes a sample API call and extracts all available field names
  */
-export async function getResponseFields(
+export async function loadResponseFieldsOptions(
 	this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
 	const resource = this.getNodeParameter('resource', 0) as string;
@@ -718,7 +718,7 @@ export async function getResponseFields(
 	}));
 }
 
-export async function getKanbanBoards(
+export async function searchKanbanBoards(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {
@@ -755,7 +755,7 @@ export async function getKanbanBoards(
 	return { results };
 }
 
-export async function getKanbanSteps(
+export async function searchKanbanSteps(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {
@@ -794,7 +794,7 @@ export async function getKanbanSteps(
 	return { results };
 }
 
-export async function getKanbanTasks(
+export async function searchKanbanTasks(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {

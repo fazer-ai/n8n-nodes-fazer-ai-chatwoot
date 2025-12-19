@@ -10,7 +10,7 @@ import {
 } from 'n8n-workflow';
 
 import { accountSelector } from './shared/descriptions';
-import { getAccounts, getInboxes } from './listSearch';
+import { searchAccounts, searchInboxes } from './listSearch';
 import {
 	fetchWebhooks,
 	createWebhook,
@@ -150,7 +150,7 @@ export class ChatwootTrigger implements INodeType {
 						type: 'list',
 						placeholder: 'All Inboxes',
 						typeOptions: {
-							searchListMethod: 'getInboxes',
+							searchListMethod: 'searchInboxes',
 							searchable: true,
 						},
 					},
@@ -176,8 +176,8 @@ export class ChatwootTrigger implements INodeType {
 
 	methods = {
 		listSearch: {
-			getAccounts,
-			getInboxes,
+			searchAccounts,
+			searchInboxes,
 		},
 	};
 

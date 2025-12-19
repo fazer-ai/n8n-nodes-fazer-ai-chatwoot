@@ -350,7 +350,7 @@ const contactFields: INodeProperties[] = [
 		type: 'multiOptions',
 		required: true,
 		typeOptions: {
-			loadOptionsMethod: 'getContactCustomAttributeDefinitions',
+			loadOptionsMethod: 'loadContactCustomAttributeDefinitionsOptions',
 		},
 		default: [],
 		description: 'Select the custom attributes that will be destroyed. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',

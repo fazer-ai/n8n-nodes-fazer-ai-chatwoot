@@ -68,7 +68,7 @@ const boardIdField: INodeProperties = {
 			type: 'list',
 			placeholder: 'Select a board...',
 			typeOptions: {
-				searchListMethod: 'getKanbanBoards',
+				searchListMethod: 'searchKanbanBoards',
 				searchable: true,
 			},
 		},
@@ -104,7 +104,7 @@ const stepIdField: INodeProperties = {
 			type: 'list',
 			placeholder: 'Select a step...',
 			typeOptions: {
-				searchListMethod: 'getKanbanSteps',
+				searchListMethod: 'searchKanbanSteps',
 				searchable: true,
 			},
 		},
@@ -140,7 +140,7 @@ const taskIdField: INodeProperties = {
 			type: 'list',
 			placeholder: 'Select a task...',
 			typeOptions: {
-				searchListMethod: 'getKanbanTasks',
+				searchListMethod: 'searchKanbanTasks',
 				searchable: true,
 			},
 		},

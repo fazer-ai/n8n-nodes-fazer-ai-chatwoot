@@ -17,7 +17,7 @@ export const accountSelector: INodeProperties = {
 			type: 'list',
 			placeholder: 'Select an account...',
 			typeOptions: {
-				searchListMethod: 'getAccounts',
+				searchListMethod: 'searchAccounts',
 				searchable: true,
 			},
 		},
@@ -56,7 +56,7 @@ export const inboxSelector: INodeProperties = {
 			type: 'list',
 			placeholder: 'Select an inbox...',
 			typeOptions: {
-				searchListMethod: 'getInboxes',
+				searchListMethod: 'searchInboxes',
 				searchable: true,
 			},
 		},
@@ -95,7 +95,7 @@ export const conversationSelector: INodeProperties = {
 			type: 'list',
 			placeholder: 'Select a conversation...',
 			typeOptions: {
-				searchListMethod: 'getConversations',
+				searchListMethod: 'searchConversations',
 				searchable: true,
 			},
 		},
@@ -134,6 +134,28 @@ export const contactSelector: INodeProperties = {
 			type: 'list',
 			placeholder: 'Select a contact...',
 			typeOptions: {
+				searchListMethod: 'searchContacts',
+				searchable: true,
+			},
+		},
+		{
+			displayName: 'By ID',
+			name: 'id',
+			type: 'string',
+			placeholder: 'e.g. 1',
+			validation: [
+				{
+					type: 'regex',
+					properties: {
+						regex: '^[0-9]+$',
+						errorMessage: 'The ID must be a number',
+					},
+				},
+			],
+		},
+	],
+};
+
 /**
  * Agent selector using resourceLocator (From List / By ID in single field)
  */
@@ -268,7 +290,7 @@ export const webhookSelector: INodeProperties = {
 			type: 'list',
 			placeholder: 'Select a webhook...',
 			typeOptions: {
-				searchListMethod: 'getWebhooks',
+				searchListMethod: 'searchWebhooks',
 				searchable: true,
 			},
 		},
@@ -419,7 +441,7 @@ export const selectFieldsOption: INodeProperties = {
 	default: [],
 	description: 'Select the fields to include in the response. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	typeOptions: {
-		loadOptionsMethod: 'getResponseFields',
+		loadOptionsMethod: 'loadResponseFieldsOptions',
 	},
 };
 
@@ -433,7 +455,7 @@ export const exceptFieldsOption: INodeProperties = {
 	default: [],
 	description: 'Select the fields to exclude from the response. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	typeOptions: {
-		loadOptionsMethod: 'getResponseFields',
+		loadOptionsMethod: 'loadResponseFieldsOptions',
 	},
 };
 
@@ -479,7 +501,7 @@ export const responseFilterFields: INodeProperties = {
 					description:
 						'Select the fields to include in the response. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 					typeOptions: {
-						loadOptionsMethod: 'getResponseFields',
+						loadOptionsMethod: 'loadResponseFieldsOptions',
 					},
 					displayOptions: {
 						show: {
@@ -495,7 +517,7 @@ export const responseFilterFields: INodeProperties = {
 					description:
 						'Select the fields to exclude from the response. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 					typeOptions: {
-						loadOptionsMethod: 'getResponseFields',
+						loadOptionsMethod: 'loadResponseFieldsOptions',
 					},
 					displayOptions: {
 						show: {

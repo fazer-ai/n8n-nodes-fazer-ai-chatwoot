@@ -165,7 +165,7 @@ const conversationFields: INodeProperties[] = [
 		required: true,
 		description: 'Select the agent to assign. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 		typeOptions: {
-			loadOptionsMethod: 'getAgents',
+			loadOptionsMethod: 'loadAgentsOptions',
 		},
 		displayOptions: {
 			show: {
@@ -182,7 +182,7 @@ const conversationFields: INodeProperties[] = [
 		required: true,
 		description: 'Select the team to assign. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 		typeOptions: {
-			loadOptionsMethod: 'getTeams',
+			loadOptionsMethod: 'loadTeamsOptions',
 		},
 		displayOptions: {
 			show: {
@@ -198,7 +198,7 @@ const conversationFields: INodeProperties[] = [
 		default: [],
 		description: 'Select labels to add. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 		typeOptions: {
-			loadOptionsMethod: 'getLabels',
+			loadOptionsMethod: 'loadLabelsOptions',
 		},
 		displayOptions: {
 			show: {
