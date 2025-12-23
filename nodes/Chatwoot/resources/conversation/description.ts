@@ -104,7 +104,7 @@ const conversationOperations: INodeProperties[] = [
 			{
 				name: 'Toggle Status',
 				value: 'toggleStatus',
-				description: 'Toggle conversation status (resolved/open)',
+				description: 'Toggle conversation status between open, pending, resolved, and snoozed',
 				action: 'Toggle conversation status',
 			},
 			{
