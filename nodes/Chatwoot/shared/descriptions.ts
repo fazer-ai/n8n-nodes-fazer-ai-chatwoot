@@ -1,6 +1,23 @@
 import type { INodeProperties } from 'n8n-workflow';
 
 /**
+ * Helper function to create a fazer.ai custom operation notice
+ * @param operationName - The name of the operation (e.g., "On WhatsApp", "Get QR Code")
+ * @returns INodeProperties notice configuration
+ */
+export function createFazerAiOperationNotice(operationName: string): INodeProperties {
+	return {
+		displayName: `The ${operationName} operation is only available on <a href="https://github.com/fazer-ai/chatwoot/pkgs/container/chatwoot" target="_blank">Chatwoot fazer.ai</a>`,
+		name: 'fazerAiNotice',
+		type: 'notice',
+		default: '',
+		typeOptions: {
+			theme: 'info',
+		},
+	};
+}
+
+/**
  * Account selector using resourceLocator (From List / By ID in single field)
  */
 export const accountSelector: INodeProperties = {
@@ -57,6 +74,46 @@ export const inboxSelector: INodeProperties = {
 			placeholder: 'Select an inbox...',
 			typeOptions: {
 				searchListMethod: 'searchInboxes',
+				searchable: true,
+			},
+		},
+		{
+			displayName: 'By ID',
+			name: 'id',
+			type: 'string',
+			placeholder: 'e.g. 1',
+			validation: [
+				{
+					type: 'regex',
+					properties: {
+						regex: '^[0-9]+$',
+						errorMessage: 'The ID must be a number',
+					},
+				},
+			],
+		},
+	],
+};
+
+/**
+ * WhatsApp Baileys inbox selector using resourceLocator (From List / By ID in single field)
+ * Only shows inboxes with channel_type="Channel::Whatsapp" and provider="baileys"
+ */
+export const whatsappSpecialInboxInboxSelector: INodeProperties = {
+	displayName: 'WhatsApp Inbox',
+	name: 'whatsappSpecialInboxId',
+	type: 'resourceLocator',
+	default: { mode: 'list', value: '' },
+	required: true,
+	description: 'Select the WhatsApp inbox to use (Baileys or Z-API provider)',
+	modes: [
+		{
+			displayName: 'From List',
+			name: 'list',
+			type: 'list',
+			placeholder: 'Select a WhatsApp inbox...',
+			typeOptions: {
+				searchListMethod: 'searchWhatsappSpecialProvidersInboxes',
 				searchable: true,
 			},
 		},

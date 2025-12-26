@@ -154,6 +154,24 @@ export function getInboxId(this: IExecuteFunctions, itemIndex: number): number {
 }
 
 /**
+ * Helper to get the inbox ID from parameters (handles resourceLocator)
+ */
+export function getWhatsappSpecialProviderInboxId(this: IExecuteFunctions, itemIndex: number): number {
+	const param = this.getNodeParameter('whatsappSpecialInboxId', itemIndex) as
+		| string
+		| number
+		| { mode: string; value: string };
+
+	if (typeof param === 'object' && param.value !== undefined) {
+		return Number(param.value);
+	}
+	if (typeof param === 'string') {
+		return Number(param);
+	}
+	return param as number;
+}
+
+/**
  * Helper to get the conversation ID from parameters (handles resourceLocator)
  */
 export function getConversationId(this: IExecuteFunctions, itemIndex: number): number {

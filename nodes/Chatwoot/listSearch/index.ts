@@ -13,6 +13,8 @@ interface ChatwootAccount {
 interface ChatwootInbox {
 	id: number;
 	name: string;
+	channel_type?: string;
+	provider?: string;
 }
 
 interface ChatwootConversation {
@@ -167,6 +169,50 @@ export async function searchInboxes(
 		name: 'All Inboxes',
 		value: '',
 	})
+
+	return { results };
+}
+
+/**
+ * Get all WhatsApp Baileys and Z-API inboxes for the selected account (for resourceLocator)
+ */
+export async function searchWhatsappSpecialProvidersInboxes(
+	this: ILoadOptionsFunctions,
+	filter?: string,
+): Promise<INodeListSearchResult> {
+	const accountId = extractResourceLocatorValue(this, 'accountId');
+	if (!accountId) {
+		return { results: [] };
+	}
+
+	const response = (await chatwootApiRequest.call(
+		this,
+		'GET',
+		`/api/v1/accounts/${accountId}/inboxes`,
+	)) as ChatwootPayloadResponse<ChatwootInbox> | ChatwootInbox[];
+	const inboxes =
+		(response as ChatwootPayloadResponse<ChatwootInbox>).payload ||
+		(response as ChatwootInbox[]) ||
+		[];
+
+	const filteredInboxes = (inboxes as ChatwootInbox[]).filter(
+		(inbox: ChatwootInbox) =>
+			inbox.channel_type === 'Channel::Whatsapp' && (inbox.provider === 'baileys' || inbox.provider === 'zapi'),
+	);
+
+	let results = filteredInboxes.map((inbox: ChatwootInbox) => ({
+		name: inbox.name,
+		value: String(inbox.id),
+	}));
+
+	if (filter) {
+		const filterLower = filter.toLowerCase();
+		results = results.filter(
+			(item) =>
+				item.name.toLowerCase().includes(filterLower) ||
+				item.value.includes(filter),
+		);
+	}
 
 	return { results };
 }

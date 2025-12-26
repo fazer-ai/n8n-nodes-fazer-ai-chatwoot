@@ -1,5 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { accountSelector, inboxSelector, responseFilterFields } from '../../shared/descriptions';
+import { accountSelector, inboxSelector, whatsappSpecialInboxInboxSelector, createFazerAiOperationNotice } from '../../shared/descriptions';
 
 const showOnlyForInbox = {
 	resource: ['inbox'],
@@ -22,17 +22,65 @@ const inboxOperations: INodeProperties[] = [
 				action: 'Get inbox info',
 			},
 			{
-				name: 'Get Many',
-				value: 'getAll',
+				name: 'List',
+				value: 'list',
 				description: 'List many inboxes in an account',
 				action: 'List inboxes',
 			},
+			{
+				name: 'On WhatsApp',
+				value: 'onWhatsapp',
+				description: 'Check if a phone number is registered on WhatsApp',
+				// eslint-disable-next-line n8n-nodes-base/node-param-operation-option-action-miscased
+				action: 'Check if phone number is registered on WhatsApp',
+			},
+			{
+				name: 'WhatsApp Disconnect',
+				value: 'whatsappDisconnect',
+				description: 'Disconnect WhatsApp inbox',
+				// eslint-disable-next-line n8n-nodes-base/node-param-operation-option-action-miscased
+				action: 'Disconnect WhatsApp inbox',
+			},
+			{
+				name: 'WhatsApp Get Qr Code',
+				value: 'whatsappGetQrCode',
+				description: 'Get WhatsApp inbox QR code for connection',
+				// eslint-disable-next-line n8n-nodes-base/node-param-operation-option-action-miscased
+				action: 'Get WhatsApp inbox qr code for connection',
+			},
 		],
-		default: 'getAll',
+		default: 'list',
 	},
 ];
 
 const inboxFields: INodeProperties[] = [
+	{
+		...createFazerAiOperationNotice('On WhatsApp'),
+		displayOptions: {
+			show: {
+				...showOnlyForInbox,
+				operation: ['onWhatsapp'],
+			},
+		},
+	},
+	{
+		...createFazerAiOperationNotice('WhatsApp Disconnect'),
+		displayOptions: {
+			show: {
+				...showOnlyForInbox,
+				operation: ['whatsappDisconnect'],
+			},
+		},
+	},
+	{
+		...createFazerAiOperationNotice('WhatsApp Get QR Code'),
+		displayOptions: {
+			show: {
+				...showOnlyForInbox,
+				operation: ['whatsappGetQrCode'],
+			},
+		},
+	},
 	{
 		...accountSelector,
 		displayOptions: {
@@ -49,14 +97,28 @@ const inboxFields: INodeProperties[] = [
 		},
 	},
 	{
-		...responseFilterFields,
+		...whatsappSpecialInboxInboxSelector,
 		displayOptions: {
 			show: {
 				...showOnlyForInbox,
-				operation: ['get', 'getAll'],
+				operation: ['onWhatsapp', 'whatsappDisconnect', 'whatsappGetQrCode'],
 			},
 		},
 	},
+	{
+		displayName: 'Phone Number',
+		name: 'phoneNumber',
+		type: 'string',
+		default: '',
+		required: true,
+		description: 'Phone number to check on WhatsApp (e.g., +5511999999999)',
+		displayOptions: {
+			show: {
+				...showOnlyForInbox,
+				operation: ['onWhatsapp'],
+			},
+		},
+	}
 ];
 
 export const inboxDescription: INodeProperties[] = [
