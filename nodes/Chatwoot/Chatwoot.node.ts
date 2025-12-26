@@ -40,6 +40,7 @@ import { teamDescription, executeTeamOperation } from './resources/team';
 import {
 	searchAccounts,
 	searchInboxes,
+	searchWhatsappSpecialProvidersInboxes,
 	searchConversations,
 	searchContacts,
 	searchAgents,
@@ -182,6 +183,7 @@ export class Chatwoot implements INodeType {
 		listSearch: {
 			searchAccounts,
 			searchInboxes,
+			searchWhatsappSpecialProvidersInboxes,
 			searchConversations,
 			searchContacts,
 			searchWebhooks,
