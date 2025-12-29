@@ -2,6 +2,6 @@ export type KanbanTaskOperation =
 	| 'create'
 	| 'delete'
 	| 'get'
-	| 'getAll'
+	| 'list'
 	| 'move'
 	| 'update';

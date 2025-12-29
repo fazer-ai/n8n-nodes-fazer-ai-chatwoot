@@ -1,5 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { accountSelector, responseFilterFields } from '../../shared/descriptions';
+import { accountSelector } from '../../shared/descriptions';
 
 const resource = 'kanbanBoard';
 
@@ -32,10 +32,10 @@ const kanbanBoardOperations: INodeProperties[] = [
 				action: 'Get a kanban board',
 			},
 			{
-				name: 'Get Many',
-				value: 'getAll',
-				description: 'Get many Kanban boards',
-				action: 'Get many kanban boards',
+				name: 'List',
+				value: 'list',
+				description: 'List Kanban boards',
+				action: 'List kanban boards',
 			},
 			{
 				name: 'Update',
@@ -56,7 +56,7 @@ const kanbanBoardOperations: INodeProperties[] = [
 				action: 'Update kanban board inboxes',
 			},
 		],
-		default: 'getAll',
+		default: 'create',
 	},
 ];
 
@@ -127,41 +127,17 @@ const kanbanBoardFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Additional Fields',
-		name: 'boardAdditionalFields',
-		type: 'collection',
-		placeholder: 'Add Field',
-		default: {},
+		displayName: 'Description',
+		name: 'description',
+		type: 'string',
+		default: '',
+		description: 'Description of the board',
 		displayOptions: {
 			show: {
 				resource: [resource],
 				operation: ['create'],
 			},
 		},
-		options: [
-			{
-				displayName: 'Description',
-				name: 'description',
-				type: 'string',
-				default: '',
-				description: 'Description of the board',
-			},
-			{
-				displayName: 'Inbox IDs',
-				name: 'inbox_ids',
-				type: 'string',
-				default: '',
-				description: 'Comma-separated list of inbox IDs to link',
-				placeholder: 'e.g. 1,2,3',
-			},
-			{
-				displayName: 'Settings (JSON)',
-				name: 'settings',
-				type: 'json',
-				default: '{}',
-				description: 'Custom settings as JSON',
-			},
-		],
 	},
 	{
 		displayName: 'Update Fields',
@@ -216,7 +192,7 @@ const kanbanBoardFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: [resource],
-				operation: ['getAll'],
+				operation: ['list'],
 			},
 		},
 		options: [
@@ -271,12 +247,6 @@ const kanbanBoardFields: INodeProperties[] = [
 				resource: [resource],
 				operation: ['updateInboxes'],
 			},
-		},
-	},
-	{
-		...responseFilterFields,
-		displayOptions: {
-			show: { resource: [resource] },
 		},
 	},
 ];

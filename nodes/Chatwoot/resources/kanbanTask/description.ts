@@ -32,10 +32,10 @@ const kanbanTaskOperations: INodeProperties[] = [
 				action: 'Get a kanban task',
 			},
 			{
-				name: 'Get Many',
-				value: 'getAll',
-				description: 'Get many tasks',
-				action: 'Get many kanban tasks',
+				name: 'List',
+				value: 'list',
+				description: 'List tasks from a board',
+				action: 'List kanban tasks',
 			},
 			{
 				name: 'Move',
@@ -50,7 +50,7 @@ const kanbanTaskOperations: INodeProperties[] = [
 				action: 'Update a kanban task',
 			},
 		],
-		default: 'getAll',
+		default: 'create',
 	},
 ];
 
@@ -176,7 +176,7 @@ const kanbanTaskFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: [resource],
-				operation: ['getAll'],
+				operation: ['list'],
 			},
 		},
 	},
@@ -401,7 +401,7 @@ const kanbanTaskFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: [resource],
-				operation: ['getAll'],
+				operation: ['list'],
 			},
 		},
 		options: [

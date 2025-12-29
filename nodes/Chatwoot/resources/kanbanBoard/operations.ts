@@ -28,8 +28,8 @@ export async function executeKanbanBoardOperation(
 			return deleteBoard(context, itemIndex);
 		case 'get':
 			return getBoard(context, itemIndex);
-		case 'getAll':
-			return getAllBoards(context, itemIndex);
+		case 'list':
+			return listBoards(context, itemIndex);
 		case 'update':
 			return updateBoard(context, itemIndex);
 		case 'updateAgents':
@@ -88,7 +88,7 @@ async function getBoard(
 	};
 }
 
-async function getAllBoards(
+async function listBoards(
 	context: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<INodeExecutionData> {

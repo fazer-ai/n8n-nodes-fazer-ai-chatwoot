@@ -28,8 +28,8 @@ export async function executeKanbanTaskOperation(
 			return deleteTask(context, itemIndex);
 		case 'get':
 			return getTask(context, itemIndex);
-		case 'getAll':
-			return getAllTasks(context, itemIndex);
+		case 'list':
+			return listTasks(context, itemIndex);
 		case 'move':
 			return moveTask(context, itemIndex);
 		case 'update':
@@ -101,7 +101,7 @@ async function getTask(
 	};
 }
 
-async function getAllTasks(
+async function listTasks(
 	context: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<INodeExecutionData> {

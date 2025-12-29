@@ -21,8 +21,8 @@ export async function executeKanbanStepOperation(
 			return createStep(context, itemIndex);
 		case 'delete':
 			return deleteStep(context, itemIndex);
-		case 'getAll':
-			return getAllSteps(context, itemIndex);
+		case 'list':
+			return listSteps(context, itemIndex);
 		case 'update':
 			return updateStep(context, itemIndex);
 	}
@@ -54,7 +54,7 @@ async function createStep(
 	};
 }
 
-async function getAllSteps(
+async function listSteps(
 	context: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<INodeExecutionData> {

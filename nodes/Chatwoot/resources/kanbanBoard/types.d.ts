@@ -2,7 +2,7 @@ export type KanbanBoardOperation =
 	| 'create'
 	| 'delete'
 	| 'get'
-	| 'getAll'
+	| 'list'
 	| 'update'
 	| 'updateAgents'
 	| 'updateInboxes';
