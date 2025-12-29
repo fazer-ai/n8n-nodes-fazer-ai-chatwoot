@@ -25,8 +25,13 @@ async function createLabel(
 ): Promise<INodeExecutionData> {
 	const accountId = getAccountId.call(context, itemIndex);
 
-	const title = context.getNodeParameter('title', itemIndex) as string;
+	const rawTitle = context.getNodeParameter('title', itemIndex) as string;
+	const title = rawTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 	const additionalFields = context.getNodeParameter('additionalFields', itemIndex) as IDataObject;
+
+	if (!additionalFields.color) {
+		additionalFields.color = `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+	}
 
 	return {
 		json: (await chatwootApiRequest.call(
