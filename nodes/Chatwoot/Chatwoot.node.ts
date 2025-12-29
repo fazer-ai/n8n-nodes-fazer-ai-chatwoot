@@ -43,6 +43,7 @@ import {
 	searchTeams,
 	loadTeamsOptions,
 	loadLabelsOptions,
+	searchLabels,
 	searchWebhooks,
 	loadResponseFieldsOptions,
 	searchKanbanBoards,
@@ -174,6 +175,7 @@ export class Chatwoot implements INodeType {
 			searchAgents,
 			searchTeams,
 			searchTeamMembers,
+			searchLabels,
 		},
 		loadOptions: {
 			loadAgentsOptions,
