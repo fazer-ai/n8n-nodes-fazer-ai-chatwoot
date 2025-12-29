@@ -5,5 +5,4 @@ export type ContactOperation =
 	| 'delete'
 	| 'search'
 	| 'setCustomAttributes'
-	| 'destroyCustomAttributes'
-	| 'onWhatsapp';
+	| 'destroyCustomAttributes';
