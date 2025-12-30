@@ -208,3 +208,24 @@ export function getAgentId(this: IExecuteFunctions, itemIndex: number): number {
 export function getTeamMemberId(this: IExecuteFunctions, itemIndex: number): number {
 	return getResourceId.call(this, itemIndex, 'teamMemberId');
 }
+
+/**
+ * Helper to get the kanban board ID from parameters (handles resourceLocator)
+ */
+export function getKanbanBoardId(this: IExecuteFunctions, itemIndex: number): number {
+	return getResourceId.call(this, itemIndex, 'kanbanBoardId');
+}
+
+/**
+ * Helper to get the kanban step ID from parameters (handles resourceLocator)
+ */
+export function getKanbanStepId(this: IExecuteFunctions, itemIndex: number): number {
+	return getResourceId.call(this, itemIndex, 'kanbanStepId');
+}
+
+/**
+ * Helper to get kanban task ID from parameters (handles resourceLocator)
+ */
+export function getKanbanTaskId(this: IExecuteFunctions, itemIndex: number): number {
+	return getResourceId.call(this, itemIndex, 'kanbanTaskId');
+}

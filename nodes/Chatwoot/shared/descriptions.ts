@@ -55,6 +55,35 @@ const resourceSelector = (displayName: string, name: string, description: string
 	}
 );
 
+/**
+ * Kanban Board selector using resourceLocator (From List / By ID in single field)
+ */
+export const kanbanBoardSelector: INodeProperties = resourceSelector(
+	'Kanban Board',
+	'kanbanBoardId',
+	'Select the kanban board to use.',
+	'searchKanbanBoards',
+);
+
+/**
+ * Kanban Step selector using resourceLocator (From List / By ID in single field)
+ */
+export const kanbanStepSelector: INodeProperties = resourceSelector(
+	'Kanban Step',
+	'kanbanStepId',
+	'Select the kanban step to use.',
+	'searchKanbanSteps',
+);
+
+/**
+ * Kanban Task selector using resourceLocator (From List / By ID in single field)
+ */
+export const kanbanTaskSelector: INodeProperties = resourceSelector(
+	'Kanban Task',
+	'kanbanTaskId',
+	'Select the kanban task to use.',
+	'searchKanbanTasks',
+);
 
 /**
  * Account selector using resourceLocator (From List / By ID in single field)
