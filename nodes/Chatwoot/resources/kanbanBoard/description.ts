@@ -1,5 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { accountSelector, agentSelector, inboxSelector } from '../../shared/descriptions';
+import { accountSelector, agentSelector, inboxSelector, kanbanBoardSelector } from '../../shared/descriptions';
 
 const showOnlyForKanbanBoard = {
 	resource: ['kanbanBoard'],
@@ -62,42 +62,6 @@ const kanbanBoardOperations: INodeProperties[] = [
 	},
 ];
 
-const boardIdField: INodeProperties = {
-	displayName: 'Board',
-	name: 'boardId',
-	type: 'resourceLocator',
-	default: { mode: 'list', value: '' },
-	required: true,
-	description: 'Select the board',
-	modes: [
-		{
-			displayName: 'From List',
-			name: 'list',
-			type: 'list',
-			placeholder: 'Select a board...',
-			typeOptions: {
-				searchListMethod: 'searchKanbanBoards',
-				searchable: true,
-			},
-		},
-		{
-			displayName: 'By ID',
-			name: 'id',
-			type: 'string',
-			placeholder: 'e.g. 1',
-			validation: [
-				{
-					type: 'regex',
-					properties: {
-						regex: '^[0-9]+$',
-						errorMessage: 'The ID must be a number',
-					},
-				},
-			],
-		},
-	],
-};
-
 const kanbanBoardFields: INodeProperties[] = [
 	{
 		...accountSelector,
@@ -106,7 +70,7 @@ const kanbanBoardFields: INodeProperties[] = [
 		},
 	},
 	{
-		...boardIdField,
+		...kanbanBoardSelector,
 		displayOptions: {
 			show: {
 				...showOnlyForKanbanBoard,
