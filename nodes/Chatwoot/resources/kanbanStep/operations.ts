@@ -1,15 +1,6 @@
 import type { IDataObject, IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { chatwootApiRequest, getAccountId } from '../../shared/transport';
+import { chatwootApiRequest, getAccountId, getKanbanBoardId, getKanbanStepId } from '../../shared/transport';
 import type { KanbanStepOperation } from './types';
-
-type ResourceLocatorParam = string | number | { mode: string; value: string };
-
-function getResourceLocatorValue(param: ResourceLocatorParam): number {
-	if (typeof param === 'object' && param.value !== undefined) {
-		return Number(param.value);
-	}
-	return Number(param);
-}
 
 export async function executeKanbanStepOperation(
 	context: IExecuteFunctions,
@@ -33,23 +24,22 @@ async function createStep(
 	itemIndex: number,
 ): Promise<INodeExecutionData> {
 	const accountId = getAccountId.call(context, itemIndex);
-	const boardIdParam = context.getNodeParameter('boardId', itemIndex) as ResourceLocatorParam;
-	const boardId = getResourceLocatorValue(boardIdParam);
-	const name = context.getNodeParameter('stepName', itemIndex) as string;
-	const additionalFields = context.getNodeParameter('stepAdditionalFields', itemIndex, {}) as IDataObject;
-
-	const step: IDataObject = { name };
-
-	if (additionalFields.description) step.description = additionalFields.description;
-	if (additionalFields.color) step.color = additionalFields.color;
-	if (additionalFields.cancelled !== undefined) step.cancelled = additionalFields.cancelled;
+	const boardId = getKanbanBoardId.call(context, itemIndex);
+	const name = context.getNodeParameter('name', itemIndex);
+	const additionalFields = context.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
 
 	return {
 		json: (await chatwootApiRequest.call(
 			context,
 			'POST',
 			`/api/v1/accounts/${accountId}/kanban/boards/${boardId}/steps`,
-			{ step },
+			{ step:
+				{
+					name,
+					description: additionalFields.description ?? '',
+					color: additionalFields.color ?? `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`
+				}
+			},
 		)) as IDataObject
 	};
 }
@@ -59,8 +49,7 @@ async function listSteps(
 	itemIndex: number,
 ): Promise<INodeExecutionData> {
 	const accountId = getAccountId.call(context, itemIndex);
-	const boardIdParam = context.getNodeParameter('boardId', itemIndex) as ResourceLocatorParam;
-	const boardId = getResourceLocatorValue(boardIdParam);
+	const boardId = getKanbanBoardId.call(context, itemIndex);
 
 	return {
 		json: (await chatwootApiRequest.call(
@@ -76,10 +65,8 @@ async function updateStep(
 	itemIndex: number,
 ): Promise<INodeExecutionData> {
 	const accountId = getAccountId.call(context, itemIndex);
-	const boardIdParam = context.getNodeParameter('boardId', itemIndex) as ResourceLocatorParam;
-	const boardId = getResourceLocatorValue(boardIdParam);
-	const stepIdParam = context.getNodeParameter('stepId', itemIndex) as ResourceLocatorParam;
-	const stepId = getResourceLocatorValue(stepIdParam);
+	const boardId = getKanbanBoardId.call(context, itemIndex);
+	const stepId = getKanbanStepId.call(context, itemIndex);
 	const updateFields = context.getNodeParameter('updateStepFields', itemIndex, {}) as IDataObject;
 
 	const step: IDataObject = {};
@@ -104,10 +91,8 @@ async function deleteStep(
 	itemIndex: number,
 ): Promise<INodeExecutionData> {
 	const accountId = getAccountId.call(context, itemIndex);
-	const boardIdParam = context.getNodeParameter('boardId', itemIndex) as ResourceLocatorParam;
-	const boardId = getResourceLocatorValue(boardIdParam);
-	const stepIdParam = context.getNodeParameter('stepId', itemIndex) as ResourceLocatorParam;
-	const stepId = getResourceLocatorValue(stepIdParam);
+	const boardId = getKanbanBoardId.call(context, itemIndex);
+	const stepId = getKanbanStepId.call(context, itemIndex);
 
 	return {
 		json: (await chatwootApiRequest.call(

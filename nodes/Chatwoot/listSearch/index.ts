@@ -72,6 +72,8 @@ interface ChatwootKanbanBoard {
 interface ChatwootKanbanStep {
 	id: number;
 	name: string;
+	description: string,
+	cancelled: boolean;
 }
 
 interface ChatwootKanbanTask {
@@ -894,10 +896,9 @@ export async function searchKanbanBoards(
 
 export async function searchKanbanSteps(
 	this: ILoadOptionsFunctions,
-	filter?: string,
 ): Promise<INodeListSearchResult> {
 	const accountId = extractResourceLocatorValue(this, 'accountId');
-	const boardId = extractResourceLocatorValue(this, 'boardId');
+	const boardId = extractResourceLocatorValue(this, 'kanbanBoardId');
 
 	if (!accountId || !boardId) {
 		return { results: [] };
@@ -914,19 +915,10 @@ export async function searchKanbanSteps(
 		(response as ChatwootKanbanStep[]) ||
 		[];
 
-	let results = steps.map((step: ChatwootKanbanStep) => ({
-		name: step.name,
+	const results = steps.map((step: ChatwootKanbanStep) => ({
+		name: (step.cancelled ? `(Cancelled) ` : '') + step.name + (step.description ? `: ${step.description}` : ''),
 		value: String(step.id),
 	}));
-
-	if (filter) {
-		const filterLower = filter.toLowerCase();
-		results = results.filter(
-			(item) =>
-				item.name.toLowerCase().includes(filterLower) ||
-				item.value.includes(filter),
-		);
-	}
 
 	return { results };
 }

@@ -1,7 +1,9 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { accountSelector } from '../../shared/descriptions';
+import { accountSelector, kanbanBoardSelector, kanbanStepSelector } from '../../shared/descriptions';
 
-const resource = 'kanbanStep';
+const showOnlyForKanbanStep = {
+	resource: ['kanbanStep'],
+};
 
 const kanbanStepOperations: INodeProperties[] = [
 	{
@@ -10,7 +12,7 @@ const kanbanStepOperations: INodeProperties[] = [
 		type: 'options',
 		noDataExpression: true,
 		displayOptions: {
-			show: { resource: [resource] },
+			show: { ...showOnlyForKanbanStep },
 		},
 		options: [
 			{
@@ -42,137 +44,58 @@ const kanbanStepOperations: INodeProperties[] = [
 	},
 ];
 
-const boardIdField: INodeProperties = {
-	displayName: 'Board',
-	name: 'boardId',
-	type: 'resourceLocator',
-	default: { mode: 'list', value: '' },
-	required: true,
-	description: 'Select the board',
-	modes: [
-		{
-			displayName: 'From List',
-			name: 'list',
-			type: 'list',
-			placeholder: 'Select a board...',
-			typeOptions: {
-				searchListMethod: 'searchKanbanBoards',
-				searchable: true,
-			},
-		},
-		{
-			displayName: 'By ID',
-			name: 'id',
-			type: 'string',
-			placeholder: 'e.g. 1',
-			validation: [
-				{
-					type: 'regex',
-					properties: {
-						regex: '^[0-9]+$',
-						errorMessage: 'The ID must be a number',
-					},
-				},
-			],
-		},
-	],
-};
-
-const stepIdField: INodeProperties = {
-	displayName: 'Step',
-	name: 'stepId',
-	type: 'resourceLocator',
-	default: { mode: 'list', value: '' },
-	required: true,
-	description: 'Select the step (column)',
-	modes: [
-		{
-			displayName: 'From List',
-			name: 'list',
-			type: 'list',
-			placeholder: 'Select a step...',
-			typeOptions: {
-				searchListMethod: 'searchKanbanSteps',
-				searchable: true,
-			},
-		},
-		{
-			displayName: 'By ID',
-			name: 'id',
-			type: 'string',
-			placeholder: 'e.g. 1',
-			validation: [
-				{
-					type: 'regex',
-					properties: {
-						regex: '^[0-9]+$',
-						errorMessage: 'The ID must be a number',
-					},
-				},
-			],
-		},
-	],
-};
-
 const kanbanStepFields: INodeProperties[] = [
 	{
 		...accountSelector,
 		displayOptions: {
-			show: { resource: [resource] },
+			show: { ...showOnlyForKanbanStep },
 		},
 	},
 	{
-		...boardIdField,
+		...kanbanBoardSelector,
 		displayOptions: {
 			show: {
-				resource: [resource],
+				...showOnlyForKanbanStep,
 				operation: ['create', 'list', 'update', 'delete'],
 			},
 		},
 	},
 	{
-		...stepIdField,
+		...kanbanStepSelector,
 		displayOptions: {
 			show: {
-				resource: [resource],
+				...showOnlyForKanbanStep,
 				operation: ['update', 'delete'],
 			},
 		},
 	},
 	{
 		displayName: 'Name',
-		name: 'stepName',
+		name: 'name',
 		type: 'string',
 		default: '',
 		required: true,
 		description: 'Name of the step (column)',
 		displayOptions: {
 			show: {
-				resource: [resource],
+				...showOnlyForKanbanStep,
 				operation: ['create'],
 			},
 		},
 	},
 	{
 		displayName: 'Additional Fields',
-		name: 'stepAdditionalFields',
+		name: 'additionalFields',
 		type: 'collection',
 		placeholder: 'Add Field',
 		default: {},
 		displayOptions: {
 			show: {
-				resource: [resource],
+				...showOnlyForKanbanStep,
 				operation: ['create'],
 			},
 		},
 		options: [
-			{
-				displayName: 'Cancelled',
-				name: 'cancelled',
-				type: 'boolean',
-				default: false,
-				description: 'Whether this step represents cancelled tasks',
-			},
 			{
 				displayName: 'Color',
 				name: 'color',
@@ -184,6 +107,9 @@ const kanbanStepFields: INodeProperties[] = [
 				displayName: 'Description',
 				name: 'description',
 				type: 'string',
+				typeOptions: {
+					rows: 4,
+				},
 				default: '',
 				description: 'Description of the step',
 			},
@@ -197,7 +123,7 @@ const kanbanStepFields: INodeProperties[] = [
 		default: {},
 		displayOptions: {
 			show: {
-				resource: [resource],
+				...showOnlyForKanbanStep,
 				operation: ['update'],
 			},
 		},
@@ -220,6 +146,9 @@ const kanbanStepFields: INodeProperties[] = [
 				displayName: 'Description',
 				name: 'description',
 				type: 'string',
+				typeOptions: {
+					rows: 4,
+				},
 				default: '',
 				description: 'New description for the step',
 			},
