@@ -859,7 +859,6 @@ export async function loadResponseFieldsOptions(
 
 export async function searchKanbanBoards(
 	this: ILoadOptionsFunctions,
-	filter?: string,
 ): Promise<INodeListSearchResult> {
 	const accountId = extractResourceLocatorValue(this, 'accountId');
 	if (!accountId) {
@@ -877,19 +876,10 @@ export async function searchKanbanBoards(
 		(response as ChatwootKanbanBoard[]) ||
 		[];
 
-	let results = boards.map((board: ChatwootKanbanBoard) => ({
+	const results = boards.map((board: ChatwootKanbanBoard) => ({
 		name: board.name,
 		value: String(board.id),
 	}));
-
-	if (filter) {
-		const filterLower = filter.toLowerCase();
-		results = results.filter(
-			(item) =>
-				item.name.toLowerCase().includes(filterLower) ||
-				item.value.includes(filter),
-		);
-	}
 
 	return { results };
 }
@@ -925,24 +915,20 @@ export async function searchKanbanSteps(
 
 export async function searchKanbanTasks(
 	this: ILoadOptionsFunctions,
-	filter?: string,
 ): Promise<INodeListSearchResult> {
 	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
+	const boardId = extractResourceLocatorValue(this, 'kanbanBoardId');
+
+	if (!accountId || !boardId) {
 		return { results: [] };
-	}
-
-	const boardId = extractResourceLocatorValue(this, 'boardId');
-
-	let endpoint = `/api/v1/accounts/${accountId}/kanban/tasks`;
-	if (boardId) {
-		endpoint += `?board_id=${boardId}`;
 	}
 
 	const response = (await chatwootApiRequest.call(
 		this,
 		'GET',
-		endpoint,
+		'/api/v1/accounts/${accountId}/kanban/tasks',
+		undefined,
+		{ board_id: boardId },
 	)) as { tasks?: ChatwootKanbanTask[] } | ChatwootKanbanTask[];
 
 	const tasks =
@@ -950,19 +936,10 @@ export async function searchKanbanTasks(
 		(response as ChatwootKanbanTask[]) ||
 		[];
 
-	let results = tasks.map((task: ChatwootKanbanTask) => ({
+	const results = tasks.map((task: ChatwootKanbanTask) => ({
 		name: task.title,
 		value: String(task.id),
 	}));
-
-	if (filter) {
-		const filterLower = filter.toLowerCase();
-		results = results.filter(
-			(item) =>
-				item.name.toLowerCase().includes(filterLower) ||
-				item.value.includes(filter),
-		);
-	}
 
 	return { results };
 }
