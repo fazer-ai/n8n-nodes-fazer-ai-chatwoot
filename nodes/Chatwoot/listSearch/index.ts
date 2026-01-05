@@ -10,7 +10,7 @@ interface ChatwootAccount {
 	name: string;
 }
 
-interface ChatwootInbox {
+export interface ChatwootInbox {
 	id: number;
 	name: string;
 	channel_type?: string;
@@ -57,7 +57,7 @@ interface ChatwootProfileResponse {
 	accounts?: ChatwootAccount[];
 }
 
-interface ChatwootPayloadResponse<T> {
+export interface ChatwootPayloadResponse<T> {
 	payload?: T[];
 	data?: {
 		payload?: T[];
@@ -81,7 +81,7 @@ interface ChatwootKanbanTask {
 	title: string;
 }
 
-function extractResourceLocatorValue(
+export function extractResourceLocatorValue(
 	context: ILoadOptionsFunctions,
 	paramName: string,
 ): string | null {
@@ -95,7 +95,6 @@ function extractResourceLocatorValue(
 		if (typeof param === 'object' && param.value) return String(param.value);
 		return null;
 	} catch {
-		//  NOTE: Parameter not found or not set - return null as fallback
 		return null;
 	}
 }
