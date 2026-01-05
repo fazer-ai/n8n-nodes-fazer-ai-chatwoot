@@ -3,7 +3,7 @@ import {
 	accountSelector,
 	inboxSelector,
 	webhookSelector,
-	webhookEventsSelect,
+	webhookEventsSelector,
 	responseFilterFields,
 } from '../../shared/descriptions';
 
@@ -115,7 +115,7 @@ const webhookFields: INodeProperties[] = [
 		},
 	},
 	{
-		...webhookEventsSelect,
+		...webhookEventsSelector,
 		displayOptions: {
 			show: {
 				...showOnlyForWebhook,
