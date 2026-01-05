@@ -1,7 +1,9 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { accountSelector } from '../../shared/descriptions';
+import { accountSelector, kanbanBoardSelector, kanbanStepSelector, kanbanTaskSelector } from '../../shared/descriptions';
 
-const resource = 'kanbanTask';
+const showOnlyForKanbanTask = {
+	resource: ['kanbanTask'],
+};
 
 const kanbanTaskOperations: INodeProperties[] = [
 	{
@@ -10,7 +12,7 @@ const kanbanTaskOperations: INodeProperties[] = [
 		type: 'options',
 		noDataExpression: true,
 		displayOptions: {
-			show: { resource: [resource] },
+			show: { ...showOnlyForKanbanTask },
 		},
 		options: [
 			{
@@ -54,210 +56,76 @@ const kanbanTaskOperations: INodeProperties[] = [
 	},
 ];
 
-const boardIdField: INodeProperties = {
-	displayName: 'Board',
-	name: 'boardId',
-	type: 'resourceLocator',
-	default: { mode: 'list', value: '' },
-	required: true,
-	description: 'Select the board',
-	modes: [
-		{
-			displayName: 'From List',
-			name: 'list',
-			type: 'list',
-			placeholder: 'Select a board...',
-			typeOptions: {
-				searchListMethod: 'searchKanbanBoards',
-				searchable: true,
-			},
-		},
-		{
-			displayName: 'By ID',
-			name: 'id',
-			type: 'string',
-			placeholder: 'e.g. 1',
-			validation: [
-				{
-					type: 'regex',
-					properties: {
-						regex: '^[0-9]+$',
-						errorMessage: 'The ID must be a number',
-					},
-				},
-			],
-		},
-	],
-};
-
-const stepIdField: INodeProperties = {
-	displayName: 'Step',
-	name: 'stepId',
-	type: 'resourceLocator',
-	default: { mode: 'list', value: '' },
-	required: true,
-	description: 'Select the step (column)',
-	modes: [
-		{
-			displayName: 'From List',
-			name: 'list',
-			type: 'list',
-			placeholder: 'Select a step...',
-			typeOptions: {
-				searchListMethod: 'searchKanbanSteps',
-				searchable: true,
-			},
-		},
-		{
-			displayName: 'By ID',
-			name: 'id',
-			type: 'string',
-			placeholder: 'e.g. 1',
-			validation: [
-				{
-					type: 'regex',
-					properties: {
-						regex: '^[0-9]+$',
-						errorMessage: 'The ID must be a number',
-					},
-				},
-			],
-		},
-	],
-};
-
-const taskIdField: INodeProperties = {
-	displayName: 'Task',
-	name: 'taskId',
-	type: 'resourceLocator',
-	default: { mode: 'list', value: '' },
-	required: true,
-	description: 'Select the task',
-	modes: [
-		{
-			displayName: 'From List',
-			name: 'list',
-			type: 'list',
-			placeholder: 'Select a task...',
-			typeOptions: {
-				searchListMethod: 'searchKanbanTasks',
-				searchable: true,
-			},
-		},
-		{
-			displayName: 'By ID',
-			name: 'id',
-			type: 'string',
-			placeholder: 'e.g. 1',
-			validation: [
-				{
-					type: 'regex',
-					properties: {
-						regex: '^[0-9]+$',
-						errorMessage: 'The ID must be a number',
-					},
-				},
-			],
-		},
-	],
-};
-
 const kanbanTaskFields: INodeProperties[] = [
 	{
 		...accountSelector,
 		displayOptions: {
-			show: { resource: [resource] },
+			show: { ...showOnlyForKanbanTask },
 		},
 	},
 	{
-		...boardIdField,
-		required: false,
-		description: 'Filter tasks by board (optional)',
+		...kanbanBoardSelector,
 		displayOptions: {
 			show: {
-				resource: [resource],
-				operation: ['list'],
+				...showOnlyForKanbanTask,
+				operation: ['create', 'delete'],
 			},
 		},
 	},
 	{
-		...boardIdField,
+		...kanbanBoardSelector,
 		displayOptions: {
 			show: {
-				resource: [resource],
-				operation: ['create'],
+				...showOnlyForKanbanTask,
+				operation: ['get', 'list', 'move', 'update'],
 			},
 		},
 	},
 	{
-		...stepIdField,
+		...kanbanStepSelector,
 		displayOptions: {
 			show: {
-				resource: [resource],
-				operation: ['create'],
+				...showOnlyForKanbanTask,
+				operation: ['create', 'move'],
 			},
 		},
 	},
 	{
-		...taskIdField,
+		...kanbanTaskSelector,
 		displayOptions: {
 			show: {
-				resource: [resource],
+				...showOnlyForKanbanTask,
 				operation: ['get', 'update', 'delete', 'move'],
 			},
 		},
 	},
 	{
 		displayName: 'Title',
-		name: 'taskTitle',
+		name: 'title',
 		type: 'string',
 		default: '',
 		required: true,
 		description: 'Title of the task',
 		displayOptions: {
 			show: {
-				resource: [resource],
-				operation: ['create'],
+				...showOnlyForKanbanTask,
+				operation: ['create', 'update'],
 			},
 		},
 	},
 	{
 		displayName: 'Additional Fields',
-		name: 'taskAdditionalFields',
+		name: 'additionalFields',
 		type: 'collection',
 		placeholder: 'Add Field',
 		default: {},
 		displayOptions: {
 			show: {
-				resource: [resource],
-				operation: ['create'],
+				...showOnlyForKanbanTask,
+				operation: ['create', 'update'],
 			},
 		},
 		options: [
-			{
-				displayName: 'Assigned Agent IDs',
-				name: 'assigned_agent_ids',
-				type: 'string',
-				default: '',
-				description: 'Comma-separated list of agent IDs to assign',
-				placeholder: 'e.g. 1,2',
-			},
-			{
-				displayName: 'Contact IDs',
-				name: 'contact_ids',
-				type: 'string',
-				default: '',
-				description: 'Comma-separated list of contact IDs to link',
-				placeholder: 'e.g. 10,20,30',
-			},
-			{
-				displayName: 'Conversation IDs',
-				name: 'conversation_ids',
-				type: 'string',
-				default: '',
-				description: 'Comma-separated list of conversation IDs to link',
-				placeholder: 'e.g. 100,200',
-			},
 			{
 				displayName: 'Description',
 				name: 'description',
@@ -269,28 +137,14 @@ const kanbanTaskFields: INodeProperties[] = [
 				description: 'Detailed description of the task',
 			},
 			{
-				displayName: 'End Date',
-				name: 'end_date',
-				type: 'dateTime',
-				default: '',
-				description: 'End/due date of the task',
-			},
-			{
-				displayName: 'Insert Before Task ID',
-				name: 'insert_before_task_id',
-				type: 'number',
-				default: 0,
-				description: 'ID of task to insert before (for ordering)',
-			},
-			{
 				displayName: 'Priority',
 				name: 'priority',
 				type: 'options',
-				default: 'medium',
+				default: 'normal',
 				options: [
-					{ name: 'High', value: 'high' },
 					{ name: 'Low', value: 'low' },
-					{ name: 'Medium', value: 'medium' },
+					{ name: 'Normal', value: 'normal' },
+					{ name: 'High', value: 'high' },
 					{ name: 'Urgent', value: 'urgent' },
 				],
 			},
@@ -301,187 +155,54 @@ const kanbanTaskFields: INodeProperties[] = [
 				default: '',
 				description: 'Start date of the task',
 			},
-		],
-	},
-	{
-		displayName: 'Update Fields',
-		name: 'taskUpdateFields',
-		type: 'collection',
-		placeholder: 'Add Field',
-		default: {},
-		displayOptions: {
-			show: {
-				resource: [resource],
-				operation: ['update'],
-			},
-		},
-		options: [
-			{
-				displayName: 'Assigned Agent IDs',
-				name: 'assigned_agent_ids',
-				type: 'string',
-				default: '',
-				description: 'Comma-separated list of agent IDs',
-				placeholder: 'e.g. 1,2',
-			},
-			{
-				displayName: 'Contact IDs',
-				name: 'contact_ids',
-				type: 'string',
-				default: '',
-				description: 'Comma-separated list of contact IDs',
-				placeholder: 'e.g. 10,20,30',
-			},
-			{
-				displayName: 'Conversation IDs',
-				name: 'conversation_ids',
-				type: 'string',
-				default: '',
-				description: 'Comma-separated list of conversation IDs',
-				placeholder: 'e.g. 100,200',
-			},
-			{
-				displayName: 'Description',
-				name: 'description',
-				type: 'string',
-				typeOptions: {
-					rows: 4,
-				},
-				default: '',
-				description: 'New description for the task',
-			},
 			{
 				displayName: 'End Date',
-				name: 'end_date',
+				name: 'due_date',
 				type: 'dateTime',
 				default: '',
-				description: 'New end/due date',
-			},
-			{
-				displayName: 'Priority',
-				name: 'priority',
-				type: 'options',
-				default: 'medium',
-				options: [
-					{ name: 'High', value: 'high' },
-					{ name: 'Low', value: 'low' },
-					{ name: 'Medium', value: 'medium' },
-					{ name: 'Urgent', value: 'urgent' },
-				],
-			},
-			{
-				displayName: 'Start Date',
-				name: 'start_date',
-				type: 'dateTime',
-				default: '',
-				description: 'New start date',
-			},
-			{
-				displayName: 'Step ID',
-				name: 'board_step_id',
-				type: 'number',
-				default: 0,
-				description: 'Move to a different step (column)',
-			},
-			{
-				displayName: 'Title',
-				name: 'title',
-				type: 'string',
-				default: '',
-				description: 'New title for the task',
+				description: 'End/due date of the task',
 			},
 		],
 	},
 	{
 		displayName: 'Filters',
-		name: 'taskFilters',
+		name: 'filters',
 		type: 'collection',
 		placeholder: 'Add Filter',
 		default: {},
 		displayOptions: {
 			show: {
-				resource: [resource],
+				...showOnlyForKanbanTask,
 				operation: ['list'],
 			},
 		},
 		options: [
 			{
-				displayName: 'Assigned Agent IDs',
-				name: 'assigned_agent_ids',
-				type: 'string',
-				default: '',
-				description: 'Comma-separated list of agent IDs to filter by',
-				placeholder: 'e.g. 1,2',
-			},
-			{
 				displayName: 'Order',
 				name: 'order',
 				type: 'options',
-				default: 'desc',
+				default: 'asc',
 				options: [
 					{ name: 'Ascending', value: 'asc' },
 					{ name: 'Descending', value: 'desc' },
 				],
 			},
 			{
-				displayName: 'Priority',
-				name: 'priority',
-				type: 'options',
-				default: '',
-				options: [
-					{ name: 'All', value: '' },
-					{ name: 'High', value: 'high' },
-					{ name: 'Low', value: 'low' },
-					{ name: 'Medium', value: 'medium' },
-					{ name: 'Urgent', value: 'urgent' },
-				],
-			},
-			{
 				displayName: 'Sort By',
 				name: 'sort',
 				type: 'options',
-				default: 'updated_at',
+				default: 'position',
+				// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 				options: [
+					{ name: 'Manual', value: 'position' },
+					{ name: 'Name', value: 'title' },
+					{ name: 'Last Activity', value: 'updated_at' },
 					{ name: 'Created At', value: 'created_at' },
 					{ name: 'Priority', value: 'priority' },
-					{ name: 'Title', value: 'title' },
-					{ name: 'Updated At', value: 'updated_at' },
+					{ name: 'Due Date', value: 'due_date' },
 				],
 			},
-			{
-				displayName: 'Step ID',
-				name: 'board_step_id',
-				type: 'number',
-				default: 0,
-				description: 'Filter by step (column) ID',
-			},
 		],
-	},
-	{
-		...stepIdField,
-		displayName: 'Target Step',
-		name: 'targetStepId',
-		required: false,
-		description: 'The step (column) to move the task to',
-		displayOptions: {
-			show: {
-				resource: [resource],
-				operation: ['move'],
-			},
-		},
-	},
-	{
-		displayName: 'Insert Before Task ID',
-		name: 'insertBeforeTaskId',
-		type: 'number',
-		default: 0,
-		description: 'ID of the task that should come after this one (for ordering). Leave 0 to append at the end.',
-		displayOptions: {
-			show: {
-				resource: [resource],
-				operation: ['move'],
-			},
-		},
 	},
 ];
 
