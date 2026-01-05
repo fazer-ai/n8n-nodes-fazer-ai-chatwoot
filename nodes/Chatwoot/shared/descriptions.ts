@@ -189,23 +189,31 @@ export const webhookSelector: INodeProperties = resourceSelector(
 /**
  * Webhook events multi-select
  */
-export const webhookEventsSelect: INodeProperties = {
+export const webhookEventsSelector: INodeProperties = {
 	displayName: 'Events',
 	name: 'events',
 	type: 'multiOptions',
 	default: [],
 	required: true,
-	description: 'Select the events to subscribe to',
+	description: 'Select the events to listen for',
 	options: [
 		{ name: 'Contact Created', value: 'contact_created' },
 		{ name: 'Contact Updated', value: 'contact_updated' },
 		{ name: 'Conversation Created', value: 'conversation_created' },
 		{ name: 'Conversation Status Changed', value: 'conversation_status_changed' },
+		{ name: 'Conversation Typing Off', value: 'conversation_typing_off' },
+		{ name: 'Conversation Typing On', value: 'conversation_typing_on' },
 		{ name: 'Conversation Updated', value: 'conversation_updated' },
-		{ name: 'Message Created', value: 'message_created' },
+		{ name: 'Incoming Message', value: 'message_incoming' },
+		{ name: 'Kanban Task Created', value: 'kanban_task_created' },
+		{ name: 'Kanban Task Deleted', value: 'kanban_task_deleted' },
+		{	name: 'Kanban Task Updated', value: 'kanban_task_updated' },
+		{ name: 'Live Chat Widget Opened by the User', value: 'webwidget_triggered' },
+		{	name: 'Message Created', value: 'message_created' },
 		{ name: 'Message Updated', value: 'message_updated' },
-		{ name: 'Webwidget Triggered', value: 'webwidget_triggered' },
-	],
+		{ name: 'Outgoing Message', value: 'message_outgoing' },
+		{ name: 'Provider Event Received', value: 'provider_event_received' },
+	]
 };
 
 /**
