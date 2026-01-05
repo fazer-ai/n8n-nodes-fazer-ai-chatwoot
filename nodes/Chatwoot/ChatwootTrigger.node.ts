@@ -7,15 +7,18 @@ import {
 	IWebhookResponseData,
 	NodeApiError,
 	JsonObject,
+	ILoadOptionsFunctions,
+	INodeListSearchResult,
 } from 'n8n-workflow';
 
-import { accountSelector } from './shared/descriptions';
-import { searchAccounts, searchInboxes } from './listSearch';
+import { accountSelector, webhookEventsSelector } from './shared/descriptions';
+import { ChatwootInbox, ChatwootPayloadResponse, extractResourceLocatorValue, searchAccounts } from './listSearch';
 import {
 	fetchWebhooks,
 	createWebhook,
 	deleteWebhook,
 } from './resources/webhook';
+import { chatwootApiRequest } from './shared/transport';
 
 function extractAccountId(context: IHookFunctions): number {
 	const accountIdParam = context.getNodeParameter('accountId') as
@@ -40,7 +43,7 @@ function extractInboxId(context: IHookFunctions): number | null {
 		return Number(inboxIdParam.value);
 	}
 
-	if (inboxIdParam === '' || inboxIdParam === 0) return null;
+	if (inboxIdParam === 'all' || inboxIdParam === '' || inboxIdParam === 0) return null;
 	return Number(inboxIdParam);
 }
 
@@ -48,6 +51,50 @@ function getWebhookName(context: IHookFunctions): string {
 	const nodeName = context.getNode().name;
 	const mode = context.getActivationMode();
 	return mode === 'manual' ? `[N8N-TEST] ${nodeName}` : `[N8N] ${nodeName}`;
+}
+
+/**
+ * Get all inboxes for the selected account (for resourceLocator)
+ */
+export async function searchInboxesForWebhook(
+	this: ILoadOptionsFunctions,
+	filter?: string,
+): Promise<INodeListSearchResult> {
+	const accountId = extractResourceLocatorValue(this, 'accountId');
+	if (!accountId) {
+		return { results: [] };
+	}
+
+	const response = (await chatwootApiRequest.call(
+		this,
+		'GET',
+		`/api/v1/accounts/${accountId}/inboxes`,
+	)) as ChatwootPayloadResponse<ChatwootInbox> | ChatwootInbox[];
+	const inboxes =
+		(response as ChatwootPayloadResponse<ChatwootInbox>).payload ||
+		(response as ChatwootInbox[]) ||
+		[];
+
+	let results = (inboxes as ChatwootInbox[]).map((inbox: ChatwootInbox) => ({
+		name: inbox.name,
+		value: String(inbox.id),
+	}));
+
+	if (filter) {
+		const filterLower = filter.toLowerCase();
+		results = results.filter(
+			(item) =>
+				item.name.toLowerCase().includes(filterLower) ||
+				item.value.includes(filter),
+		);
+	}
+
+	results.unshift({
+		name: 'All Inboxes',
+		value: 'all',
+	})
+
+	return { results };
 }
 
 // eslint-disable-next-line @n8n/community-nodes/node-usable-as-tool
@@ -83,66 +130,34 @@ export class ChatwootTrigger implements INodeType {
 		],
 		properties: [
 			accountSelector,
+			webhookEventsSelector,
 			{
-				displayName: 'Events',
-				name: 'events',
-				type: 'multiOptions',
-				options: [
-					{
-						name: 'Contact Created',
-						value: 'contact_created',
+				displayName: `These events require <a href="https://github.com/fazer-ai/chatwoot/pkgs/container/chatwoot" target="_blank">Chatwoot fazer.ai</a> and are not available in the standard Chatwoot release`,
+				name: 'notice',
+				type: 'notice',
+				default: '',
+				typeOptions: {
+					theme: 'info',
+				},
+				displayOptions: {
+					show: {
+						events: [
+							'kanban_task_created',
+							'kanban_task_deleted',
+							'kanban_task_updated',
+							'provider_event_received',
+							'message_incoming',
+							'message_outgoing',
+						],
 					},
-					{
-						name: 'Contact Updated',
-						value: 'contact_updated',
-					},
-					{
-						name: 'Conversation Created',
-						value: 'conversation_created',
-					},
-					{
-						name: 'Conversation Status Changed',
-						value: 'conversation_status_changed',
-					},
-					{
-						name: 'Conversation Typing Off',
-						value: 'conversation_typing_off',
-					},
-					{
-						name: 'Conversation Typing On',
-						value: 'conversation_typing_on',
-					},
-					{
-						name: 'Conversation Updated',
-						value: 'conversation_updated',
-					},
-					{
-						name: 'Message Created',
-						value: 'message_created',
-					},
-					{
-						name: 'Message Updated',
-						value: 'message_updated',
-					},
-					{
-						name: 'Provider Event Received',
-						value: 'provider_event_received',
-					},
-					{
-						name: 'Webwidget Triggered',
-						value: 'webwidget_triggered',
-					},
-				],
-				default: [],
-				required: true,
-				description: 'The events to listen for',
+				},
 			},
 			{
 				displayName: 'Inbox',
 				name: 'inboxId',
 				type: 'resourceLocator',
-				default: { mode: 'list', value: '' },
-				description: 'The ID of the inbox to filter events for. If not selected, triggers for all inboxes.',
+				default: { mode: 'list', value: 'all' },
+				description: 'The ID of the inbox to filter events for. Choose "All Inboxes" to receive events from all inboxes.',
 				modes: [
 					{
 						displayName: 'From List',
@@ -150,7 +165,7 @@ export class ChatwootTrigger implements INodeType {
 						type: 'list',
 						placeholder: 'All Inboxes',
 						typeOptions: {
-							searchListMethod: 'searchInboxes',
+							searchListMethod: 'searchInboxesForWebhook',
 							searchable: true,
 						},
 					},
@@ -177,7 +192,7 @@ export class ChatwootTrigger implements INodeType {
 	methods = {
 		listSearch: {
 			searchAccounts,
-			searchInboxes,
+			searchInboxesForWebhook,
 		},
 	};
 
