@@ -310,6 +310,69 @@ export async function searchContacts(
 }
 
 /**
+ * Load contacts for multiOptions dropdown
+ */
+export async function loadContactsOptions(
+	this: ILoadOptionsFunctions,
+): Promise<INodePropertyOptions[]> {
+	const accountId = extractResourceLocatorValue(this, 'accountId');
+	if (!accountId) {
+		return [];
+	}
+
+	const response = (await chatwootApiRequest.call(
+		this,
+		'GET',
+		`/api/v1/accounts/${accountId}/contacts`,
+	)) as ChatwootPayloadResponse<ChatwootContact> | ChatwootContact[];
+	const contacts =
+		(response as ChatwootPayloadResponse<ChatwootContact>).payload ||
+		(response as ChatwootContact[]) ||
+		[];
+
+	return (contacts as ChatwootContact[]).map((contact: ChatwootContact) => ({
+		name: contact.name || contact.email || `Contact ${contact.id}`,
+		value: contact.id,
+	}));
+}
+
+/**
+ * Load conversations for multiOptions dropdown
+ */
+export async function loadConversationsOptions(
+	this: ILoadOptionsFunctions,
+): Promise<INodePropertyOptions[]> {
+	const accountId = extractResourceLocatorValue(this, 'accountId');
+	if (!accountId) {
+		return [];
+	}
+
+	const inboxId = extractResourceLocatorValue(this, 'inboxId');
+
+	let endpoint = `/api/v1/accounts/${accountId}/conversations`;
+	if (inboxId) {
+		endpoint += `?inbox_id=${inboxId}`;
+	}
+
+	const response = (await chatwootApiRequest.call(this, 'GET', endpoint)) as
+	| ChatwootPayloadResponse<ChatwootConversation>
+	| ChatwootConversation[];
+	const responseObj = response as ChatwootPayloadResponse<ChatwootConversation>;
+	const conversations =
+		responseObj.data?.payload ||
+		responseObj.payload ||
+		(response as ChatwootConversation[]) ||
+		[];
+
+	return (conversations as ChatwootConversation[]).map(
+		(conv: ChatwootConversation) => ({
+			name: `#${conv.id} - ${conv.meta?.sender?.name || 'Unknown'}`,
+			value: conv.id,
+		}),
+	);
+}
+
+/**
  * Get all agents for the selected account (for loadOptions)
  */
 export async function loadAgentsOptions(
@@ -926,7 +989,7 @@ export async function searchKanbanTasks(
 	const response = (await chatwootApiRequest.call(
 		this,
 		'GET',
-		'/api/v1/accounts/${accountId}/kanban/tasks',
+		`/api/v1/accounts/${accountId}/kanban/tasks`,
 		undefined,
 		{ board_id: boardId },
 	)) as { tasks?: ChatwootKanbanTask[] } | ChatwootKanbanTask[];

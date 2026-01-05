@@ -38,7 +38,9 @@ import {
 	loadInboxesOptions,
 	searchWhatsappSpecialProvidersInboxes,
 	searchConversations,
+	loadConversationsOptions,
 	searchContacts,
+	loadContactsOptions,
 	searchAgents,
 	loadAgentsOptions,
 	searchTeams,
@@ -180,6 +182,8 @@ export class Chatwoot implements INodeType {
 		},
 		loadOptions: {
 			loadAgentsOptions,
+			loadContactsOptions,
+			loadConversationsOptions,
 			loadInboxesOptions,
 			loadTeamsOptions,
 			loadLabelsOptions,
