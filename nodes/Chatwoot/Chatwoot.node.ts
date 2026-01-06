@@ -31,32 +31,7 @@ import { kanbanBoardDescription, executeKanbanBoardOperation } from './actions/k
 import { kanbanStepDescription, executeKanbanStepOperation } from './actions/kanbanStep';
 import { kanbanTaskDescription, executeKanbanTaskOperation } from './actions/kanbanTask';
 import { teamDescription, executeTeamOperation } from './actions/team';
-
-import {
-	searchAccounts,
-	searchInboxes,
-	loadInboxesOptions,
-	searchWhatsappSpecialProvidersInboxes,
-	searchConversations,
-	loadConversationsOptions,
-	searchContacts,
-	loadContactsOptions,
-	searchAgents,
-	loadAgentsOptions,
-	searchTeams,
-	loadTeamsOptions,
-	loadLabelsOptions,
-	searchLabels,
-	searchWebhooks,
-	loadResponseFieldsOptions,
-	searchKanbanBoards,
-	searchKanbanSteps,
-	searchKanbanTasks,
-	loadContactCustomAttributeDefinitionsOptions,
-	loadCustomAttributeDefinitionsOptions,
-	searchTeamMembers,
-	loadTeamMembersOptions,
-} from './methods/listSearch';
+import { listSearch, loadOptions } from './methods';
 
 /**
  * Node for interacting with the Chatwoot REST API.
@@ -165,33 +140,8 @@ export class Chatwoot implements INodeType {
 	};
 
 	methods = {
-		listSearch: {
-			searchAccounts,
-			searchInboxes,
-			searchWhatsappSpecialProvidersInboxes,
-			searchConversations,
-			searchContacts,
-			searchWebhooks,
-			searchKanbanBoards,
-			searchKanbanSteps,
-			searchKanbanTasks,
-			searchAgents,
-			searchTeams,
-			searchTeamMembers,
-			searchLabels,
-		},
-		loadOptions: {
-			loadAgentsOptions,
-			loadContactsOptions,
-			loadConversationsOptions,
-			loadInboxesOptions,
-			loadTeamsOptions,
-			loadLabelsOptions,
-			loadResponseFieldsOptions,
-			loadContactCustomAttributeDefinitionsOptions,
-			loadCustomAttributeDefinitionsOptions,
-			loadTeamMembersOptions,
-		},
+		listSearch,
+		loadOptions,
 	};
 
 	/**

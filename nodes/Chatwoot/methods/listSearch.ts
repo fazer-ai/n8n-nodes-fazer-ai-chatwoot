@@ -1,103 +1,24 @@
 import type {
 	ILoadOptionsFunctions,
 	INodeListSearchResult,
-	INodePropertyOptions,
 } from 'n8n-workflow';
 import { chatwootApiRequest } from '../shared/transport';
-
-interface ChatwootAccount {
-	id: number;
-	name: string;
-}
-
-export interface ChatwootInbox {
-	id: number;
-	name: string;
-	channel_type?: string;
-	provider?: string;
-}
-
-interface ChatwootConversation {
-	id: number;
-	meta?: {
-		sender?: {
-			name?: string;
-		};
-	};
-}
-
-interface ChatwootContact {
-	id: number;
-	name?: string;
-	email?: string;
-}
-
-interface ChatwootAgent {
-	id: number;
-	name?: string;
-	email?: string;
-}
-
-interface ChatwootTeam {
-	id: number;
-	name: string;
-}
-
-interface ChatwootLabel {
-	id:	number;
-	title: string;
-}
-
-interface ChatwootWebhook {
-	id: number;
-	url: string;
-}
-
-interface ChatwootProfileResponse {
-	accounts?: ChatwootAccount[];
-}
-
-export interface ChatwootPayloadResponse<T> {
-	payload?: T[];
-	data?: {
-		payload?: T[];
-	};
-}
-
-interface ChatwootKanbanBoard {
-	id: number;
-	name: string;
-}
-
-interface ChatwootKanbanStep {
-	id: number;
-	name: string;
-	description: string,
-	cancelled: boolean;
-}
-
-interface ChatwootKanbanTask {
-	id: number;
-	title: string;
-}
-
-export function extractResourceLocatorValue(
-	context: ILoadOptionsFunctions,
-	paramName: string,
-): string | null {
-	try {
-		const param = context.getNodeParameter(paramName, 0) as
-			| string
-			| { mode: string; value: string };
-
-		if (!param) return null;
-		if (typeof param === 'string') return param;
-		if (typeof param === 'object' && param.value) return String(param.value);
-		return null;
-	} catch {
-		return null;
-	}
-}
+import {
+	extractResourceLocatorValue,
+	ChatwootAccount,
+	ChatwootAgent,
+	ChatwootContact,
+	ChatwootConversation,
+	ChatwootInbox,
+	ChatwootKanbanBoard,
+	ChatwootKanbanStep,
+	ChatwootKanbanTask,
+	ChatwootLabel,
+	ChatwootPayloadResponse,
+	ChatwootProfileResponse,
+	ChatwootTeam,
+	ChatwootTeamMember,
+	ChatwootWebhook } from './resourceMapping';
 
 /**
  * Get all accounts available to the user (for resourceLocator)
@@ -303,117 +224,6 @@ export async function searchContacts(
 }
 
 /**
- * Load contacts for multiOptions dropdown
- */
-export async function loadContactsOptions(
-	this: ILoadOptionsFunctions,
-): Promise<INodePropertyOptions[]> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
-		return [];
-	}
-
-	const response = (await chatwootApiRequest.call(
-		this,
-		'GET',
-		`/api/v1/accounts/${accountId}/contacts`,
-	)) as ChatwootPayloadResponse<ChatwootContact> | ChatwootContact[];
-	const contacts =
-		(response as ChatwootPayloadResponse<ChatwootContact>).payload ||
-		(response as ChatwootContact[]) ||
-		[];
-
-	return (contacts as ChatwootContact[]).map((contact: ChatwootContact) => ({
-		name: contact.name || contact.email || `Contact ${contact.id}`,
-		value: contact.id,
-	}));
-}
-
-/**
- * Load conversations for multiOptions dropdown
- */
-export async function loadConversationsOptions(
-	this: ILoadOptionsFunctions,
-): Promise<INodePropertyOptions[]> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
-		return [];
-	}
-
-	const inboxId = extractResourceLocatorValue(this, 'inboxId');
-
-	let endpoint = `/api/v1/accounts/${accountId}/conversations`;
-	if (inboxId) {
-		endpoint += `?inbox_id=${inboxId}`;
-	}
-
-	const response = (await chatwootApiRequest.call(this, 'GET', endpoint)) as
-	| ChatwootPayloadResponse<ChatwootConversation>
-	| ChatwootConversation[];
-	const responseObj = response as ChatwootPayloadResponse<ChatwootConversation>;
-	const conversations =
-		responseObj.data?.payload ||
-		responseObj.payload ||
-		(response as ChatwootConversation[]) ||
-		[];
-
-	return (conversations as ChatwootConversation[]).map(
-		(conv: ChatwootConversation) => ({
-			name: `#${conv.id} - ${conv.meta?.sender?.name || 'Unknown'}`,
-			value: conv.id,
-		}),
-	);
-}
-
-/**
- * Get all agents for the selected account (for loadOptions)
- */
-export async function loadAgentsOptions(
-	this: ILoadOptionsFunctions,
-): Promise<INodePropertyOptions[]> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
-		return [];
-	}
-
-	const response = (await chatwootApiRequest.call(
-		this,
-		'GET',
-		`/api/v1/accounts/${accountId}/agents`,
-	)) as ChatwootAgent[];
-	const agents = response || [];
-
-	return agents.map((agent: ChatwootAgent) => ({
-		name: agent.name || agent.email || `Agent ${agent.id}`,
-		value: agent.id,
-	}));
-}
-
-/**
- * Get all inboxes for the selected account (for loadOptions)
- */
-export async function loadInboxesOptions(
-	this: ILoadOptionsFunctions,
-): Promise<INodePropertyOptions[]> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
-		return [];
-	}
-
-	const response = (await chatwootApiRequest.call(
-		this,
-		'GET',
-		`/api/v1/accounts/${accountId}/inboxes`,
-	)) as ChatwootPayloadResponse<ChatwootInbox>;
-	const inboxes = response.payload ||[];
-
-	return (inboxes as ChatwootInbox[]).map((inbox: ChatwootInbox) => ({
-		name: inbox.name,
-		value: inbox.id,
-	}));
-}
-
-/**
  * Get all agents for the selected account (for resourceLocator)
  */
 export async function searchAgents(
@@ -450,30 +260,6 @@ export async function searchAgents(
 }
 
 /**
- * Get all teams for the selected account (for loadOptions)
- */
-export async function loadTeamsOptions(
-	this: ILoadOptionsFunctions,
-): Promise<INodePropertyOptions[]> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
-		return [];
-	}
-
-	const response = (await chatwootApiRequest.call(
-		this,
-		'GET',
-		`/api/v1/accounts/${accountId}/teams`,
-	)) as ChatwootTeam[];
-	const teams = response || [];
-
-	return teams.map((team: ChatwootTeam) => ({
-		name: team.name,
-		value: team.id,
-	}));
-}
-
-/**
  * Get all teams for the selected account (for resourceLocator)
  */
 export async function searchTeams(
@@ -507,37 +293,6 @@ export async function searchTeams(
 	}
 
 	return { results };
-}
-
-interface ChatwootTeamMember {
-	id: number;
-	name?: string;
-	email?: string;
-}
-
-/**
- * Get all members of the selected team (for loadOptions)
- */
-export async function loadTeamMembersOptions(
-	this: ILoadOptionsFunctions,
-): Promise<INodePropertyOptions[]> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	const teamId = extractResourceLocatorValue(this, 'teamId');
-	if (!accountId || !teamId) {
-		return [];
-	}
-
-	const response = (await chatwootApiRequest.call(
-		this,
-		'GET',
-		`/api/v1/accounts/${accountId}/teams/${teamId}/team_members`,
-	)) as ChatwootTeamMember[];
-	const members = response || [];
-
-	return members.map((member: ChatwootTeamMember) => ({
-		name: member.name || member.email || `Agent ${member.id}`,
-		value: member.id,
-	}));
 }
 
 /**
@@ -578,33 +333,6 @@ export async function searchTeamMembers(
 }
 
 /**
- * Get all labels for the selected account (for loadOptions)
- */
-export async function loadLabelsOptions(
-	this: ILoadOptionsFunctions,
-): Promise<INodePropertyOptions[]> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
-		return [];
-	}
-
-	const response = (await chatwootApiRequest.call(
-		this,
-		'GET',
-		`/api/v1/accounts/${accountId}/labels`,
-	)) as ChatwootPayloadResponse<ChatwootLabel> | ChatwootLabel[];
-	const labels =
-		(response as ChatwootPayloadResponse<ChatwootLabel>).payload ||
-		(response as ChatwootLabel[]) ||
-		[];
-
-	return (labels as ChatwootLabel[]).map((label: ChatwootLabel) => ({
-		name: label.title,
-		value: label.title,
-	}));
-}
-
-/**
  * Search labels for the selected account (for resourceLocator)
  */
 export async function searchLabels(
@@ -641,62 +369,6 @@ export async function searchLabels(
 	}
 
 	return { results };
-}
-
-interface ChatwootCustomAttributeDefinition {
-	id: number;
-	attribute_key: string;
-	attribute_display_name: string;
-	attribute_model: number;
-}
-
-export async function loadContactCustomAttributeDefinitionsOptions(
-	this: ILoadOptionsFunctions,
-): Promise<INodePropertyOptions[]> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
-		return [];
-	}
-
-	const response = (await chatwootApiRequest.call(
-		this,
-		'GET',
-		`/api/v1/accounts/${accountId}/custom_attribute_definitions`,
-		undefined,
-		{ attribute_model: 'contact_attribute' },
-	)) as ChatwootCustomAttributeDefinition[];
-
-	return (response || []).map((attr: ChatwootCustomAttributeDefinition) => ({
-		name: attr.attribute_display_name,
-		value: attr.attribute_key,
-	}));
-}
-
-/**
- * Get custom attribute definitions based on selected model
- */
-export async function loadCustomAttributeDefinitionsOptions(
-	this: ILoadOptionsFunctions,
-): Promise<INodePropertyOptions[]> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
-		return [];
-	}
-
-	const attributeModel = this.getNodeParameter('attributeModel', 0) as string;
-
-	const response = (await chatwootApiRequest.call(
-		this,
-		'GET',
-		`/api/v1/accounts/${accountId}/custom_attribute_definitions`,
-		undefined,
-		{ attribute_model: attributeModel },
-	)) as ChatwootCustomAttributeDefinition[];
-
-	return (response || []).map((attr: ChatwootCustomAttributeDefinition) => ({
-		name: attr.attribute_display_name,
-		value: attr.id,
-	}));
 }
 
 /**
@@ -741,178 +413,8 @@ export async function searchWebhooks(
 }
 
 /**
- * Get all response fields dynamically based on resource and operation
- * Makes a sample API call and extracts all available field names
+ * Get all kanban boards for the selected account (for resourceLocator)
  */
-export async function loadResponseFieldsOptions(
-	this: ILoadOptionsFunctions,
-): Promise<INodePropertyOptions[]> {
-	const resource = this.getNodeParameter('resource', 0) as string;
-	const operation = this.getNodeParameter('operation', 0) as string;
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-
-	if (!accountId) {
-		return [];
-	}
-
-	let sampleResponse: unknown;
-
-	try {
-		switch (resource) {
-			case 'profile':
-				sampleResponse = await chatwootApiRequest.call(this, 'GET', '/api/v1/profile');
-				break;
-
-			case 'account':
-				if (operation === 'getAll') {
-					const profile = (await chatwootApiRequest.call(
-						this,
-						'GET',
-						'/api/v1/profile',
-					)) as ChatwootProfileResponse;
-					sampleResponse = profile.accounts?.[0] || {};
-				} else {
-					sampleResponse = await chatwootApiRequest.call(
-						this,
-						'GET',
-						`/api/v1/accounts/${accountId}`,
-					);
-				}
-				break;
-
-			case 'inbox': {
-				const inboxResponse = (await chatwootApiRequest.call(
-					this,
-					'GET',
-					`/api/v1/accounts/${accountId}/inboxes`,
-				)) as ChatwootPayloadResponse<ChatwootInbox> | ChatwootInbox[];
-				const inboxes =
-					(inboxResponse as ChatwootPayloadResponse<ChatwootInbox>).payload ||
-					(inboxResponse as ChatwootInbox[]) ||
-					[];
-				sampleResponse = inboxes[0] || {};
-				break;
-			}
-
-			case 'contact': {
-				const contactResponse = (await chatwootApiRequest.call(
-					this,
-					'GET',
-					`/api/v1/accounts/${accountId}/contacts`,
-					undefined,
-					{ per_page: 1 },
-				)) as ChatwootPayloadResponse<ChatwootContact> | ChatwootContact[];
-				const contacts =
-					(contactResponse as ChatwootPayloadResponse<ChatwootContact>).payload ||
-					(contactResponse as ChatwootContact[]) ||
-					[];
-				sampleResponse = contacts[0] || {};
-				break;
-			}
-
-			case 'conversation': {
-				const convResponse = (await chatwootApiRequest.call(
-					this,
-					'GET',
-					`/api/v1/accounts/${accountId}/conversations`,
-					undefined,
-					{ per_page: 1 },
-				)) as ChatwootPayloadResponse<ChatwootConversation> | { data: { payload?: ChatwootConversation[] } };
-				const conversations =
-					(convResponse as ChatwootPayloadResponse<ChatwootConversation>).payload ||
-					(convResponse as { data: { payload?: ChatwootConversation[] } }).data?.payload ||
-					[];
-				sampleResponse = conversations[0] || {};
-				break;
-			}
-
-			case 'message': {
-				const msgConvResponse = (await chatwootApiRequest.call(
-					this,
-					'GET',
-					`/api/v1/accounts/${accountId}/conversations`,
-					undefined,
-					{ per_page: 1 },
-				)) as ChatwootPayloadResponse<ChatwootConversation> | { data: { payload?: ChatwootConversation[] } };
-				const msgConversations =
-					(msgConvResponse as ChatwootPayloadResponse<ChatwootConversation>).payload ||
-					(msgConvResponse as { data: { payload?: ChatwootConversation[] } }).data?.payload ||
-					[];
-				if (msgConversations.length > 0) {
-					const messagesResponse = (await chatwootApiRequest.call(
-						this,
-						'GET',
-						`/api/v1/accounts/${accountId}/conversations/${msgConversations[0].id}/messages`,
-					)) as unknown[];
-					sampleResponse = Array.isArray(messagesResponse) && messagesResponse.length > 0
-						? messagesResponse[0]
-						: {};
-				} else {
-					sampleResponse = {};
-				}
-				break;
-			}
-
-			case 'webhook': {
-				const webhookResponse = (await chatwootApiRequest.call(
-					this,
-					'GET',
-					`/api/v1/accounts/${accountId}/webhooks`,
-				)) as ChatwootPayloadResponse<ChatwootWebhook> | ChatwootWebhook[];
-				const webhooks =
-					(webhookResponse as ChatwootPayloadResponse<ChatwootWebhook>).payload ||
-					(webhookResponse as ChatwootWebhook[]) ||
-					[];
-				sampleResponse = webhooks[0] || {};
-				break;
-			}
-
-			case 'customAttribute': {
-				const attrResponse = (await chatwootApiRequest.call(
-					this,
-					'GET',
-					`/api/v1/accounts/${accountId}/custom_attribute_definitions`,
-					undefined,
-					{ attribute_model: 'contact_attribute' },
-				)) as unknown[];
-				sampleResponse = Array.isArray(attrResponse) && attrResponse.length > 0
-					? attrResponse[0]
-					: {};
-				break;
-			}
-
-			case 'label': {
-				const labelResponse = (await chatwootApiRequest.call(
-					this,
-					'GET',
-					`/api/v1/accounts/${accountId}/labels`,
-				)) as { payload?: unknown[] } | unknown[];
-				const labels =
-					(labelResponse as { payload?: unknown[] }).payload ||
-					(labelResponse as unknown[]) ||
-					[];
-				sampleResponse = Array.isArray(labels) && labels.length > 0
-					? labels[0]
-					: {};
-				break;
-			}
-
-			default:
-				return [];
-		}
-	} catch {
-		// NOTE: API call failed - return empty fields list as graceful fallback
-		return [];
-	}
-
-	const fields = Object.keys(sampleResponse as Record<string, unknown>);
-
-	return fields.sort().map((field) => ({
-		name: field,
-		value: field,
-	}));
-}
-
 export async function searchKanbanBoards(
 	this: ILoadOptionsFunctions,
 ): Promise<INodeListSearchResult> {
@@ -940,6 +442,9 @@ export async function searchKanbanBoards(
 	return { results };
 }
 
+/**
+ * Get all kanban steps for the selected board (for resourceLocator)
+ */
 export async function searchKanbanSteps(
 	this: ILoadOptionsFunctions,
 ): Promise<INodeListSearchResult> {
@@ -969,6 +474,9 @@ export async function searchKanbanSteps(
 	return { results };
 }
 
+/**
+ * Get all kanban tasks for the selected board (for resourceLocator)
+ */
 export async function searchKanbanTasks(
 	this: ILoadOptionsFunctions,
 ): Promise<INodeListSearchResult> {

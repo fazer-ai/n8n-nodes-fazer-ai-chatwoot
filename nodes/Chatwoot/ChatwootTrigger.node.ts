@@ -12,13 +12,14 @@ import {
 } from 'n8n-workflow';
 
 import { accountSelector, webhookEventsSelector } from './shared/descriptions';
-import { ChatwootInbox, ChatwootPayloadResponse, extractResourceLocatorValue, searchAccounts } from './methods/listSearch';
+import { searchAccounts } from './methods/listSearch';
 import {
 	fetchWebhooks,
 	createWebhook,
 	deleteWebhook,
 } from './actions/webhook';
 import { chatwootApiRequest } from './shared/transport';
+import { ChatwootInbox, ChatwootPayloadResponse, extractResourceLocatorValue } from './methods/resourceMapping';
 
 function extractAccountId(context: IHookFunctions): number {
 	const accountIdParam = context.getNodeParameter('accountId') as
