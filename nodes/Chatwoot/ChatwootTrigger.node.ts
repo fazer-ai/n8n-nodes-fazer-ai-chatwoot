@@ -18,11 +18,10 @@ import {
 	createWebhook,
 	deleteWebhook,
 } from './actions/webhook';
-import { chatwootApiRequest } from './shared/transport';
+import { chatwootApiRequest, getAccountId } from './shared/transport';
 import {
 	ChatwootInbox,
 	ChatwootPayloadResponse,
-	extractResourceLocatorValue
 } from './methods/resourceMapping';
 
 function extractAccountId(context: IHookFunctions): number {
@@ -65,8 +64,8 @@ export async function searchInboxesForWebhook(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
+	const accountId = getAccountId.call(this, 0);
+	if (accountId === '') {
 		return { results: [] };
 	}
 

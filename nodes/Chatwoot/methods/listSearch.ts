@@ -2,9 +2,8 @@ import type {
 	ILoadOptionsFunctions,
 	INodeListSearchResult,
 } from 'n8n-workflow';
-import { chatwootApiRequest } from '../shared/transport';
+import { chatwootApiRequest, getAccountId, getInboxId, getKanbanBoardId, getTeamId } from '../shared/transport';
 import {
-	extractResourceLocatorValue,
 	ChatwootAccount,
 	ChatwootAgent,
 	ChatwootContact,
@@ -58,8 +57,8 @@ export async function searchInboxes(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
+	const accountId = getAccountId.call(this, 0);
+	if (accountId === '') {
 		return { results: [] };
 	}
 
@@ -97,8 +96,8 @@ export async function searchWhatsappSpecialProvidersInboxes(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
+	const accountId = getAccountId.call(this, 0);
+	if (accountId === '') {
 		return { results: [] };
 	}
 
@@ -141,12 +140,15 @@ export async function searchConversations(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
+	const accountId = getAccountId.call(this, 0);
+	if (accountId === '') {
 		return { results: [] };
 	}
 
-	const inboxId = extractResourceLocatorValue(this, 'inboxId');
+	const inboxId = getInboxId.call(this, 0);
+	if (inboxId === '') {
+		return { results: [] };
+	}
 
 	let endpoint = `/api/v1/accounts/${accountId}/conversations`;
 	if (inboxId) {
@@ -189,8 +191,8 @@ export async function searchContacts(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
+	const accountId = getAccountId.call(this, 0);
+	if (accountId === '') {
 		return { results: [] };
 	}
 
@@ -230,8 +232,8 @@ export async function searchAgents(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
+	const accountId = getAccountId.call(this, 0);
+	if (accountId === '') {
 		return { results: [] };
 	}
 
@@ -266,8 +268,8 @@ export async function searchTeams(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
+	const accountId = getAccountId.call(this, 0);
+	if (accountId === '') {
 		return { results: [] };
 	}
 
@@ -302,8 +304,8 @@ export async function searchTeamMembers(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	const teamId = extractResourceLocatorValue(this, 'teamId');
+	const accountId = getAccountId.call(this, 0);
+	const teamId = getTeamId.call(this, 0);
 	if (!accountId || !teamId) {
 		return { results: [] };
 	}
@@ -339,8 +341,8 @@ export async function searchLabels(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
+	const accountId = getAccountId.call(this, 0);
+	if (accountId === '') {
 		return { results: [] };
 	}
 
@@ -378,8 +380,8 @@ export async function searchWebhooks(
 	this: ILoadOptionsFunctions,
 	filter?: string,
 ): Promise<INodeListSearchResult> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
+	const accountId = getAccountId.call(this, 0);
+	if (accountId === '') {
 		return { results: [] };
 	}
 
@@ -418,8 +420,8 @@ export async function searchWebhooks(
 export async function searchKanbanBoards(
 	this: ILoadOptionsFunctions,
 ): Promise<INodeListSearchResult> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	if (!accountId) {
+	const accountId = getAccountId.call(this, 0);
+	if (accountId === '') {
 		return { results: [] };
 	}
 
@@ -448,8 +450,8 @@ export async function searchKanbanBoards(
 export async function searchKanbanSteps(
 	this: ILoadOptionsFunctions,
 ): Promise<INodeListSearchResult> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	const boardId = extractResourceLocatorValue(this, 'kanbanBoardId');
+	const accountId = getAccountId.call(this, 0);
+	const boardId = getKanbanBoardId.call(this, 0);
 
 	if (!accountId || !boardId) {
 		return { results: [] };
@@ -480,8 +482,8 @@ export async function searchKanbanSteps(
 export async function searchKanbanTasks(
 	this: ILoadOptionsFunctions,
 ): Promise<INodeListSearchResult> {
-	const accountId = extractResourceLocatorValue(this, 'accountId');
-	const boardId = extractResourceLocatorValue(this, 'kanbanBoardId');
+	const accountId = getAccountId.call(this, 0);
+	const boardId = getKanbanBoardId.call(this, 0);
 
 	if (!accountId || !boardId) {
 		return { results: [] };

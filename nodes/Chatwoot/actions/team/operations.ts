@@ -125,7 +125,7 @@ async function unassignAgentFromTeam(
 
 	const remainingMemberIds = currentMembers
 		.map((member) => member.id)
-		.filter((id) => id !== teamMemberId);
+		.filter((id) => String(id) !== teamMemberId);
 
 	return {
 		json: (await chatwootApiRequest.call(

@@ -28,7 +28,7 @@ export async function executeWebhookOperation(
 
 export async function fetchWebhooks(
 	context: WebhookContext,
-	accountId: number,
+	accountId: string | number,
 ): Promise<IDataObject[]> {
 	const response = (await chatwootApiRequest.call(
 		context,
@@ -50,7 +50,7 @@ export async function fetchWebhooks(
 
 export async function createWebhook(
 	context: WebhookContext,
-	accountId: number,
+	accountId: string | number,
 	body: IDataObject,
 ): Promise<IDataObject> {
 	return (await chatwootApiRequest.call(
@@ -63,8 +63,8 @@ export async function createWebhook(
 
 export async function deleteWebhook(
 	context: WebhookContext,
-	accountId: number,
-	webhookId: number,
+	accountId: string | number,
+	webhookId: string | number,
 ): Promise<void> {
 	await chatwootApiRequest.call(
 		context,
@@ -75,8 +75,8 @@ export async function deleteWebhook(
 
 export async function updateWebhook(
 	context: WebhookContext,
-	accountId: number,
-	webhookId: number,
+	accountId: string | number,
+	webhookId: string | number,
 	body: IDataObject,
 ): Promise<IDataObject> {
 	return (await chatwootApiRequest.call(

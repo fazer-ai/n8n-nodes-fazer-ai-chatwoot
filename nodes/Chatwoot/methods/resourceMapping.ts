@@ -1,5 +1,3 @@
-import { ILoadOptionsFunctions } from "n8n-workflow";
-
 export interface ChatwootAccount {
   id: number;
   name: string;
@@ -87,22 +85,4 @@ export interface ChatwootCustomAttributeDefinition {
 	attribute_key: string;
 	attribute_display_name: string;
 	attribute_model: number;
-}
-
-export function extractResourceLocatorValue(
-	context: ILoadOptionsFunctions,
-	paramName: string,
-): string | null {
-	try {
-		const param = context.getNodeParameter(paramName, 0) as
-			| string
-			| { mode: string; value: string };
-
-		if (!param) return null;
-		if (typeof param === 'string') return param;
-		if (typeof param === 'object' && param.value) return String(param.value);
-		return null;
-	} catch {
-		return null;
-	}
 }

@@ -1,13 +1,12 @@
 import { ILoadOptionsFunctions, INodePropertyOptions } from "n8n-workflow";
 import {
-  extractResourceLocatorValue,
   ChatwootPayloadResponse,
   ChatwootAgent,
   ChatwootInbox,
   ChatwootCustomAttributeDefinition,
   ChatwootLabel,
   ChatwootTeam  } from "./resourceMapping";
-import { chatwootApiRequest } from "../shared/transport";
+import { chatwootApiRequest, getAccountId } from "../shared/transport";
 
 /**
  * Get all agents for the selected account (for loadOptions)
@@ -15,7 +14,7 @@ import { chatwootApiRequest } from "../shared/transport";
 export async function loadAgentsOptions(
   this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
-  const accountId = extractResourceLocatorValue(this, 'accountId');
+  const accountId = getAccountId.call(this, 0);
   if (!accountId) {
     return [];
   }
@@ -39,7 +38,7 @@ export async function loadAgentsOptions(
 export async function loadInboxesOptions(
   this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
-  const accountId = extractResourceLocatorValue(this, 'accountId');
+  const accountId = getAccountId.call(this, 0);
   if (!accountId) {
     return [];
   }
@@ -63,7 +62,7 @@ export async function loadInboxesOptions(
 export async function loadTeamsOptions(
   this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
-  const accountId = extractResourceLocatorValue(this, 'accountId');
+  const accountId = getAccountId.call(this, 0);
   if (!accountId) {
     return [];
   }
@@ -88,7 +87,7 @@ export async function loadTeamsOptions(
 export async function loadLabelsOptions(
   this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
-  const accountId = extractResourceLocatorValue(this, 'accountId');
+  const accountId = getAccountId.call(this, 0);
   if (!accountId) {
     return [];
   }
@@ -115,7 +114,7 @@ export async function loadLabelsOptions(
 export async function loadContactCustomAttributeDefinitionsOptions(
   this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
-  const accountId = extractResourceLocatorValue(this, 'accountId');
+  const accountId = getAccountId.call(this, 0);
   if (!accountId) {
     return [];
   }
@@ -140,7 +139,7 @@ export async function loadContactCustomAttributeDefinitionsOptions(
 export async function loadCustomAttributeDefinitionsOptions(
   this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
-  const accountId = extractResourceLocatorValue(this, 'accountId');
+  const accountId = getAccountId.call(this, 0);
   if (!accountId) {
     return [];
   }
