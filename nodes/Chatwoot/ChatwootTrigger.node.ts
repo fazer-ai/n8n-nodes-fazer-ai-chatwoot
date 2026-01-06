@@ -19,7 +19,11 @@ import {
 	deleteWebhook,
 } from './actions/webhook';
 import { chatwootApiRequest } from './shared/transport';
-import { ChatwootInbox, ChatwootPayloadResponse, extractResourceLocatorValue } from './methods/resourceMapping';
+import {
+	ChatwootInbox,
+	ChatwootPayloadResponse,
+	extractResourceLocatorValue
+} from './methods/resourceMapping';
 
 function extractAccountId(context: IHookFunctions): number {
 	const accountIdParam = context.getNodeParameter('accountId') as
