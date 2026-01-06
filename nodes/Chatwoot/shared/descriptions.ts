@@ -45,7 +45,7 @@ const resourceSelector = (displayName: string, name: string, description: string
 					{
 						type: 'regex',
 						properties: {
-							regex: '^[0-9]+$',
+							regex: '^[0-9]*$',
 							errorMessage: 'The ID must be a number',
 						},
 					},
