@@ -2,8 +2,6 @@ import type { INodeProperties } from 'n8n-workflow';
 import {
 	accountSelector,
 	conversationSelector,
-	messageTypeOptions,
-	typingStatusOptions,
 } from '../../shared/descriptions';
 
 const showOnlyForMessage = {
@@ -86,7 +84,15 @@ const messageFields: INodeProperties[] = [
 		},
 	},
 	{
-		...messageTypeOptions,
+    displayName: 'Message Type',
+    name: 'messageType',
+    type: 'options',
+    default: 'outgoing',
+    options: [
+      { name: 'Outgoing', value: 'outgoing' },
+      { name: 'Incoming', value: 'incoming' },
+      { name: 'Activity', value: 'activity' },
+    ],
 		displayOptions: {
 			show: {
 				...showOnlyForMessage,
@@ -122,7 +128,14 @@ const messageFields: INodeProperties[] = [
 		},
 	},
 	{
-		...typingStatusOptions,
+		displayName: 'Typing Status',
+    name: 'typingStatus',
+    type: 'options',
+    default: 'on',
+    options: [
+      { name: 'Typing On', value: 'on' },
+      { name: 'Typing Off', value: 'off' },
+    ],
 		displayOptions: {
 			show: {
 				...showOnlyForMessage,

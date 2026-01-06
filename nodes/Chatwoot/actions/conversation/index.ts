@@ -4,8 +4,6 @@ import {
   inboxSelector,
   conversationSelector,
   contactSelector,
-  conversationStatusOptions,
-  customAttributesField,
 } from '../../shared/descriptions';
 
 const showOnlyForConversation = {
@@ -158,7 +156,16 @@ const conversationFields: INodeProperties[] = [
     },
   },
   {
-    ...conversationStatusOptions,
+    displayName: 'Status',
+    name: 'status',
+    type: 'options',
+    default: 'resolved',
+    options: [
+      { name: 'Open', value: 'open' },
+      { name: 'Resolved', value: 'resolved' },
+      { name: 'Pending', value: 'pending' },
+      { name: 'Snoozed', value: 'snoozed' },
+    ],
     displayOptions: {
       show: {
         ...showOnlyForConversation,
@@ -297,7 +304,11 @@ const conversationFields: INodeProperties[] = [
     },
     options: [
       {
-        ...customAttributesField,
+        displayName: 'Custom Attributes',
+        name: 'customAttributes',
+        type: 'json',
+        default: '{}',
+        description: 'Custom attributes as JSON object',
       },
       {
         displayName: 'Source ID',
