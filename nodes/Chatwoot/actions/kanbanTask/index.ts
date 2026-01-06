@@ -1,3 +1,4 @@
+/* eslint-disable n8n-nodes-base/node-param-collection-type-unsorted-items */
 import type { INodeProperties } from 'n8n-workflow';
 import {
   accountSelector,
@@ -76,6 +77,10 @@ const kanbanTaskFields: INodeProperties[] = [
 				operation: ['create', 'delete'],
 			},
 		},
+		typeOptions: {
+			...kanbanBoardSelector.typeOptions,
+			loadOptionsDependsOn: ['accountId'],
+		},
 	},
 	{
 		...kanbanBoardSelector,
@@ -84,6 +89,10 @@ const kanbanTaskFields: INodeProperties[] = [
 				...showOnlyForKanbanTask,
 				operation: ['get', 'list', 'move', 'update'],
 			},
+		},
+		typeOptions: {
+			...kanbanBoardSelector.typeOptions,
+			loadOptionsDependsOn: ['accountId'],
 		},
 	},
 	{
@@ -94,6 +103,10 @@ const kanbanTaskFields: INodeProperties[] = [
 				operation: ['create', 'move'],
 			},
 		},
+		typeOptions: {
+			...kanbanStepSelector.typeOptions,
+			loadOptionsDependsOn: ['kanbanBoardId'],
+		},
 	},
 	{
 		...kanbanTaskSelector,
@@ -102,6 +115,10 @@ const kanbanTaskFields: INodeProperties[] = [
 				...showOnlyForKanbanTask,
 				operation: ['get', 'update', 'delete', 'move'],
 			},
+		},
+		typeOptions: {
+			...kanbanTaskSelector.typeOptions,
+			loadOptionsDependsOn: ['kanbanBoardId'],
 		},
 	},
 	{
@@ -167,6 +184,51 @@ const kanbanTaskFields: INodeProperties[] = [
 				default: '',
 				description: 'End/due date of the task',
 			},
+			{
+				displayName: 'Agent Names or IDs',
+				name: 'assigned_agent_ids',
+				description: 'Agents assigned to the task. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+				type: 'multiOptions',
+				typeOptions: {
+					loadOptionsMethod: 'loadKanbanBoardAgentsOptions',
+					loadOptionsDependsOn: ['kanbanBoardId'],
+				},
+				default: [],
+			},
+			{
+				displayName: 'Label Names or IDs',
+				name: 'labels',
+				description: 'Labels assigned to the task. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+				type: 'multiOptions',
+				typeOptions: {
+					loadOptionsMethod: 'loadLabelsWithTitleValueOptions',
+					loadOptionsDependsOn: ['accountId'],
+				},
+				default: [],
+
+			},
+			{
+				displayName: 'Conversation Names or IDs',
+				name: 'conversation_ids',
+				description: 'Conversations linked to the task. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+				type: 'multiOptions',
+				typeOptions: {
+					loadOptionsMethod: 'loadKanbanBoardConversationsOptions',
+					loadOptionsDependsOn: ['kanbanBoardId'],
+				},
+				default: [],
+			},
+			{
+				displayName: 'Contact Names or IDs',
+				name: 'contact_ids',
+				description: 'Contacts linked to the task. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+				type: 'multiOptions',
+				typeOptions: {
+					loadOptionsMethod: 'loadContactsOptions',
+					loadOptionsDependsOn: ['accountId'],
+				},
+				default: [],
+			}
 		],
 	},
 	{

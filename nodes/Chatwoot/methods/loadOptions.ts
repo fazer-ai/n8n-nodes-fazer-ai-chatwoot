@@ -5,8 +5,11 @@ import {
   ChatwootInbox,
   ChatwootCustomAttributeDefinition,
   ChatwootLabel,
-  ChatwootTeam  } from "./resourceMapping";
-import { chatwootApiRequest, getAccountId } from "../shared/transport";
+  ChatwootTeam,
+  ChatwootConversation,
+  ChatwootContact,
+  ChatwootKanbanBoard} from "./resourceMapping";
+import { chatwootApiRequest, getAccountId, getKanbanBoardId } from "../shared/transport";
 
 /**
  * Get all agents for the selected account (for loadOptions)
@@ -82,9 +85,9 @@ export async function loadTeamsOptions(
 
 /**
  * Get all labels for the selected account (for loadOptions)
+ * The value is label title instead of ID because Chatwoot API requires titles when adding/removing labels from conversations
 */
-// FIX: It's not loading the labels
-export async function loadLabelsOptions(
+export async function loadLabelsWithTitleValueOptions(
   this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
   const accountId = getAccountId.call(this, 0);
@@ -157,5 +160,101 @@ export async function loadCustomAttributeDefinitionsOptions(
   return (response || []).map((attr: ChatwootCustomAttributeDefinition) => ({
     name: attr.attribute_display_name,
     value: attr.id,
+  }));
+}
+
+/**
+ * Get all agents for the selected kanban board (for loadOptions)
+ */
+export async function loadKanbanBoardAgentsOptions(
+  this: ILoadOptionsFunctions,
+): Promise<INodePropertyOptions[]> {
+  const accountId = getAccountId.call(this, 0);
+  if (!accountId) {
+    return [];
+  }
+  const boardId = getKanbanBoardId.call(this, 0);
+  if (!boardId) {
+    return [];
+  }
+
+  const response = (await chatwootApiRequest.call(
+    this,
+    'GET',
+    `/api/v1/accounts/${accountId}/kanban/boards/${boardId}`,
+  )) as ChatwootKanbanBoard;
+  const agents = response.assigned_agents || [];
+  return (agents as ChatwootAgent[]).map((agent) => ({
+    name: agent.name || agent.email || `Agent ${agent.id}`,
+    value: agent.id,
+  }));
+}
+
+/**
+ * Get all conversations for the selected kanban board (for loadOptions)
+ */
+export async function loadKanbanBoardConversationsOptions(
+  this: ILoadOptionsFunctions,
+): Promise<INodePropertyOptions[]> {
+  const accountId = getAccountId.call(this, 0);
+  if (!accountId) {
+    return [];
+  }
+  const boardId = getKanbanBoardId.call(this, 0);
+  if (!boardId) {
+    return [];
+  }
+
+  const board = (await chatwootApiRequest.call(
+    this,
+    'GET',
+    `/api/v1/accounts/${accountId}/kanban/boards/${boardId}`,
+  )) as ChatwootKanbanBoard;
+
+  const inboxes = board.assigned_inboxes || [];
+  let conversations: INodePropertyOptions[] = [];
+
+  for (const inbox of inboxes) {
+    const response = (await chatwootApiRequest.call(
+      this,
+      'GET',
+      `/api/v1/accounts/${accountId}/conversations`,
+      undefined,
+      { inbox_id: inbox.id },
+    )) as ChatwootPayloadResponse<ChatwootConversation>;
+
+    conversations = conversations.concat(response.data?.payload?.map((conversation) => ({
+      name: `(${inbox.name}) ${conversation.meta?.sender?.name || conversation.meta?.sender?.email || 'Unknown'}`,
+      value: conversation.id,
+    })) ?? [])
+  }
+
+  return conversations;
+}
+
+/**
+ * Get all contacts for the selected kanban board (for loadOptions)
+*/
+export async function loadContactsOptions(
+  this: ILoadOptionsFunctions,
+): Promise<INodePropertyOptions[]> {
+  const accountId = getAccountId.call(this, 0);
+  if (!accountId) {
+    return [];
+  }
+
+  const response = (await chatwootApiRequest.call(
+    this,
+    'GET',
+    `/api/v1/accounts/${accountId}/contacts`,
+  )) as ChatwootPayloadResponse<ChatwootContact> | ChatwootContact[];
+  const contacts =
+    (response as ChatwootPayloadResponse<ChatwootContact>).payload ||
+    (response as ChatwootContact[]) ||
+    [];
+
+  return (contacts as ChatwootContact[]).map((contact) => ({
+    name: contact.name || contact.email || `Contact ${contact.id}`,
+    value: contact.id,
   }));
 }

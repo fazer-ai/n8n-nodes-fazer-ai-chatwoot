@@ -146,9 +146,6 @@ export async function searchConversations(
 	}
 
 	const inboxId = getInboxId.call(this, 0);
-	if (inboxId === '') {
-		return { results: [] };
-	}
 
 	let endpoint = `/api/v1/accounts/${accountId}/conversations`;
 	if (inboxId) {
@@ -167,7 +164,7 @@ export async function searchConversations(
 
 	let results = (conversations as ChatwootConversation[]).map(
 		(conv: ChatwootConversation) => ({
-			name: `#${conv.id} - ${conv.meta?.sender?.name || 'Unknown'}`,
+			name: `#${conv.id} - ${conv.meta?.sender?.name || conv.meta?.sender?.email || 'Unknown'}`,
 			value: String(conv.id),
 		}),
 	);

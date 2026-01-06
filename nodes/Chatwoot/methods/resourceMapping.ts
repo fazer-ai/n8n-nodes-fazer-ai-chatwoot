@@ -15,6 +15,7 @@ export interface ChatwootConversation {
   meta?: {
     sender?: {
       name?: string;
+      email?: string;
     };
   };
 }
@@ -60,6 +61,8 @@ export interface ChatwootPayloadResponse<T> {
 export interface ChatwootKanbanBoard {
   id: number;
   name: string;
+  assigned_agents: ChatwootAgent[];
+  assigned_inboxes: ChatwootInbox[];
 }
 
 export interface ChatwootKanbanStep {
