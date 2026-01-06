@@ -81,10 +81,10 @@ export async function loadTeamsOptions(
   }));
 }
 
-
 /**
  * Get all labels for the selected account (for loadOptions)
- */
+*/
+// FIX: It's not loading the labels
 export async function loadLabelsOptions(
   this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
