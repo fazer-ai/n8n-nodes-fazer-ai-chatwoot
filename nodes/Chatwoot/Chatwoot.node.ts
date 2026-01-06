@@ -18,7 +18,7 @@ import type {
 	LabelOperation,
 	ProfileOperation,
 	TeamOperation,
-} from './actions/types';
+} from './actions/node.type';
 
 import { profileDescription, executeProfileOperation } from './actions/profile';
 import { accountDescription, executeAccountOperation } from './actions/account';
