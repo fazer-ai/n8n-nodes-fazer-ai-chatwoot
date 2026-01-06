@@ -18,19 +18,19 @@ import type {
 	LabelOperation,
 	ProfileOperation,
 	TeamOperation,
-} from './resources/types';
+} from './actions/types';
 
-import { profileDescription, executeProfileOperation } from './resources/profile';
-import { accountDescription, executeAccountOperation } from './resources/account';
-import { inboxDescription, executeInboxOperation } from './resources/inbox';
-import { contactDescription, executeContactOperation } from './resources/contact';
-import { conversationDescription, executeConversationOperation } from './resources/conversation';
-import { customAttributeDescription, executeCustomAttributeOperation } from './resources/customAttribute';
-import { labelDescription, executeLabelOperation } from './resources/label';
-import { kanbanBoardDescription, executeKanbanBoardOperation } from './resources/kanbanBoard';
-import { kanbanStepDescription, executeKanbanStepOperation } from './resources/kanbanStep';
-import { kanbanTaskDescription, executeKanbanTaskOperation } from './resources/kanbanTask';
-import { teamDescription, executeTeamOperation } from './resources/team';
+import { profileDescription, executeProfileOperation } from './actions/profile';
+import { accountDescription, executeAccountOperation } from './actions/account';
+import { inboxDescription, executeInboxOperation } from './actions/inbox';
+import { contactDescription, executeContactOperation } from './actions/contact';
+import { conversationDescription, executeConversationOperation } from './actions/conversation';
+import { customAttributeDescription, executeCustomAttributeOperation } from './actions/customAttribute';
+import { labelDescription, executeLabelOperation } from './actions/label';
+import { kanbanBoardDescription, executeKanbanBoardOperation } from './actions/kanbanBoard';
+import { kanbanStepDescription, executeKanbanStepOperation } from './actions/kanbanStep';
+import { kanbanTaskDescription, executeKanbanTaskOperation } from './actions/kanbanTask';
+import { teamDescription, executeTeamOperation } from './actions/team';
 
 import {
 	searchAccounts,

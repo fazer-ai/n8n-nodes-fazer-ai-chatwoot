@@ -17,7 +17,7 @@ import {
 	fetchWebhooks,
 	createWebhook,
 	deleteWebhook,
-} from './resources/webhook';
+} from './actions/webhook';
 import { chatwootApiRequest } from './shared/transport';
 
 function extractAccountId(context: IHookFunctions): number {
