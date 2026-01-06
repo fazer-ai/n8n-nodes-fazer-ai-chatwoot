@@ -4,7 +4,6 @@ import {
 	conversationSelector,
 	messageTypeOptions,
 	typingStatusOptions,
-	responseFilterFields,
 } from '../../shared/descriptions';
 
 const showOnlyForMessage = {
@@ -201,15 +200,6 @@ const messageFields: INodeProperties[] = [
 				description: 'Get messages before this message ID',
 			},
 		],
-	},
-	{
-		...responseFilterFields,
-		displayOptions: {
-			show: {
-				...showOnlyForMessage,
-				operation: ['getAll'],
-			},
-		},
 	},
 ];
 

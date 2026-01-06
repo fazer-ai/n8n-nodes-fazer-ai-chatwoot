@@ -4,7 +4,6 @@ import {
 	inboxSelector,
 	webhookSelector,
 	webhookEventsSelector,
-	responseFilterFields,
 } from '../../shared/descriptions';
 
 const showOnlyForWebhook = {
@@ -156,15 +155,6 @@ const webhookFields: INodeProperties[] = [
 			show: {
 				...showOnlyForWebhook,
 				operation: ['create'],
-			},
-		},
-	},
-	{
-		...responseFilterFields,
-		displayOptions: {
-			show: {
-				...showOnlyForWebhook,
-				operation: ['getAll'],
 			},
 		},
 	},
