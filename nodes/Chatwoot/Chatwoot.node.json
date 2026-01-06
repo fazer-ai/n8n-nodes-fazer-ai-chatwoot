@@ -1,0 +1,13 @@
+{
+	"node": "n8n-nodes-base.chatwoot",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Communication", "Sales", "Utility"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://www.chatwoot.com/hc/user-guide/articles/1757445004-how-to-find-your-personal-access-token-in-chatwoot"
+			}
+		]
+	}
+}
