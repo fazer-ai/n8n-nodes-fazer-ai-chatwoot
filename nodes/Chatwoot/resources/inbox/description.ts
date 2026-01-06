@@ -1,5 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { accountSelector, inboxSelector, whatsappSpecialInboxInboxSelector, createFazerAiOperationNotice } from '../../shared/descriptions';
+import { accountSelector, inboxSelector, whatsappSpecialInboxInboxSelector, chatwootFazerAiOnlyOperation } from '../../shared/descriptions';
 
 const showOnlyForInbox = {
 	resource: ['inbox'],
@@ -55,7 +55,7 @@ const inboxOperations: INodeProperties[] = [
 
 const inboxFields: INodeProperties[] = [
 	{
-		...createFazerAiOperationNotice('On WhatsApp'),
+		...chatwootFazerAiOnlyOperation('On WhatsApp'),
 		displayOptions: {
 			show: {
 				...showOnlyForInbox,
@@ -64,7 +64,7 @@ const inboxFields: INodeProperties[] = [
 		},
 	},
 	{
-		...createFazerAiOperationNotice('WhatsApp Disconnect'),
+		...chatwootFazerAiOnlyOperation('WhatsApp Disconnect'),
 		displayOptions: {
 			show: {
 				...showOnlyForInbox,
@@ -73,7 +73,7 @@ const inboxFields: INodeProperties[] = [
 		},
 	},
 	{
-		...createFazerAiOperationNotice('WhatsApp Get QR Code'),
+		...chatwootFazerAiOnlyOperation('WhatsApp Get QR Code'),
 		displayOptions: {
 			show: {
 				...showOnlyForInbox,

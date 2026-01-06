@@ -5,7 +5,7 @@ import type { INodeProperties } from 'n8n-workflow';
  * @param operationName - The name of the operation (e.g., "On WhatsApp", "Get QR Code")
  * @returns INodeProperties notice configuration
  */
-export function createFazerAiOperationNotice(operationName: string): INodeProperties {
+export function chatwootFazerAiOnlyOperation(operationName: string): INodeProperties {
 	return {
 		displayName: `The ${operationName} operation is only available on <a href="https://github.com/fazer-ai/chatwoot/pkgs/container/chatwoot" target="_blank">Chatwoot fazer.ai</a>`,
 		name: 'fazerAiNotice',
