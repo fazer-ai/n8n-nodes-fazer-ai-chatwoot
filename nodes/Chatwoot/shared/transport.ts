@@ -2,19 +2,6 @@ import type { IDataObject, IExecuteFunctions, IHttpRequestOptions, ILoadOptionsF
 import { NodeApiError } from 'n8n-workflow';
 
 /**
- * Get the Chatwoot API base URL from credentials
- */
-export async function getBaseUrl(this: IExecuteFunctions | ILoadOptionsFunctions | IHookFunctions): Promise<string> {
-	const credentials = await this.getCredentials('chatwootApi');
-	let url = credentials.url as string;
-	// Remove trailing slash if present
-	if (url.endsWith('/')) {
-		url = url.slice(0, -1);
-	}
-	return url;
-}
-
-/**
  * Make an authenticated request to the Chatwoot API
  */
 export async function chatwootApiRequest(
@@ -54,67 +41,6 @@ export async function chatwootApiRequest(
 			message: `Chatwoot API error: ${(error as Error).message}`,
 		});
 	}
-}
-
-/**
- * Make an authenticated request with pagination support
- */
-export async function chatwootApiRequestAllItems(
-	this: IExecuteFunctions | ILoadOptionsFunctions,
-	method: 'GET' | 'POST',
-	endpoint: string,
-	body?: IDataObject,
-	query?: IDataObject,
-	dataKey?: string,
-): Promise<unknown[]> {
-	const returnData: unknown[] = [];
-	let page = 1;
-	const perPage = 100;
-
-	query = query || {};
-	query.page = page;
-	query.per_page = perPage;
-
-	let hasMore = true;
-
-	while (hasMore) {
-		const response = await chatwootApiRequest.call(this, method, endpoint, body, query);
-
-		let items: unknown[];
-
-		if (dataKey) {
-			items = (response as IDataObject)[dataKey] as unknown[] || [];
-		} else if (Array.isArray(response)) {
-			items = response;
-		} else if ((response as IDataObject).payload) {
-			items = (response as IDataObject).payload as unknown[] || [];
-		} else {
-			const responseObj = response as IDataObject;
-			const dataObj = responseObj.data as IDataObject | undefined;
-			if (dataObj && dataObj.payload) {
-				items = dataObj.payload as unknown[] || [];
-			} else {
-				items = [response];
-			}
-		}
-
-		returnData.push(...items);
-
-		// Check if there are more pages
-		if (items.length < perPage) {
-			hasMore = false;
-		} else {
-			page++;
-			query.page = page;
-		}
-
-		// Safety limit
-		if (page > 100) {
-			hasMore = false;
-		}
-	}
-
-	return returnData;
 }
 
 /**
