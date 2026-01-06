@@ -228,18 +228,6 @@ export const customAttributesField: INodeProperties = {
 };
 
 /**
- * Additional fields collection - para campos extras opcionais
- */
-export const additionalFieldsCollection: INodeProperties = {
-	displayName: 'Additional Fields',
-	name: 'additionalFields',
-	type: 'collection',
-	placeholder: 'Add Field',
-	default: {},
-	options: [],
-};
-
-/**
  * Conversation status options
  */
 export const conversationStatusOptions: INodeProperties = {
