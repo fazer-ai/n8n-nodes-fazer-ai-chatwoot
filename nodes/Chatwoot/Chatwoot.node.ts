@@ -40,7 +40,7 @@ export class Chatwoot implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Chatwoot fazer.ai',
 		name: 'chatwoot',
-		icon: 'file:../../icons/chatwoot.svg',
+		icon: 'file:../../icons/fazer-ai.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{ $parameter["operation"] + ": " + $parameter["resource"] }}',

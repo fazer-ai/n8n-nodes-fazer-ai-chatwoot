@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 176 176" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1.213351,0,0,1.213351,-22.56973,-18.055051)">
+        <g transform="matrix(1,0,0,1,19,0)">
+            <path d="M22.018,96.728C22.271,91.345 28.256,88.254 32.791,91.164L49.44,101.847C53.975,104.758 53.659,111.486 48.871,113.958L31.295,123.035C26.507,125.508 20.838,121.87 21.091,116.487L22.018,96.728Z" style="fill-rule:nonzero;"/>
+        </g>
+        <g transform="matrix(1,0,0,1,19,0)">
+            <path d="M44.028,140.28C41.06,135.783 44.073,129.759 49.452,129.436L69.198,128.254C74.577,127.932 78.287,133.553 75.877,138.373L67.028,156.064C64.617,160.884 57.894,161.286 54.925,156.789L44.028,140.28Z" style="fill-rule:nonzero;"/>
+        </g>
+        <g transform="matrix(1,0,0,1,19,0)">
+            <path d="M72.624,20.685C73.549,15.377 79.874,13.06 84.009,16.516L99.187,29.202C103.322,32.657 102.165,39.293 97.105,41.146L78.53,47.948C73.47,49.801 68.302,45.481 69.227,40.172L72.624,20.685Z" style="fill-rule:nonzero;"/>
+        </g>
+        <g transform="matrix(1,0,0,1,19,0)">
+            <path d="M25.277,53.614C20.238,51.703 19.158,45.054 23.332,41.646L38.654,29.135C42.828,25.727 49.126,28.116 49.991,33.434L53.164,52.96C54.029,58.278 48.811,62.538 43.773,60.628L25.277,53.614Z" style="fill-rule:nonzero;"/>
+        </g>
+        <g transform="matrix(1,0,0,1,19,0)">
+            <path d="M94.024,84.737C89.732,81.478 90.578,74.796 95.546,72.709L113.784,65.049C118.752,62.962 124.116,67.036 123.44,72.382L120.955,92.006C120.278,97.352 114.068,99.961 109.777,96.701L94.024,84.737Z" style="fill-rule:nonzero;"/>
+        </g>
+        <g transform="matrix(1,0,0,1,19,0)">
+            <circle cx="63.578" cy="74.637" r="15.17"/>
+        </g>
+        <g transform="matrix(1,0,0,1,19,0)">
+            <circle cx="90.278" cy="114.686" r="15.17"/>
+        </g>
+    </g>
+</svg>

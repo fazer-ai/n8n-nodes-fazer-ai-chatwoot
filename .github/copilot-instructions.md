@@ -12,7 +12,7 @@
 - Dynamic dropdowns and resource-locator helpers live in `nodes/Chatwoot/listSearch/`. Add new list-search or load-option handlers here, then expose them via the `methods` object of the node.
 - HTTP helpers and shared logic live in `nodes/Chatwoot/shared/` (e.g., `transport.ts`). Reuse utilities here instead of duplicating REST logic inside `execute`.
 - Credentials are defined in `credentials/ChatwootApi.credentials.ts`. Align any property or display-name changes with the `credentials` entry in `package.json`.
-- Static assets belong under `icons/` (the node uses `icons/chatwoot.svg`). Build output is emitted to `dist/` and is the only folder published (see the `"files"` array in `package.json`).
+- Static assets belong under `icons/` (the node uses `icons/fazer-ai.svg`). Build output is emitted to `dist/` and is the only folder published (see the `"files"` array in `package.json`).
 
 ## Coding Conventions
 
