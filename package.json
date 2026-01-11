@@ -1,9 +1,9 @@
 {
 	"name": "@fazer-ai/n8n-nodes-chatwoot",
 	"version": "0.1.0",
-	"description": "Fazer.ai chatwoot integration with n8n",
+	"description": "fazer.ai Chatwoot integration with n8n",
 	"license": "MIT",
-	"homepage": "",
+	"homepage": "https://fazer.ai",
 	"keywords": [
 		"n8n-community-node-package",
 		"fazer-ai",
@@ -11,11 +11,11 @@
 	],
 	"author": {
 		"name": "Cayo Oliveira",
-		"email": "cayoproliveira@gmail.com"
+		"email": "contato@fazer.ai"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/CayoPOliveira/n8n-nodes-chatwoot.git"
+		"url": "https://github.com/fazer-ai/n8n-nodes-fazer-ai-chatwoot.git"
 	},
 	"scripts": {
 		"build": "n8n-node build",
