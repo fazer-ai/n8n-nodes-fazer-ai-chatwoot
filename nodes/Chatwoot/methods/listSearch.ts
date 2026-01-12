@@ -14,10 +14,12 @@ import {
 	ChatwootKanbanTask,
 	ChatwootLabel,
 	ChatwootPayloadResponse,
+	ChatwootPayloadResponseWithData,
 	ChatwootProfileResponse,
 	ChatwootTeam,
 	ChatwootTeamMember,
-	ChatwootWebhook } from './resourceMapping';
+	ChatwootWebhook
+} from './resourceMapping';
 
 /**
  * Get all accounts available to the user (for resourceLocator)
@@ -139,44 +141,33 @@ export async function searchWhatsappSpecialProvidersInboxes(
 export async function searchConversations(
 	this: ILoadOptionsFunctions,
 	filter?: string,
+	paginationToken?: string,
 ): Promise<INodeListSearchResult> {
 	const accountId = getAccountId.call(this, 0);
-	if (accountId === '') {
+	const inboxId = getInboxId.call(this, 0);
+	if (accountId === '' || inboxId === '') {
 		return { results: [] };
 	}
 
-	const inboxId = getInboxId.call(this, 0);
+	const page = paginationToken ? Number(paginationToken) : 1;
 
-	let endpoint = `/api/v1/accounts/${accountId}/conversations`;
-	if (inboxId) {
-		endpoint += `?inbox_id=${inboxId}`;
-	}
+	const response = (await chatwootApiRequest.call(
+		this,
+		'GET',
+		`/api/v1/accounts/${accountId}/conversations`,
+		undefined,
+		{ q: filter || '', page, inbox_id: inboxId || undefined },
+	)) as ChatwootPayloadResponseWithData<ChatwootConversation>;
 
-	const response = (await chatwootApiRequest.call(this, 'GET', endpoint)) as
-	| ChatwootPayloadResponse<ChatwootConversation>
-	| ChatwootConversation[];
-	const responseObj = response as ChatwootPayloadResponse<ChatwootConversation>;
-	const conversations =
-		responseObj.data?.payload ||
-		responseObj.payload ||
-		(response as ChatwootConversation[]) ||
-		[];
-
-	let results = (conversations as ChatwootConversation[]).map(
-		(conv: ChatwootConversation) => ({
-			name: `#${conv.id} - ${conv.meta?.sender?.name || conv.meta?.sender?.email || 'Unknown'}`,
-			value: String(conv.id),
-		}),
+	const results = response.data.payload.map(
+		({ id, meta }: ChatwootConversation) => {
+			const { name, email, phone_number } = meta.sender;
+			return {
+				name: `#${id} - ${name || email || phone_number || 'Unknown'}`,
+				value: String(id),
+			};
+		},
 	);
-
-	if (filter) {
-		const filterLower = filter.toLowerCase();
-		results = results.filter(
-			(item) =>
-				item.name.toLowerCase().includes(filterLower) ||
-				item.value.includes(filter),
-		);
-	}
 
 	return { results };
 }
@@ -187,37 +178,33 @@ export async function searchConversations(
 export async function searchContacts(
 	this: ILoadOptionsFunctions,
 	filter?: string,
+	paginationToken?: string,
 ): Promise<INodeListSearchResult> {
 	const accountId = getAccountId.call(this, 0);
 	if (accountId === '') {
 		return { results: [] };
 	}
 
+	let endpoint = `/api/v1/accounts/${accountId}/contacts`;
+	if (filter) {
+		endpoint += '/search';
+	}
+
+	const page = paginationToken ? Number(paginationToken) : 1;
 	const response = (await chatwootApiRequest.call(
 		this,
 		'GET',
-		`/api/v1/accounts/${accountId}/contacts`,
-	)) as ChatwootPayloadResponse<ChatwootContact> | ChatwootContact[];
-	const contacts =
-		(response as ChatwootPayloadResponse<ChatwootContact>).payload ||
-		(response as ChatwootContact[]) ||
-		[];
+		endpoint,
+		undefined,
+		{ q: filter || '', page },
+	)) as ChatwootPayloadResponse<ChatwootContact>;
 
-	let results = (contacts as ChatwootContact[]).map(
+	const results = response.payload.map(
 		(contact: ChatwootContact) => ({
-			name: contact.name || contact.email || `Contact ${contact.id}`,
+			name: contact.name || contact.email || `Contact #${contact.id}`,
 			value: String(contact.id),
 		}),
 	);
-
-	if (filter) {
-		const filterLower = filter.toLowerCase();
-		results = results.filter(
-			(item) =>
-				item.name.toLowerCase().includes(filterLower) ||
-				item.value.includes(filter),
-		);
-	}
 
 	return { results };
 }

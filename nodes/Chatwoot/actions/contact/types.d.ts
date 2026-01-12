@@ -1,8 +1,9 @@
 export type ContactOperation =
 	| 'create'
 	| 'get'
-	| 'list'
+	| 'update'
 	| 'delete'
+	| 'list'
 	| 'search'
 	| 'setCustomAttributes'
 	| 'destroyCustomAttributes';

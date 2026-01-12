@@ -8,7 +8,9 @@ import {
   ChatwootTeam,
   ChatwootConversation,
   ChatwootContact,
-  ChatwootKanbanBoard} from "./resourceMapping";
+  ChatwootKanbanBoard,
+  ChatwootPayloadResponseWithData,
+} from "./resourceMapping";
 import { chatwootApiRequest, getAccountId, getKanbanBoardId } from "../shared/transport";
 
 /**
@@ -221,7 +223,7 @@ export async function loadKanbanBoardConversationsOptions(
       `/api/v1/accounts/${accountId}/conversations`,
       undefined,
       { inbox_id: inbox.id },
-    )) as ChatwootPayloadResponse<ChatwootConversation>;
+    )) as ChatwootPayloadResponseWithData<ChatwootConversation>;
 
     conversations = conversations.concat(response.data?.payload?.map((conversation) => ({
       name: `(${inbox.name}) ${conversation.meta?.sender?.name || conversation.meta?.sender?.email || 'Unknown'}`,

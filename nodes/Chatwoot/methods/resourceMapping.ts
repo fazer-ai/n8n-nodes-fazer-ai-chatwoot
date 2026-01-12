@@ -12,10 +12,11 @@ export interface ChatwootInbox {
 
 export interface ChatwootConversation {
   id: number;
-  meta?: {
-    sender?: {
+  meta: {
+    sender: {
       name?: string;
       email?: string;
+      phone_number?: string;
     };
   };
 }
@@ -52,10 +53,15 @@ export interface ChatwootProfileResponse {
 }
 
 export interface ChatwootPayloadResponse<T> {
-  payload?: T[];
-  data?: {
-    payload?: T[];
+  meta: {
+    count: number;
+    current_page: number;
   };
+  payload: T[];
+}
+
+export interface ChatwootPayloadResponseWithData<T> {
+  data: ChatwootPayloadResponse<T>;
 }
 
 export interface ChatwootKanbanBoard {

@@ -17,6 +17,7 @@ const contactOperations: INodeProperties[] = [
     displayOptions: {
       show: showOnlyForContact,
     },
+    // eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
     options: [
       {
         name: 'Create Contact',
@@ -25,34 +26,28 @@ const contactOperations: INodeProperties[] = [
         action: 'Create a contact',
       },
       {
-        name: 'Delete',
-        value: 'delete',
-        description: 'Delete a contact',
-        action: 'Delete contact',
-      },
-      {
-        name: 'Destroy Custom Attributes',
-        value: 'destroyCustomAttributes',
-        description: 'Destroy all custom attributes of a contact',
-        action: 'Destroy all custom attributes of contact',
-      },
-      {
         name: 'Get',
         value: 'get',
         description: 'Get a contact information',
         action: 'Get contact',
       },
       {
+        name: 'Update',
+        value: 'update',
+        description: 'Update a contact information',
+        action: 'Update contact',
+      },
+      {
+        name: 'Delete',
+        value: 'delete',
+        description: 'Delete a contact',
+        action: 'Delete contact',
+      },
+      {
         name: 'List',
         value: 'list',
         description: 'List contacts',
         action: 'List contacts',
-      },
-      {
-        name: 'On Whatsapp',
-        value: 'onWhatsapp',
-        description: 'Mark contact as on WhatsApp',
-        action: 'Mark contact as on whats app',
       },
       {
         name: 'Search',
@@ -65,7 +60,13 @@ const contactOperations: INodeProperties[] = [
         value: 'setCustomAttributes',
         description: 'Set custom attributes on a contact',
         action: 'Set custom attribute on contact',
-      }
+      },
+      {
+        name: 'Destroy Custom Attributes',
+        value: 'destroyCustomAttributes',
+        description: 'Destroy all custom attributes of a contact',
+        action: 'Destroy all custom attributes of contact',
+      },
     ],
     default: 'create',
   },
@@ -83,7 +84,7 @@ const contactFields: INodeProperties[] = [
     displayOptions: {
       show: {
         ...showOnlyForContact,
-        operation: ['get', 'update', 'delete', 'setCustomAttributes', 'destroyCustomAttributes', 'onWhatsapp'],
+        operation: ['get', 'update', 'delete', 'setCustomAttributes', 'destroyCustomAttributes'],
       },
     },
   },
@@ -102,6 +103,19 @@ const contactFields: INodeProperties[] = [
     },
   },
   {
+    displayName: 'Name',
+    name: 'nameOptional',
+    type: 'string',
+    default: '',
+    description: 'Name of the contact',
+    displayOptions: {
+      show: {
+        ...showOnlyForContact,
+        operation: ['update'],
+      },
+    },
+  },
+  {
     displayName: 'Phone Number',
     name: 'phoneNumber',
     type: 'string',
@@ -111,7 +125,7 @@ const contactFields: INodeProperties[] = [
     displayOptions: {
       show: {
         ...showOnlyForContact,
-        operation: ['create'],
+        operation: ['create', 'update'],
       },
     },
   },
@@ -125,7 +139,7 @@ const contactFields: INodeProperties[] = [
     displayOptions: {
       show: {
         ...showOnlyForContact,
-        operation: ['create'],
+        operation: ['create', 'update'],
       },
     },
   },
@@ -166,7 +180,7 @@ const contactFields: INodeProperties[] = [
     displayOptions: {
       show: {
         ...showOnlyForContact,
-        operation: ['create'],
+        operation: ['create', 'update'],
       },
     },
     options: [
