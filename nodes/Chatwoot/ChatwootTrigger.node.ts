@@ -9,6 +9,7 @@ import {
 	JsonObject,
 	ILoadOptionsFunctions,
 	INodeListSearchResult,
+	NodeConnectionTypes,
 } from 'n8n-workflow';
 
 import { accountSelector, webhookEventsSelector } from './shared/descriptions';
@@ -114,7 +115,7 @@ export class ChatwootTrigger implements INodeType {
 			name: 'Chatwoot fazer.ai Trigger',
 		},
 		inputs: [],
-		outputs: ['main'],
+		outputs: [NodeConnectionTypes.Main],
 		credentials: [
 			{
 				name: 'chatwootApi',

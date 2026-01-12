@@ -1,8 +1,9 @@
-import type {
-	IExecuteFunctions,
-	INodeExecutionData,
-	INodeType,
-	INodeTypeDescription,
+import {
+	NodeConnectionTypes,
+	type IExecuteFunctions,
+	type INodeExecutionData,
+	type INodeType,
+	type INodeTypeDescription,
 } from 'n8n-workflow';
 
 import type {
@@ -48,8 +49,8 @@ export class Chatwoot implements INodeType {
 		defaults: {
 			name: 'Chatwoot',
 		},
-		inputs: ['main'],
-		outputs: ['main'],
+		inputs: [NodeConnectionTypes.Main],
+		outputs: [NodeConnectionTypes.Main],
 		credentials: [
 			{
 				name: 'chatwootApi',
@@ -59,6 +60,7 @@ export class Chatwoot implements INodeType {
 		codex: {
 			categories: ['Communication', 'Utility'],
 		},
+		usableAsTool: true,
 		properties: [
 			{
 				displayName: 'Resource',
@@ -136,7 +138,6 @@ export class Chatwoot implements INodeType {
 			...kanbanTaskDescription,
 			...teamDescription,
 		],
-		usableAsTool: true,
 	};
 
 	methods = {

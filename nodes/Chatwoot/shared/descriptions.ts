@@ -30,7 +30,7 @@ const resourceSelector = (displayName: string, name: string, description: string
 				displayName: 'From List',
 				name: 'list',
 				type: 'list',
-				placeholder: `Select an ${displayName.toLocaleLowerCase()}...`,
+				placeholder: `Select a${['a','e','i','o','u'].includes(displayName[0].toLowerCase()) ? 'n' : ''} ${displayName.toLocaleLowerCase()}...`,
 				typeOptions: {
 					searchListMethod,
 					searchable: true,
