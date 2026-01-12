@@ -19,36 +19,13 @@ const conversationOperations: INodeProperties[] = [
     displayOptions: {
       show: showOnlyForConversation,
     },
+    // eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
     options: [
-      {
-        name: 'Add Label',
-        value: 'addLabel',
-        description: 'Append a label to conversation',
-        action: 'Append a label to conversation',
-      },
-      {
-        name: 'Assign Agent',
-        value: 'assignAgent',
-        description: 'Assign an agent to conversation',
-        action: 'Assign agent to conversation',
-      },
-      {
-        name: 'Assign Team',
-        value: 'assignTeam',
-        description: 'Assign a team to conversation',
-        action: 'Assign team to conversation',
-      },
       {
         name: 'Create',
         value: 'create',
         description: 'Create a new conversation',
         action: 'Create conversation',
-      },
-      {
-        name: 'Destroy Custom Attributes',
-        value: 'destroyCustomAttributes',
-        description: 'Reset custom attributes in conversation',
-        action: 'Reset custom attributes in conversation',
       },
       {
         name: 'Get',
@@ -63,41 +40,52 @@ const conversationOperations: INodeProperties[] = [
         action: 'List conversations',
       },
       {
-        name: 'List Messages',
-        value: 'listMessages',
-        description: 'List messages in conversation',
-        action: 'List messages in conversation',
-      },
-      {
-        name: 'Remove Label',
-        value: 'removeLabel',
-        description: 'Remove a label from conversation',
-        action: 'Remove label from conversation',
-      },
-      {
-        name: 'Send File',
-        value: 'sendFile',
-        description: 'Send a file message in conversation',
-        action: 'Send file message in conversation',
-
-      },
-      {
         name: 'Send Message',
         value: 'sendMessage',
         description: 'Send a text message in conversation',
         action: 'Send text message in conversation',
       },
       {
-        name: 'Set Custom Attributes',
-        value: 'setCustomAttributes',
-        description: 'Set custom attributes on conversation',
-        action: 'Set custom attributes on conversation',
+        name: 'Send File',
+        value: 'sendFile',
+        description: 'Send a file message in conversation',
+        action: 'Send file message in conversation',
       },
       {
-        name: 'Set Priority',
-        value: 'setPriority',
-        description: 'Set priority for conversation',
-        action: 'Set conversation priority',
+        name: 'List Messages',
+        value: 'listMessages',
+        description: 'List messages in conversation',
+        action: 'List messages in conversation',
+      },
+      {
+        name: 'Assign Agent',
+        value: 'assignAgent',
+        description: 'Assign an agent to conversation',
+        action: 'Assign agent to conversation',
+      },
+      {
+        name: 'Assign Team',
+        value: 'assignTeam',
+        description: 'Assign a team to conversation',
+        action: 'Assign team to conversation',
+      },
+      {
+        name: 'Add Labels',
+        value: 'addLabels',
+        description: 'Append labels to conversation',
+        action: 'Append labels to conversation and keeps other labels intact',
+      },
+      {
+        name: 'Remove Labels',
+        value: 'removeLabels',
+        description: 'Remove labels from conversation',
+        action: 'Remove labels from conversation',
+      },
+      {
+        name: 'Update Labels',
+        value: 'updateLabels',
+        description: 'Update conversation labels',
+        action: 'Update conversation labels replacing existing labels',
       },
       {
         name: 'Toggle Status',
@@ -106,10 +94,22 @@ const conversationOperations: INodeProperties[] = [
         action: 'Toggle conversation status',
       },
       {
-        name: 'Update Labels',
-        value: 'updateLabels',
-        description: 'Update labels to conversation',
-        action: 'Update labels to conversation',
+        name: 'Set Priority',
+        value: 'setPriority',
+        description: 'Set priority for conversation',
+        action: 'Set conversation priority',
+      },
+      {
+        name: 'Set Custom Attributes',
+        value: 'setCustomAttributes',
+        description: 'Set custom attributes on conversation',
+        action: 'Set custom attributes on conversation',
+      },
+      {
+        name: 'Destroy Custom Attributes',
+        value: 'destroyCustomAttributes',
+        description: 'Reset custom attributes in conversation',
+        action: 'Reset custom attributes in conversation',
       },
       {
         name: 'Update Last Seen',
@@ -140,7 +140,7 @@ const conversationFields: INodeProperties[] = [
     displayOptions: {
       show: {
         ...showOnlyForConversation,
-        operation: ['list', 'get', 'toggleStatus', 'assignAgent', 'assignTeam', 'updateLabels', 'setCustomAttribute', 'setPriority', 'sendMessage'],
+        operation: ['list', 'get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'setCustomAttribute', 'setPriority', 'sendMessage'],
       },
     },
   },
@@ -149,7 +149,7 @@ const conversationFields: INodeProperties[] = [
     displayOptions: {
       show: {
         ...showOnlyForConversation,
-        operation: ['get', 'toggleStatus', 'assignAgent', 'assignTeam', 'updateLabels', 'setCustomAttribute', 'setPriority', 'sendMessage'],
+        operation: ['get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'setCustomAttribute', 'setPriority', 'sendMessage'],
       },
     },
   },
@@ -257,14 +257,14 @@ const conversationFields: INodeProperties[] = [
     name: 'labels',
     type: 'multiOptions',
     default: [],
-    description: 'Select labels to add. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+    description: 'Select labels to add or remove. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
     typeOptions: {
       loadOptionsMethod: 'loadLabelsWithTitleValueOptions',
     },
     displayOptions: {
       show: {
         ...showOnlyForConversation,
-        operation: ['updateLabels'],
+        operation: ['addLabels', 'removeLabels', 'updateLabels'],
       },
     },
   },

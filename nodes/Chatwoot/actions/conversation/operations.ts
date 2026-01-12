@@ -20,22 +20,49 @@ export async function executeConversationOperation(
       return getConversation(context, itemIndex);
     case 'list':
       return listConversations(context, itemIndex);
-    case 'toggleStatus':
-      return toggleConversationStatus(context, itemIndex);
+		case 'sendMessage':
+			return sendMessageToConversation(context, itemIndex);
+		case 'sendFile':
+			throw new NodeOperationError(
+				context.getNode(),
+				'The "Send File" operation is not implemented yet.',
+			);
+		case 'listMessages':
+			throw new NodeOperationError(
+				context.getNode(),
+				'The "List Messages" operation is not implemented yet.',
+			);
     case 'assignAgent':
       return assignConversationAgent(context, itemIndex);
     case 'assignTeam':
       return assignConversationTeam(context, itemIndex);
+		case 'addLabels':
+			return addLabelsToConversation(context, itemIndex);
+		case 'removeLabels':
+			return removeLabelsFromConversation(context, itemIndex);
     case 'updateLabels':
       return setConversationLabels(context, itemIndex);
-		case 'sendMessage':
-			return sendMessageToConversation(context, itemIndex);
-    case 'setCustomAttributes':
-      return setConversationCustomAttributes(context, itemIndex);
+    case 'toggleStatus':
+      return toggleConversationStatus(context, itemIndex);
     case 'setPriority':
       return setConversationPriority(context, itemIndex);
-		default:
-			throw new NodeOperationError(context.getNode(), `The operation "${operation}" is not implemented yet!`);
+    case 'setCustomAttributes':
+      return setConversationCustomAttributes(context, itemIndex);
+		case 'destroyCustomAttributes':
+			throw new NodeOperationError(
+				context.getNode(),
+				'The "Destroy Custom Attributes" operation is not implemented yet.',
+			);
+		case 'updateLastSeen':
+			throw new NodeOperationError(
+				context.getNode(),
+				'The "Update Last Seen" operation is not implemented yet.',
+			);
+		case 'updatePresence':
+			throw new NodeOperationError(
+				context.getNode(),
+				'The "Update Presence" operation is not implemented yet.',
+			);
   }
 }
 
@@ -193,6 +220,61 @@ async function setConversationLabels(
 			'POST',
 			`/api/v1/accounts/${accountId}/conversations/${conversationId}/labels`,
 			{ labels },
+		)) as IDataObject
+	};
+}
+
+async function addLabelsToConversation(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): Promise<INodeExecutionData> {
+	const accountId = getAccountId.call(context, itemIndex);
+	const conversationId = getConversationId.call(context, itemIndex);
+	const labelsToAdd = context.getNodeParameter('labels', itemIndex) as string[];
+
+	const conversation = (await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}`,
+	)) as IDataObject;
+
+	const currentLabels = (conversation.labels as string[]) || [];
+	const newLabels = [...new Set([...currentLabels, ...labelsToAdd])];
+
+	return {
+		json: (await chatwootApiRequest.call(
+			context,
+			'POST',
+			`/api/v1/accounts/${accountId}/conversations/${conversationId}/labels`,
+			{ labels: newLabels },
+		)) as IDataObject
+	};
+}
+
+async function removeLabelsFromConversation(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): Promise<INodeExecutionData> {
+	const accountId = getAccountId.call(context, itemIndex);
+	const conversationId = getConversationId.call(context, itemIndex);
+	const labelsToRemove = context.getNodeParameter('labels', itemIndex) as string[];
+
+	const conversation = (await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}`,
+	)) as IDataObject;
+
+	const currentLabels = (conversation.labels as string[]) || [];
+	const labelsToRemoveSet = new Set(labelsToRemove);
+	const newLabels = currentLabels.filter((label) => !labelsToRemoveSet.has(label));
+
+	return {
+		json: (await chatwootApiRequest.call(
+			context,
+			'POST',
+			`/api/v1/accounts/${accountId}/conversations/${conversationId}/labels`,
+			{ labels: newLabels },
 		)) as IDataObject
 	};
 }
