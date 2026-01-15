@@ -204,14 +204,14 @@ export const webhookEventsSelector: INodeProperties = {
 		{ name: 'Conversation Typing Off', value: 'conversation_typing_off' },
 		{ name: 'Conversation Typing On', value: 'conversation_typing_on' },
 		{ name: 'Conversation Updated', value: 'conversation_updated' },
-		{ name: 'Incoming Message', value: 'message_incoming' },
 		{ name: 'Kanban Task Created', value: 'kanban_task_created' },
 		{ name: 'Kanban Task Deleted', value: 'kanban_task_deleted' },
 		{	name: 'Kanban Task Updated', value: 'kanban_task_updated' },
 		{ name: 'Live Chat Widget Opened by the User', value: 'webwidget_triggered' },
 		{	name: 'Message Created', value: 'message_created' },
+		{ name: 'Message Incoming', value: 'message_incoming' },
+		{ name: 'Message Outgoing', value: 'message_outgoing' },
 		{ name: 'Message Updated', value: 'message_updated' },
-		{ name: 'Outgoing Message', value: 'message_outgoing' },
 		{ name: 'Provider Event Received', value: 'provider_event_received' },
 	]
 };
