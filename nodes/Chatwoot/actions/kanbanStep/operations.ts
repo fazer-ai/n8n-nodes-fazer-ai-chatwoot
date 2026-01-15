@@ -37,7 +37,8 @@ async function createStep(
 				{
 					name,
 					description: additionalFields.description ?? '',
-					color: additionalFields.color ?? `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`
+					color: additionalFields.color ?? `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`,
+					cancelled: additionalFields.cancelled ?? false,
 				}
 			},
 		)) as IDataObject

@@ -117,6 +117,13 @@ const kanbanStepFields: INodeProperties[] = [
 				default: '',
 				description: 'Description of the step',
 			},
+			{
+				displayName: 'Cancelled',
+				name: 'cancelled',
+				type: 'boolean',
+				default: true,
+				description: 'Whether this step represents cancelled tasks',
+			}
 		],
 	},
 	{
