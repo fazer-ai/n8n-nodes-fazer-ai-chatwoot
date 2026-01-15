@@ -32,13 +32,19 @@ async function createBoard(
 	const accountId = getAccountId.call(context, itemIndex);
 	const name = context.getNodeParameter('name', itemIndex);
 	const description = context.getNodeParameter('description', itemIndex, '');
+	const automations = context.getNodeParameter('automations', itemIndex, {}) as IDataObject;
+
+	const body = {name, description}
+	if(automations.settings){
+		Object.assign(body, {settings: automations.settings});
+	}
 
 	return {
 		json: (await chatwootApiRequest.call(
 			context,
 			'POST',
 			`/api/v1/accounts/${accountId}/kanban/boards`,
-			{ name, description },
+			body,
 		)) as IDataObject
 	};
 }
@@ -86,13 +92,19 @@ async function updateBoard(
 	const boardId = getKanbanBoardId.call(context, itemIndex);
 	const name = context.getNodeParameter('name', itemIndex);
 	const description = context.getNodeParameter('description', itemIndex, '');
+	const automations = context.getNodeParameter('automations', itemIndex, {}) as IDataObject;
+
+	const body = {name, description}
+	if(automations.settings){
+		Object.assign(body, {settings: automations.settings});
+	}
 
 	return {
 		json: (await chatwootApiRequest.call(
 			context,
 			'PUT',
 			`/api/v1/accounts/${accountId}/kanban/boards/${boardId}`,
-			{ name, description },
+			body,
 		)) as IDataObject
 	};
 }

@@ -109,6 +109,66 @@ const kanbanBoardFields: INodeProperties[] = [
 		},
 	},
 	{
+		displayName: 'Automations',
+		name: 'automations',
+		type: 'fixedCollection',
+		placeholder: 'Configure board automations',
+		default: {},
+		// NOTE: Prevents the field from collapsing when editing other fields like name or description
+		typeOptions: {
+			multipleValues: false,
+		},
+		displayOptions: {
+			show: {
+				...showOnlyForKanbanBoard,
+				operation: ['create', 'update'],
+			},
+		},
+		options: [
+			{
+				displayName: 'Settings',
+				name: 'settings',
+				values: [
+					{
+						displayName: 'Auto-Assign Conversation to Agent',
+						name: 'auto_assign_agent_to_conversation',
+						description: 'Whether to automatically assign an agent to all unassigned conversations linked to a task when that agent is assigned to the task',
+						type: 'boolean',
+						default: true,
+					},
+					{
+						displayName: 'Auto-Assign Task to Agent',
+						name: 'auto_assign_task_to_agent',
+						description: 'Whether to automatically assign a task to an available online agent when the task is created without an assigned agent',
+						type: 'boolean',
+						default: true,
+					},
+					{
+						displayName: 'Auto-Complete Task on Conversation Resolve',
+						name: 'auto_complete_task_on_conversation_resolve',
+						description: 'Whether to automatically move a task to the completed step when its linked conversation is resolved',
+						type: 'boolean',
+						default: true,
+					},
+					{
+						displayName: 'Auto-Create Task for New Conversations',
+						name: 'auto_create_task_for_conversation',
+						description: 'Whether to automatically create a task when a new conversation is created in any of the board\'s assigned inboxes',
+						type: 'boolean',
+						default: true,
+					},
+					{
+						displayName: 'Auto-Resolve Conversations on Task End',
+						name: 'auto_resolve_conversation_on_task_end',
+						description: 'Whether to automatically resolve all linked conversations when a task is moved to a completed or cancelled step',
+						type: 'boolean',
+						default: true,
+					},
+				],
+			},
+		],
+	},
+	{
 		displayName: 'Sort By',
 		name: 'sort',
 		type: 'options',
