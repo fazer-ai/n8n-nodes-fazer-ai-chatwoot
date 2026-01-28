@@ -61,5 +61,5 @@ export class ChatwootApi implements ICredentialType {
 		},
 	};
 
-	icon: Icon = 'file:../icons/fazer-ai.svg';
+	icon: Icon = { light: 'file:../icons/fazer-ai.svg', dark: 'file:../icons/fazer-ai-dark.svg' };
 }
