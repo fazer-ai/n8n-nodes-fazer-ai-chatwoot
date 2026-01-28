@@ -15,11 +15,11 @@ export async function executeProfileOperation(
 async function getProfile(
 	context: IExecuteFunctions,
 ): Promise<INodeExecutionData> {
-	return {
-    json: (await chatwootApiRequest.call(
-	  	context,
-	  	'GET',
-	  	'/api/v1/profile',
-	  )) as IDataObject
-  };
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		'/api/v1/profile',
+	) as IDataObject;
+
+	return { json: result };
 }

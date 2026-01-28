@@ -86,14 +86,14 @@ async function createContact(
 		additional_attributes: additionalAttributes,
 	};
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/contacts`,
-			body,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/contacts`,
+		body,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 // TODO: Figure out a way to clear phone number and email
@@ -140,14 +140,14 @@ async function updateContact(
 		additional_attributes: additionalAttributes,
 	};
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'PUT',
-			`/api/v1/accounts/${accountId}/contacts/${contactId}`,
-			body,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'PUT',
+		`/api/v1/accounts/${accountId}/contacts/${contactId}`,
+		body,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function getContact(
@@ -157,13 +157,13 @@ async function getContact(
 	const accountId = getAccountId.call(context, itemIndex);
 	const contactId = getContactId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'GET',
-			`/api/v1/accounts/${accountId}/contacts/${contactId}`,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/contacts/${contactId}`,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function deleteContact(
@@ -173,13 +173,13 @@ async function deleteContact(
 	const accountId = getAccountId.call(context, itemIndex);
 	const contactId = getContactId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'DELETE',
-			`/api/v1/accounts/${accountId}/contacts/${contactId}`,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'DELETE',
+		`/api/v1/accounts/${accountId}/contacts/${contactId}`,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function listContacts(
@@ -189,15 +189,15 @@ async function listContacts(
 	const accountId = getAccountId.call(context, itemIndex);
 	const page = context.getNodeParameter('page', itemIndex, 1);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'GET',
-			`/api/v1/accounts/${accountId}/contacts`,
-			undefined,
-			{ page },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/contacts`,
+		undefined,
+		{ page },
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function searchContacts(
@@ -210,15 +210,15 @@ async function searchContacts(
 
 	const query: IDataObject = { q: searchQuery, page };
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'GET',
-			`/api/v1/accounts/${accountId}/contacts/search`,
-			undefined,
-			query,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/contacts/search`,
+		undefined,
+		query,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function setCustomAttributes(
@@ -262,14 +262,14 @@ async function setCustomAttributes(
 		customAttributes = JSON.parse(jsonValue);
 	}
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'PATCH',
-			`/api/v1/accounts/${accountId}/contacts/${contactId}`,
-			{ custom_attributes: { ...customAttributes } }
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'PATCH',
+		`/api/v1/accounts/${accountId}/contacts/${contactId}`,
+		{ custom_attributes: { ...customAttributes } }
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function destroyCustomAttributes(
@@ -283,12 +283,12 @@ async function destroyCustomAttributes(
 		itemIndex,
 	) as string[];
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/contacts/${contactId}/destroy_custom_attributes`,
-			{ custom_attributes: customAttributesToDestroy },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/contacts/${contactId}/destroy_custom_attributes`,
+		{ custom_attributes: customAttributesToDestroy },
+	) as IDataObject;
+
+	return { json: result };
 }

@@ -33,14 +33,14 @@ async function createLabel(
 		additionalFields.color = `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
 	}
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/labels`,
-			{ title, ...additionalFields },
-		)) as IDataObject
-	}
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/labels`,
+		{ title, ...additionalFields },
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function listLabels(
@@ -49,13 +49,13 @@ async function listLabels(
 ): Promise<INodeExecutionData> {
 	const accountId = getAccountId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'GET',
-			`/api/v1/accounts/${accountId}/labels`,
-		)) as IDataObject
-	}
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/labels`,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function updateLabel(
@@ -67,14 +67,14 @@ async function updateLabel(
 
 	const body: IDataObject = context.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'PATCH',
-			`/api/v1/accounts/${accountId}/labels/${labelId}`,
-			body,
-		)) as IDataObject
-	}
+	const result = await chatwootApiRequest.call(
+		context,
+		'PATCH',
+		`/api/v1/accounts/${accountId}/labels/${labelId}`,
+		body,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function deleteLabel(
@@ -84,11 +84,11 @@ async function deleteLabel(
 	const accountId = getAccountId.call(context, itemIndex);
 	const labelId = getLabelId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'DELETE',
-			`/api/v1/accounts/${accountId}/labels/${labelId}`,
-		)) as IDataObject
-	}
+	const result = await chatwootApiRequest.call(
+		context,
+		'DELETE',
+		`/api/v1/accounts/${accountId}/labels/${labelId}`,
+	) as IDataObject;
+
+	return { json: result };
 }

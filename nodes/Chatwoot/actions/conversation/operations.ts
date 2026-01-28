@@ -50,13 +50,13 @@ export async function executeConversationOperation(
 	operation: ConversationOperation,
 	itemIndex: number,
 ): Promise<INodeExecutionData> {
-  switch (operation) {
-    case 'create':
-      return createConversation(context, itemIndex);
-    case 'get':
-      return getConversation(context, itemIndex);
-    case 'list':
-      return listConversations(context, itemIndex);
+	switch (operation) {
+		case 'create':
+			return createConversation(context, itemIndex);
+		case 'get':
+			return getConversation(context, itemIndex);
+		case 'list':
+			return listConversations(context, itemIndex);
 		case 'sendMessage':
 			return sendMessageToConversation(context, itemIndex);
 		case 'sendFile':
@@ -66,33 +66,33 @@ export async function executeConversationOperation(
 			);
 		case 'listMessages':
 			return listConversationMessages(context, itemIndex);
-    case 'assignAgent':
-      return assignConversationAgent(context, itemIndex);
-    case 'assignTeam':
-      return assignConversationTeam(context, itemIndex);
+		case 'assignAgent':
+			return assignConversationAgent(context, itemIndex);
+		case 'assignTeam':
+			return assignConversationTeam(context, itemIndex);
 		case 'addLabels':
 			return addLabelsToConversation(context, itemIndex);
 		case 'removeLabels':
 			return removeLabelsFromConversation(context, itemIndex);
-    case 'updateLabels':
-      return setConversationLabels(context, itemIndex);
-    case 'toggleStatus':
-      return toggleConversationStatus(context, itemIndex);
-    case 'setPriority':
-      return setConversationPriority(context, itemIndex);
+		case 'updateLabels':
+			return updateConversationLabels(context, itemIndex);
+		case 'toggleStatus':
+			return toggleConversationStatus(context, itemIndex);
+		case 'setPriority':
+			return setConversationPriority(context, itemIndex);
 		case 'addCustomAttributes':
 			return addCustomAttributesToConversation(context, itemIndex);
 		case 'removeCustomAttributes':
 			return removeCustomAttributesFromConversation(context, itemIndex);
-    case 'setCustomAttributes':
-      return setConversationCustomAttributes(context, itemIndex);
+		case 'setCustomAttributes':
+			return setConversationCustomAttributes(context, itemIndex);
 		case 'updateLastSeen':
 			return updateConversationLastSeen(context, itemIndex);
 		case 'updatePresence':
 			return updateConversationPresence(context, itemIndex);
 		case 'markUnread':
 			return markConversationUnread(context, itemIndex);
-  }
+	}
 }
 
 async function listConversationMessages(
@@ -166,14 +166,14 @@ async function createConversation(
 		delete body.customAttributes;
 	}
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/conversations`,
-			body,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/conversations`,
+		body,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function getConversation(
@@ -183,13 +183,13 @@ async function getConversation(
 	const accountId = getAccountId.call(context, itemIndex);
 	const conversationId = getConversationId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'GET',
-			`/api/v1/accounts/${accountId}/conversations/${conversationId}`,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}`,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function listConversations(
@@ -209,15 +209,15 @@ async function listConversations(
 		query.inbox_id = inboxId;
 	}
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'GET',
-			`/api/v1/accounts/${accountId}/conversations`,
-			undefined,
-			query,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/conversations`,
+		undefined,
+		query,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function toggleConversationStatus(
@@ -236,14 +236,14 @@ async function toggleConversationStatus(
 		body.snoozed_until = Math.floor(snoozeDate.getTime() / 1000);
 	}
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/conversations/${conversationId}/toggle_status`,
-			body,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}/toggle_status`,
+		body,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function assignConversationAgent(
@@ -254,14 +254,14 @@ async function assignConversationAgent(
 	const conversationId = getConversationId.call(context, itemIndex);
 	const agentId = context.getNodeParameter('agentId', itemIndex) as number;
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/conversations/${conversationId}/assignments`,
-			{ assignee_id: agentId },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}/assignments`,
+		{ assignee_id: agentId },
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function assignConversationTeam(
@@ -272,17 +272,17 @@ async function assignConversationTeam(
 	const conversationId = getConversationId.call(context, itemIndex);
 	const teamId = context.getNodeParameter('teamId', itemIndex) as number;
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/conversations/${conversationId}/assignments`,
-			{ team_id: teamId },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}/assignments`,
+		{ team_id: teamId },
+	) as IDataObject;
+
+	return { json: result };
 }
 
-async function setConversationLabels(
+async function updateConversationLabels(
 	context: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<INodeExecutionData> {
@@ -290,14 +290,14 @@ async function setConversationLabels(
 	const conversationId = getConversationId.call(context, itemIndex);
 	const labels = context.getNodeParameter('labels', itemIndex) as string[];
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/conversations/${conversationId}/labels`,
-			{ labels },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}/labels`,
+		{ labels },
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function addLabelsToConversation(
@@ -317,14 +317,14 @@ async function addLabelsToConversation(
 	const currentLabels = (conversation.labels as string[]) || [];
 	const newLabels = [...new Set([...currentLabels, ...labelsToAdd])];
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/conversations/${conversationId}/labels`,
-			{ labels: newLabels },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}/labels`,
+		{ labels: newLabels },
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function removeLabelsFromConversation(
@@ -345,14 +345,14 @@ async function removeLabelsFromConversation(
 	const labelsToRemoveSet = new Set(labelsToRemove);
 	const newLabels = currentLabels.filter((label) => !labelsToRemoveSet.has(label));
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/conversations/${conversationId}/labels`,
-			{ labels: newLabels },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}/labels`,
+		{ labels: newLabels },
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function setConversationCustomAttributes(
@@ -363,14 +363,14 @@ async function setConversationCustomAttributes(
 	const conversationId = getConversationId.call(context, itemIndex);
 	const customAttributes = parseCustomAttributes(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/conversations/${conversationId}/custom_attributes`,
-			{ custom_attributes: customAttributes },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}/custom_attributes`,
+		{ custom_attributes: customAttributes },
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function addCustomAttributesToConversation(
@@ -390,14 +390,14 @@ async function addCustomAttributesToConversation(
 	const currentAttributes = (conversation.custom_attributes as IDataObject) || {};
 	const mergedAttributes = { ...currentAttributes, ...attributesToAdd };
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/conversations/${conversationId}/custom_attributes`,
-			{ custom_attributes: mergedAttributes },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}/custom_attributes`,
+		{ custom_attributes: mergedAttributes },
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function removeCustomAttributesFromConversation(
@@ -424,14 +424,14 @@ async function removeCustomAttributesFromConversation(
 		}
 	}
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/conversations/${conversationId}/custom_attributes`,
-			{ custom_attributes: newAttributes },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}/custom_attributes`,
+		{ custom_attributes: newAttributes },
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function setConversationPriority(
@@ -444,14 +444,14 @@ async function setConversationPriority(
 
 	const priority = priorityValue === 'null' ? null : priorityValue;
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/conversations/${conversationId}/toggle_priority`,
-			{ priority },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}/toggle_priority`,
+		{ priority },
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function markConversationUnread(
@@ -461,15 +461,13 @@ async function markConversationUnread(
 	const accountId = getAccountId.call(context, itemIndex);
 	const conversationId = getConversationId.call(context, itemIndex);
 
-	await chatwootApiRequest.call(
+	const result = await chatwootApiRequest.call(
 		context,
 		'POST',
 		`/api/v1/accounts/${accountId}/conversations/${conversationId}/unread`,
-	);
+	) as IDataObject;
 
-	return {
-		json: { success: true },
-	};
+	return { json: result };
 }
 
 async function updateConversationLastSeen(
@@ -479,15 +477,13 @@ async function updateConversationLastSeen(
 	const accountId = getAccountId.call(context, itemIndex);
 	const conversationId = getConversationId.call(context, itemIndex);
 
-	await chatwootApiRequest.call(
+	const result = await chatwootApiRequest.call(
 		context,
 		'POST',
 		`/api/v1/accounts/${accountId}/conversations/${conversationId}/update_last_seen`,
-	);
+	) as IDataObject;
 
-	return {
-		json: { success: true },
-	};
+	return { json: result };
 }
 
 async function updateConversationPresence(
@@ -519,12 +515,12 @@ async function updateConversationPresence(
 		is_private: isPrivate,
 	};
 
-	await chatwootApiRequest.call(
+	const result = await chatwootApiRequest.call(
 		context,
 		'POST',
 		`/api/v1/accounts/${accountId}/conversations/${conversationId}/toggle_typing_status`,
 		body,
-	);
+	) as IDataObject;
 
 	if (!willHaveEffect) {
 		context.addExecutionHints({
@@ -534,13 +530,7 @@ async function updateConversationPresence(
 		});
 	}
 
-	return {
-		json: {
-			success: true,
-			typing_status: typingStatus,
-			is_private: isPrivate,
-		},
-	};
+	return { json: result };
 }
 
 async function sendMessageToConversation(
@@ -598,16 +588,16 @@ async function sendMessageToConversation(
 		contentAttributes.is_reaction = true;
 	}
 
-	if(additionalFields.split_message) {
+	if (additionalFields.split_message) {
 		const splitChar = (additionalFields.split_character as string) ?? '\n\n';
 		const messages = content.split(splitChar).filter((msg: string) => msg.trim() !== '');
 		const responses: IDataObject[] = [];
 
-		for(const message of messages) {
+		for (const message of messages) {
 			const body: IDataObject = {
 				content: message,
 			};
-			if(additionalFields.private){
+			if (additionalFields.private) {
 				body.private = additionalFields.private;
 			}
 			if (contentAttributes && Object.keys(contentAttributes).length > 0) {
@@ -621,14 +611,14 @@ async function sendMessageToConversation(
 			)) as IDataObject);
 		}
 		return {
-			json: {requests: responses},
+			json: { requests: responses },
 		};
 	}
 	else {
 		const body: IDataObject = {
 			content,
 		};
-		if(additionalFields.private){
+		if (additionalFields.private) {
 			body.private = additionalFields.private;
 		}
 		if (contentAttributes && Object.keys(contentAttributes).length > 0) {

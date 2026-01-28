@@ -31,17 +31,17 @@ async function createTeam(
 	const name = context.getNodeParameter('name', itemIndex);
 	const additionalFields = context.getNodeParameter('additionalFields', itemIndex) as IDataObject;
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/teams`,
-			{
- 	 	    name,
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/teams`,
+		{
+ 		    name,
   	    ...additionalFields,
   	  },
-		)) as IDataObject
-	};
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function deleteTeam(
@@ -51,13 +51,13 @@ async function deleteTeam(
 	const accountId = getAccountId.call(context, itemIndex);
 	const teamId = getTeamId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'DELETE',
-			`/api/v1/accounts/${accountId}/teams/${teamId}`,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'DELETE',
+		`/api/v1/accounts/${accountId}/teams/${teamId}`,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function listTeams(
@@ -66,13 +66,13 @@ async function listTeams(
 ): Promise<INodeExecutionData> {
 	const accountId = getAccountId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'GET',
-			`/api/v1/accounts/${accountId}/teams`,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/teams`,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function getTeamMembers(
@@ -82,13 +82,13 @@ async function getTeamMembers(
 	const accountId = getAccountId.call(context, itemIndex);
 	const teamId = getTeamId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'GET',
-			`/api/v1/accounts/${accountId}/teams/${teamId}/team_members`,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/teams/${teamId}/team_members`,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function assignAgentToTeam(
@@ -99,14 +99,14 @@ async function assignAgentToTeam(
 	const teamId = getTeamId.call(context, itemIndex);
 	const agentId = getAgentId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/teams/${teamId}/team_members`,
-			{ user_ids: [agentId] },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/teams/${teamId}/team_members`,
+		{ user_ids: [agentId] },
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function unassignAgentFromTeam(
@@ -127,12 +127,12 @@ async function unassignAgentFromTeam(
 		.map((member) => member.id)
 		.filter((id) => String(id) !== teamMemberId);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'PATCH',
-			`/api/v1/accounts/${accountId}/teams/${teamId}/team_members`,
-			{ user_ids: remainingMemberIds },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'PATCH',
+		`/api/v1/accounts/${accountId}/teams/${teamId}/team_members`,
+		{ user_ids: remainingMemberIds },
+	) as IDataObject;
+
+	return { json: result };
 }

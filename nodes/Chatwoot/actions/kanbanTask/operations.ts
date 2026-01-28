@@ -40,14 +40,14 @@ async function createTask(
 		...additionalFields,
 	};
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/kanban/tasks`,
-			{ task },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/kanban/tasks`,
+		{ task },
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function getTask(
@@ -57,13 +57,13 @@ async function getTask(
 	const accountId = getAccountId.call(context, itemIndex);
 	const taskId = getKanbanTaskId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'GET',
-			`/api/v1/accounts/${accountId}/kanban/tasks/${taskId}`,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/kanban/tasks/${taskId}`,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function listTasks(
@@ -74,18 +74,18 @@ async function listTasks(
 	const boardId = getKanbanBoardId.call(context, itemIndex);
 	const filters = context.getNodeParameter('taskFilters', itemIndex, {}) as IDataObject;
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'GET',
-			`/api/v1/accounts/${accountId}/kanban/tasks`,
-			undefined,
-			{
-				board_id: boardId,
-				...filters
-			},
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/kanban/tasks`,
+		undefined,
+		{
+			board_id: boardId,
+			...filters
+		},
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function updateTask(
@@ -102,14 +102,14 @@ async function updateTask(
 		...additionalFields,
 	};
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'PUT',
-			`/api/v1/accounts/${accountId}/kanban/tasks/${taskId}`,
-			{ task },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'PUT',
+		`/api/v1/accounts/${accountId}/kanban/tasks/${taskId}`,
+		{ task },
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function moveTask(
@@ -120,14 +120,14 @@ async function moveTask(
 	const taskId = getKanbanTaskId.call(context, itemIndex);
 	const stepId = getKanbanStepId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/kanban/tasks/${taskId}/move`,
-			{ board_step_id: stepId, insert_before_task_id: null },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/kanban/tasks/${taskId}/move`,
+		{ board_step_id: stepId, insert_before_task_id: null },
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function deleteTask(
@@ -137,11 +137,11 @@ async function deleteTask(
 	const accountId = getAccountId.call(context, itemIndex);
 	const taskId = getKanbanTaskId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'DELETE',
-			`/api/v1/accounts/${accountId}/kanban/tasks/${taskId}`,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'DELETE',
+		`/api/v1/accounts/${accountId}/kanban/tasks/${taskId}`,
+	) as IDataObject;
+
+	return { json: result };
 }

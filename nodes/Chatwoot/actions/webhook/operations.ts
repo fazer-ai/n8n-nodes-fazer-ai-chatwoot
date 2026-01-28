@@ -1,4 +1,4 @@
-import type { IDataObject, IExecuteFunctions, IHookFunctions } from 'n8n-workflow';
+import type { IDataObject, IExecuteFunctions, IHookFunctions, INodeExecutionData } from 'n8n-workflow';
 import {
   chatwootApiRequest,
 	getAccountId,
@@ -13,7 +13,7 @@ export async function executeWebhookOperation(
   context: IExecuteFunctions,
   operation: WebhookOperation,
   itemIndex: number,
-): Promise<IDataObject | IDataObject[]> {
+): Promise<INodeExecutionData> {
   switch (operation) {
     case 'create':
       return createWebhookOperation(context, itemIndex);
@@ -91,41 +91,44 @@ export async function updateWebhook(
 async function createWebhookOperation(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<IDataObject> {
+): Promise<INodeExecutionData> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const body = buildWebhookBody(context, itemIndex);
 
-	return createWebhook(context, accountId, body);
+	const result = await createWebhook(context, accountId, body);
+	return { json: result };
 }
 
 async function getAllWebhooksOperation(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<IDataObject[]> {
+): Promise<INodeExecutionData> {
 	const accountId = getAccountId.call(context, itemIndex);
-	return fetchWebhooks(context, accountId);
+	const result = await fetchWebhooks(context, accountId);
+	return { json: result as unknown as IDataObject };
 }
 
 async function updateWebhookOperation(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<IDataObject> {
+): Promise<INodeExecutionData> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const webhookId = getWebhookId.call(context, itemIndex);
 	const body = buildWebhookBody(context, itemIndex);
 
-	return updateWebhook(context, accountId, webhookId, body);
+	const result = await updateWebhook(context, accountId, webhookId, body);
+	return { json: result };
 }
 
 async function deleteWebhookOperation(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<IDataObject> {
+): Promise<INodeExecutionData> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const webhookId = getWebhookId.call(context, itemIndex);
 
 	await deleteWebhook(context, accountId, webhookId);
-	return { success: true };
+	return { json: { success: true } };
 }
 
 function buildWebhookBody(

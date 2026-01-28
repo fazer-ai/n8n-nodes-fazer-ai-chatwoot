@@ -28,21 +28,21 @@ async function createStep(
 	const name = context.getNodeParameter('name', itemIndex);
 	const additionalFields = context.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/kanban/boards/${boardId}/steps`,
-			{ step:
-				{
-					name,
-					description: additionalFields.description ?? '',
-					color: additionalFields.color ?? `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`,
-					cancelled: additionalFields.cancelled ?? false,
-				}
-			},
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/kanban/boards/${boardId}/steps`,
+		{ step:
+			{
+				name,
+				description: additionalFields.description ?? '',
+				color: additionalFields.color ?? `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`,
+				cancelled: additionalFields.cancelled ?? false,
+			}
+		},
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function listSteps(
@@ -52,13 +52,13 @@ async function listSteps(
 	const accountId = getAccountId.call(context, itemIndex);
 	const boardId = getKanbanBoardId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'GET',
-			`/api/v1/accounts/${accountId}/kanban/boards/${boardId}/steps`,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/kanban/boards/${boardId}/steps`,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function updateStep(
@@ -77,14 +77,14 @@ async function updateStep(
 	if (updateFields.color) step.color = updateFields.color;
 	if (updateFields.cancelled !== undefined) step.cancelled = updateFields.cancelled;
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'PUT',
-			`/api/v1/accounts/${accountId}/kanban/boards/${boardId}/steps/${stepId}`,
-			{ step },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'PUT',
+		`/api/v1/accounts/${accountId}/kanban/boards/${boardId}/steps/${stepId}`,
+		{ step },
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function deleteStep(
@@ -95,11 +95,11 @@ async function deleteStep(
 	const boardId = getKanbanBoardId.call(context, itemIndex);
 	const stepId = getKanbanStepId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'DELETE',
-			`/api/v1/accounts/${accountId}/kanban/boards/${boardId}/steps/${stepId}`,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'DELETE',
+		`/api/v1/accounts/${accountId}/kanban/boards/${boardId}/steps/${stepId}`,
+	) as IDataObject;
+
+	return { json: result };
 }

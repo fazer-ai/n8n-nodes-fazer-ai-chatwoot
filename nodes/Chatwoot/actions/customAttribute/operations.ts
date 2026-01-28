@@ -65,14 +65,14 @@ async function createCustomAttribute(
 		body.attribute_description = attributeDescription;
 	}
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/custom_attribute_definitions`,
-			body,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/custom_attribute_definitions`,
+		body,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function listCustomAttributes(
@@ -86,15 +86,15 @@ async function listCustomAttributes(
 		attribute_model: attributeModel,
 	};
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'GET',
-			`/api/v1/accounts/${accountId}/custom_attribute_definitions`,
-			undefined,
-			query,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/custom_attribute_definitions`,
+		undefined,
+		query,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function removeCustomAttribute(
@@ -104,11 +104,11 @@ async function removeCustomAttribute(
 	const accountId = getAccountId.call(context, itemIndex);
 	const attributeKey = context.getNodeParameter('attributeKeyToDelete', itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'DELETE',
-			`/api/v1/accounts/${accountId}/custom_attribute_definitions/${attributeKey}`,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'DELETE',
+		`/api/v1/accounts/${accountId}/custom_attribute_definitions/${attributeKey}`,
+	) as IDataObject;
+
+	return { json: result };
 }

@@ -19,11 +19,11 @@ async function getAccount(
 ): Promise<INodeExecutionData> {
 	const accountId = getAccountId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'GET',
-			`/api/v1/accounts/${accountId}`,
-		)) as IDataObject
-	}
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}`,
+	) as IDataObject;
+
+	return { json: result };
 }

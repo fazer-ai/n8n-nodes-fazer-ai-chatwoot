@@ -27,13 +27,13 @@ async function listInboxes(
 ): Promise<INodeExecutionData> {
 	const accountId = getAccountId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'GET',
-			`/api/v1/accounts/${accountId}/inboxes`,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/inboxes`,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function getInbox(
@@ -43,13 +43,13 @@ async function getInbox(
 	const accountId = getAccountId.call(context, itemIndex);
 	const inboxId = getInboxId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'GET',
-			`/api/v1/accounts/${accountId}/inboxes/${inboxId}`,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/inboxes/${inboxId}`,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function onWhatsapp(context: IExecuteFunctions, itemIndex: number): Promise<INodeExecutionData> {
@@ -57,27 +57,27 @@ async function onWhatsapp(context: IExecuteFunctions, itemIndex: number): Promis
 	const inboxId = getWhatsappSpecialProviderInboxId.call(context, itemIndex);
 	const phoneNumber = context.getNodeParameter('phoneNumber', itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/inboxes/${inboxId}/on_whatsapp`,
-			{ phone_number: phoneNumber },
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/inboxes/${inboxId}/on_whatsapp`,
+		{ phone_number: phoneNumber },
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function whatsappDisconnect(context: IExecuteFunctions, itemIndex: number): Promise<INodeExecutionData>{
 	const accountId = getAccountId.call(context, itemIndex);
 	const inboxId = getWhatsappSpecialProviderInboxId.call(context, itemIndex);
 
-	return {
-		json: (await chatwootApiRequest.call(
-			context,
-			'POST',
-			`/api/v1/accounts/${accountId}/inboxes/${inboxId}/disconnect_channel_provider`,
-		)) as IDataObject
-	};
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/inboxes/${inboxId}/disconnect_channel_provider`,
+	) as IDataObject;
+
+	return { json: result };
 }
 
 async function whatsappGetQrCode(context: IExecuteFunctions, itemIndex: number):  Promise<INodeExecutionData> {
