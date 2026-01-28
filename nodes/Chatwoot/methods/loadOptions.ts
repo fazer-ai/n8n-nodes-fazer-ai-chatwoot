@@ -32,7 +32,7 @@ export async function loadAgentsOptions(
   const agents = response || [];
 
   return agents.map((agent: ChatwootAgent) => ({
-    name: agent.name || agent.email || `Agent ${agent.id}`,
+    name: `#${agent.id} - ${agent.name || agent.email || 'Agent'}`,
     value: agent.id,
   }));
 }
@@ -56,7 +56,7 @@ export async function loadInboxesOptions(
   const inboxes = response.payload ||[];
 
   return (inboxes as ChatwootInbox[]).map((inbox: ChatwootInbox) => ({
-    name: inbox.name,
+    name: `#${inbox.id} - ${inbox.name}`,
     value: inbox.id,
   }));
 }
@@ -80,7 +80,7 @@ export async function loadTeamsOptions(
   const teams = response || [];
 
   return teams.map((team: ChatwootTeam) => ({
-    name: team.name,
+    name: `#${team.id} - ${team.name}`,
     value: team.id,
   }));
 }
@@ -108,7 +108,7 @@ export async function loadLabelsWithTitleValueOptions(
     [];
 
   return (labels as ChatwootLabel[]).map((label: ChatwootLabel) => ({
-    name: label.title,
+    name: `#${label.id} - ${label.title}`,
     value: label.title,
   }));
 }
@@ -187,7 +187,7 @@ export async function loadCustomAttributeDefinitionsOptions(
   )) as ChatwootCustomAttributeDefinition[];
 
   return (response || []).map((attr: ChatwootCustomAttributeDefinition) => ({
-    name: attr.attribute_display_name,
+    name: `#${attr.id} - ${attr.attribute_display_name}`,
     value: attr.id,
   }));
 }
@@ -214,7 +214,7 @@ export async function loadKanbanBoardAgentsOptions(
   )) as ChatwootKanbanBoard;
   const agents = response.assigned_agents || [];
   return (agents as ChatwootAgent[]).map((agent) => ({
-    name: agent.name || agent.email || `Agent ${agent.id}`,
+    name: `#${agent.id} - ${agent.name || agent.email || 'Agent'}`,
     value: agent.id,
   }));
 }
@@ -253,7 +253,7 @@ export async function loadKanbanBoardConversationsOptions(
     )) as ChatwootPayloadResponseWithData<ChatwootConversation>;
 
     conversations = conversations.concat(response.data?.payload?.map((conversation) => ({
-      name: `(${inbox.name}) ${conversation.meta?.sender?.name || conversation.meta?.sender?.email || 'Unknown'}`,
+      name: `#${conversation.id} - (${inbox.name}) ${conversation.meta?.sender?.name || conversation.meta?.sender?.email || 'Unknown'}`,
       value: conversation.id,
     })) ?? [])
   }
@@ -283,7 +283,7 @@ export async function loadContactsOptions(
     [];
 
   return (contacts as ChatwootContact[]).map((contact) => ({
-    name: contact.name || contact.email || `Contact ${contact.id}`,
+    name: `#${contact.id} - ${contact.name || contact.email || 'Contact'}`,
     value: contact.id,
   }));
 }

@@ -36,7 +36,7 @@ export async function searchAccounts(
 	const accounts = response.accounts || [];
 
 	let results = accounts.map((account: ChatwootAccount) => ({
-		name: account.name,
+		name: `#${account.id} - ${account.name}`,
 		value: String(account.id),
 	}));
 
@@ -75,7 +75,7 @@ export async function searchInboxes(
 		[];
 
 	let results = (inboxes as ChatwootInbox[]).map((inbox: ChatwootInbox) => ({
-		name: inbox.name,
+		name: `#${inbox.id} - ${inbox.name}`,
 		value: String(inbox.id),
 	}));
 
@@ -119,7 +119,7 @@ export async function searchWhatsappSpecialProvidersInboxes(
 	);
 
 	let results = filteredInboxes.map((inbox: ChatwootInbox) => ({
-		name: inbox.name,
+		name: `#${inbox.id} - ${inbox.name}`,
 		value: String(inbox.id),
 	}));
 
@@ -201,7 +201,7 @@ export async function searchContacts(
 
 	const results = response.payload.map(
 		(contact: ChatwootContact) => ({
-			name: contact.name || contact.email || `Contact #${contact.id}`,
+			name: `#${contact.id} - ${contact.name || contact.email || 'Contact'}`,
 			value: String(contact.id),
 		}),
 	);
@@ -229,7 +229,7 @@ export async function searchAgents(
 	const agents = response || [];
 
 	let results = agents.map((agent: ChatwootAgent) => ({
-		name: agent.name || agent.email || `Agent ${agent.id}`,
+		name: `#${agent.id} - ${agent.name || agent.email || 'Agent'}`,
 		value: String(agent.id),
 	}));
 
@@ -265,7 +265,7 @@ export async function searchTeams(
 	const teams = response || [];
 
 	let results = teams.map((team: ChatwootTeam) => ({
-		name: team.name,
+		name: `#${team.id} - ${team.name}`,
 		value: String(team.id),
 	}));
 
@@ -302,7 +302,7 @@ export async function searchTeamMembers(
 	const members = response || [];
 
 	let results = members.map((member: ChatwootTeamMember) => ({
-		name: member.name || member.email || `Agent ${member.id}`,
+		name: `#${member.id} - ${member.name || member.email || 'Agent'}`,
 		value: String(member.id),
 	}));
 
@@ -341,7 +341,7 @@ export async function searchLabels(
 		[];
 
 	let results = (labels as ChatwootLabel[]).map((label: ChatwootLabel) => ({
-		name: label.title,
+		name: `#${label.id} - ${label.title}`,
 		value: String(label.id),
 	}));
 
@@ -381,7 +381,7 @@ export async function searchWebhooks(
 
 	let results = (webhooks as ChatwootWebhook[]).map(
 		(webhook: ChatwootWebhook) => ({
-			name: webhook.url,
+			name: `#${webhook.id} - ${webhook.url}`,
 			value: String(webhook.id),
 		}),
 	);
@@ -421,7 +421,7 @@ export async function searchKanbanBoards(
 		[];
 
 	const results = boards.map((board: ChatwootKanbanBoard) => ({
-		name: board.name,
+		name: `#${board.id} - ${board.name}`,
 		value: String(board.id),
 	}));
 
@@ -453,7 +453,7 @@ export async function searchKanbanSteps(
 		[];
 
 	const results = steps.map((step: ChatwootKanbanStep) => ({
-		name: (step.cancelled ? `(Cancelled) ` : '') + step.name + (step.description ? `: ${step.description}` : ''),
+		name: `#${step.id} - ` + (step.cancelled ? `(Cancelled) ` : '') + step.name + (step.description ? `: ${step.description}` : ''),
 		value: String(step.id),
 	}));
 
@@ -487,7 +487,7 @@ export async function searchKanbanTasks(
 		[];
 
 	const results = tasks.map((task: ChatwootKanbanTask) => ({
-		name: task.title,
+		name: `#${task.id} - ${task.title}`,
 		value: String(task.id),
 	}));
 
