@@ -16,4 +16,5 @@ export type ConversationOperation =
   | 'removeCustomAttributes'
   | 'setCustomAttributes'
   | 'updateLastSeen'
-  | 'updatePresence';
+  | 'updatePresence'
+  | 'markUnread';

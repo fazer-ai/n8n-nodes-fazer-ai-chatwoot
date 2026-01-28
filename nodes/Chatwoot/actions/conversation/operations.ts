@@ -90,12 +90,11 @@ export async function executeConversationOperation(
     case 'setCustomAttributes':
       return setConversationCustomAttributes(context, itemIndex);
 		case 'updateLastSeen':
-			throw new NodeOperationError(
-				context.getNode(),
-				'The "Update Last Seen" operation is not implemented yet.',
-			);
+			return updateConversationLastSeen(context, itemIndex);
 		case 'updatePresence':
 			return updateConversationPresence(context, itemIndex);
+		case 'markUnread':
+			return markConversationUnread(context, itemIndex);
   }
 }
 
@@ -408,6 +407,42 @@ async function setConversationPriority(
 			`/api/v1/accounts/${accountId}/conversations/${conversationId}/toggle_priority`,
 			{ priority },
 		)) as IDataObject
+	};
+}
+
+async function markConversationUnread(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): Promise<INodeExecutionData> {
+	const accountId = getAccountId.call(context, itemIndex);
+	const conversationId = getConversationId.call(context, itemIndex);
+
+	await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}/unread`,
+	);
+
+	return {
+		json: { success: true },
+	};
+}
+
+async function updateConversationLastSeen(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): Promise<INodeExecutionData> {
+	const accountId = getAccountId.call(context, itemIndex);
+	const conversationId = getConversationId.call(context, itemIndex);
+
+	await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}/update_last_seen`,
+	);
+
+	return {
+		json: { success: true },
 	};
 }
 

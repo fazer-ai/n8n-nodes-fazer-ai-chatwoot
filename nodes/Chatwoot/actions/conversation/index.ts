@@ -129,6 +129,12 @@ const conversationOperations: INodeProperties[] = [
         description: 'Define presence status as off, typing or recording',
         action: 'Define presence status',
       },
+      {
+        name: 'Mark Unread',
+        value: 'markUnread',
+        description: 'Mark conversation as unread',
+        action: 'Mark conversation as unread',
+      },
     ],
     default: 'list',
   },
@@ -181,7 +187,7 @@ const conversationFields: INodeProperties[] = [
     displayOptions: {
       show: {
         ...showOnlyForConversation,
-        operation: ['list', 'get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'addCustomAttributes', 'removeCustomAttributes', 'setCustomAttributes', 'setPriority', 'sendMessage', 'updateLastSeen', 'updatePresence'],
+        operation: ['list', 'get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'addCustomAttributes', 'removeCustomAttributes', 'setCustomAttributes', 'setPriority', 'sendMessage', 'updateLastSeen', 'updatePresence', 'markUnread'],
       },
     },
   },
@@ -190,7 +196,7 @@ const conversationFields: INodeProperties[] = [
     displayOptions: {
       show: {
         ...showOnlyForConversation,
-        operation: ['get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'addCustomAttributes', 'removeCustomAttributes', 'setCustomAttributes', 'setPriority', 'sendMessage', 'updateLastSeen', 'updatePresence'],
+        operation: ['get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'addCustomAttributes', 'removeCustomAttributes', 'setCustomAttributes', 'setPriority', 'sendMessage', 'updateLastSeen', 'updatePresence', 'markUnread'],
       },
     },
   },
