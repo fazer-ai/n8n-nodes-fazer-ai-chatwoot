@@ -133,8 +133,9 @@ export async function loadContactCustomAttributeDefinitionsOptions(
   )) as ChatwootCustomAttributeDefinition[];
 
   return (response || []).map((attr: ChatwootCustomAttributeDefinition) => ({
-    name: attr.attribute_display_name,
+    name: `${attr.attribute_display_name} (${attr.attribute_key})`,
     value: attr.attribute_key,
+    description: `[${attr.attribute_display_type}]${attr.attribute_description ? ` - ${attr.attribute_description}` : ''}`,
   }));
 }
 

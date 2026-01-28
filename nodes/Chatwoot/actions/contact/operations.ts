@@ -231,7 +231,20 @@ async function setCustomAttributes(
 
 	let customAttributes: IDataObject;
 
-	if (specifyMode === 'keypair') {
+	if (specifyMode === 'definition') {
+		const attributes = context.getNodeParameter(
+			'customAttributesDefinition.attributes',
+			itemIndex,
+			[],
+		) as Array<{ key: string; value: string }>;
+
+		customAttributes = {};
+		for (const attr of attributes) {
+			if (attr.key) {
+				customAttributes[attr.key] = attr.value;
+			}
+		}
+	} else if (specifyMode === 'keypair') {
 		const attributeParameters = context.getNodeParameter(
 			'customAttributesParameters.attributes',
 			itemIndex,

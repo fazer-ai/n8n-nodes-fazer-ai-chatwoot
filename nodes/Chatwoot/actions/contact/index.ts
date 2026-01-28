@@ -290,6 +290,11 @@ const contactFields: INodeProperties[] = [
     },
     options: [
       {
+        name: 'From Definitions',
+        value: 'definition',
+        description: 'Select from pre-defined contact attributes',
+      },
+      {
         name: 'Using Fields Below',
         value: 'keypair',
       },
@@ -298,7 +303,52 @@ const contactFields: INodeProperties[] = [
         value: 'json',
       },
     ],
-    default: 'keypair',
+    default: 'definition',
+  },
+  {
+    displayName: 'Custom Attributes',
+    name: 'customAttributesDefinition',
+    type: 'fixedCollection',
+    displayOptions: {
+      show: {
+        ...showOnlyForContact,
+        operation: ['setCustomAttributes'],
+        specifyCustomAttributes: ['definition'],
+      },
+    },
+    typeOptions: {
+      multipleValues: true,
+    },
+    placeholder: 'Add Attribute',
+    default: {
+      attributes: [],
+    },
+    options: [
+      {
+        name: 'attributes',
+        displayName: 'Attribute',
+        values: [
+          {
+            // eslint-disable-next-line n8n-nodes-base/node-param-display-name-wrong-for-dynamic-options
+            displayName: 'Attribute',
+            name: 'key',
+            type: 'options',
+            default: '',
+            description: 'Select the custom attribute. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+            typeOptions: {
+              loadOptionsMethod: 'loadContactCustomAttributeDefinitionsOptions',
+            },
+          },
+          {
+            displayName: 'Value',
+            name: 'value',
+            type: 'string',
+            default: '',
+            description: 'Value of the custom attribute',
+          },
+        ],
+      },
+    ],
   },
   {
     displayName: 'Custom Attributes',
