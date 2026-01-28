@@ -187,7 +187,7 @@ const conversationFields: INodeProperties[] = [
     displayOptions: {
       show: {
         ...showOnlyForConversation,
-        operation: ['list', 'get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'addCustomAttributes', 'removeCustomAttributes', 'setCustomAttributes', 'setPriority', 'sendMessage', 'updateLastSeen', 'updatePresence', 'markUnread'],
+        operation: ['list', 'get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'addCustomAttributes', 'removeCustomAttributes', 'setCustomAttributes', 'setPriority', 'sendMessage', 'updateLastSeen', 'updatePresence', 'markUnread', 'listMessages'],
       },
     },
   },
@@ -196,7 +196,7 @@ const conversationFields: INodeProperties[] = [
     displayOptions: {
       show: {
         ...showOnlyForConversation,
-        operation: ['get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'addCustomAttributes', 'removeCustomAttributes', 'setCustomAttributes', 'setPriority', 'sendMessage', 'updateLastSeen', 'updatePresence', 'markUnread'],
+        operation: ['get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'addCustomAttributes', 'removeCustomAttributes', 'setCustomAttributes', 'setPriority', 'sendMessage', 'updateLastSeen', 'updatePresence', 'markUnread', 'listMessages'],
       },
     },
   },
@@ -677,10 +677,52 @@ const conversationFields: INodeProperties[] = [
   },
 ];
 
+const listMessagesFields: INodeProperties[] = [
+  {
+    displayName: 'Fetch At Least',
+    name: 'fetchAtLeast',
+    type: 'number',
+    default: 20,
+    description: 'Minimum number of messages to fetch. Will keep paginating until this count is reached or no more messages are available.',
+    typeOptions: {
+      minValue: 1,
+    },
+    displayOptions: {
+      show: {
+        resource: ['conversation'],
+        operation: ['listMessages'],
+      },
+    },
+  },
+  {
+    displayName: 'Options',
+    name: 'listMessagesOptions',
+    type: 'collection',
+    placeholder: 'Add Option',
+    default: {},
+    displayOptions: {
+      show: {
+        resource: ['conversation'],
+        operation: ['listMessages'],
+      },
+    },
+    options: [
+      {
+        displayName: 'Before Message ID',
+        name: 'before',
+        type: 'number',
+        default: 0,
+        description: 'Fetch messages before this message ID (for pagination)',
+      },
+    ],
+  },
+];
+
 export const conversationDescription: INodeProperties[] = [
   ...conversationOperations,
   ...conversationFields,
   ...updatePresenceFields,
+  ...listMessagesFields,
 ];
 
 export { executeConversationOperation } from './operations';

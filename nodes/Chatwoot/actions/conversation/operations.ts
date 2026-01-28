@@ -65,10 +65,7 @@ export async function executeConversationOperation(
 				'The "Send File" operation is not implemented yet.',
 			);
 		case 'listMessages':
-			throw new NodeOperationError(
-				context.getNode(),
-				'The "List Messages" operation is not implemented yet.',
-			);
+			return listConversationMessages(context, itemIndex);
     case 'assignAgent':
       return assignConversationAgent(context, itemIndex);
     case 'assignTeam':
@@ -96,6 +93,53 @@ export async function executeConversationOperation(
 		case 'markUnread':
 			return markConversationUnread(context, itemIndex);
   }
+}
+
+async function listConversationMessages(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): Promise<INodeExecutionData> {
+	const accountId = getAccountId.call(context, itemIndex);
+	const conversationId = getConversationId.call(context, itemIndex);
+	const fetchAtLeast = context.getNodeParameter('fetchAtLeast', itemIndex, 20) as number;
+	const options = context.getNodeParameter('listMessagesOptions', itemIndex, {}) as IDataObject;
+
+	const allMessages: IDataObject[] = [];
+	let beforeId = options.before as number | undefined;
+	let hasMore = true;
+
+	while (hasMore && allMessages.length < fetchAtLeast) {
+		const query: IDataObject = {};
+		if (beforeId) {
+			query.before = beforeId;
+		}
+
+		const response = (await chatwootApiRequest.call(
+			context,
+			'GET',
+			`/api/v1/accounts/${accountId}/conversations/${conversationId}/messages`,
+			undefined,
+			query,
+		)) as IDataObject;
+
+		const messages = (response.payload as IDataObject[]) || [];
+
+		if (messages.length === 0) {
+			hasMore = false;
+		} else {
+			allMessages.push(...messages);
+			// Get the smallest message ID for the next pagination
+			const lastMessage = messages[messages.length - 1];
+			beforeId = lastMessage.id as number;
+		}
+	}
+
+	return {
+		json: {
+			messages: allMessages,
+			total: allMessages.length,
+		},
+	};
 }
 
 async function createConversation(
