@@ -1,5 +1,5 @@
-import type { IDataObject, IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { chatwootApiRequest, getAccountId, getInboxId, getWhatsappSpecialProviderInboxId } from '../../shared/transport';
+import { NodeOperationError, type IDataObject, type IExecuteFunctions, type INodeExecutionData } from 'n8n-workflow';
+import { asyncSleep, chatwootApiRequest, getAccountId, getInboxId, getWhatsappSpecialProviderInboxId } from '../../shared/transport';
 import { InboxOperation } from './types';
 
 export async function executeInboxOperation(
@@ -90,8 +90,8 @@ async function whatsappGetQrCode(context: IExecuteFunctions, itemIndex: number):
 		`/api/v1/accounts/${accountId}/inboxes/${inboxId}/setup_channel_provider`,
 	);
 
-	const maxAttempts = 6;
-	const pollInterval = 15000;
+	const maxAttempts = 20;
+	const pollInterval = 3000;
 
 	for (let attempt = 0; attempt < maxAttempts; attempt++) {
 		const response = (await chatwootApiRequest.call(
@@ -100,10 +100,11 @@ async function whatsappGetQrCode(context: IExecuteFunctions, itemIndex: number):
 			`/api/v1/accounts/${accountId}/inboxes/${inboxId}`
 		)) as IDataObject;
 
-		const provider_connection = response.provider_connection as IDataObject;
+		const providerConnection = response.provider_connection as IDataObject;
+		const connectionStatus = providerConnection?.connection as string;
 
-		if (provider_connection?.connection === 'connecting' && provider_connection.qr_data_url) {
-			const qrDataUrl = provider_connection.qr_data_url as string;
+		if (connectionStatus === 'connecting' && providerConnection.qr_data_url) {
+			const qrDataUrl = providerConnection.qr_data_url as string;
 
 			const dataUrlMatch = qrDataUrl.match(/^data:(image\/\w+);base64,(.+)$/);
 
@@ -121,7 +122,6 @@ async function whatsappGetQrCode(context: IExecuteFunctions, itemIndex: number):
 
 				return {
 					json: {
-						success: true,
 						message: 'QR Code generated successfully',
 						connection: 'connecting',
 						qr_code_url: qrDataUrl,
@@ -134,7 +134,6 @@ async function whatsappGetQrCode(context: IExecuteFunctions, itemIndex: number):
 
 			return {
 				json: {
-					success: true,
 					message: 'QR Code URL retrieved successfully',
 					connection: 'connecting',
 					qr_code_url: qrDataUrl,
@@ -142,29 +141,33 @@ async function whatsappGetQrCode(context: IExecuteFunctions, itemIndex: number):
 			};
 		}
 
-		if (provider_connection?.connection === 'connected') {
+		if (connectionStatus === 'open') {
+			context.addExecutionHints({
+				message: 'This WhatsApp inbox is already connected and ready to send/receive messages.',
+				type: 'info',
+				location: 'outputPane',
+			});
+
 			return {
 				json:{
-					success: true,
 					message: 'Channel already connected',
-					connection: 'connected',
+					connection: 'open',
 				}
 			};
 		}
 
+		if (connectionStatus === 'reconnecting') {
+			// Connection is being re-established, keep polling
+		}
+
 		if (attempt < maxAttempts - 1) {
-			const waitUntil = Date.now() + pollInterval;
-			while (Date.now() < waitUntil) {
-				await new Promise((resolve) => resolve(undefined));
-			}
+			await asyncSleep(pollInterval);
 		}
 	}
 
-	return {
-		json: {
-			success: false,
-			connection: 'connected',
-			message: `Timeout waiting for QR code after ${maxAttempts} attempts`,
-		}
-	};
+	throw new NodeOperationError(
+		context.getNode(),
+		`Timeout waiting for QR code after ${maxAttempts} attempts`,
+		{ itemIndex },
+	);
 }

@@ -51,7 +51,7 @@ const inboxOperations: INodeProperties[] = [
 				value: 'whatsappGetQrCode',
 				description: 'Get WhatsApp inbox QR code for connection',
 				// eslint-disable-next-line n8n-nodes-base/node-param-operation-option-action-miscased
-				action: 'Get WhatsApp inbox qr code for connection',
+				action: 'Get WhatsApp inbox QR code for connection',
 			},
 		],
 		default: 'list',
