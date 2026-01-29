@@ -64,6 +64,12 @@ const conversationOperations: INodeProperties[] = [
         action: 'List attachments in conversation',
       },
       {
+        name: 'Download Attachment',
+        value: 'downloadAttachment',
+        description: 'Download an attachment from a conversation message',
+        action: 'Download attachment from conversation',
+      },
+      {
         name: 'Assign Agent',
         value: 'assignAgent',
         description: 'Assign an agent to conversation',
@@ -1036,6 +1042,120 @@ const updateAttachmentMetaFields: INodeProperties[] = [
 
 const listAttachmentsFields: INodeProperties[] = [];
 
+const downloadAttachmentFields: INodeProperties[] = [
+  {
+    displayName: 'Download Mode',
+    name: 'downloadMode',
+    type: 'options',
+    default: 'byId',
+    options: [
+      { name: 'By Attachment ID', value: 'byId' },
+      { name: 'By URL', value: 'byUrl' },
+    ],
+    description: 'How to identify the attachment to download',
+    displayOptions: {
+      show: {
+        resource: ['conversation'],
+        operation: ['downloadAttachment'],
+      },
+    },
+  },
+  {
+    ...accountSelector,
+    displayOptions: {
+      show: {
+        resource: ['conversation'],
+        operation: ['downloadAttachment'],
+        downloadMode: ['byId'],
+      },
+    },
+  },
+  {
+    ...inboxSelector,
+    displayOptions: {
+      show: {
+        resource: ['conversation'],
+        operation: ['downloadAttachment'],
+        downloadMode: ['byId'],
+      },
+    },
+  },
+  {
+    ...conversationSelector,
+    displayOptions: {
+      show: {
+        resource: ['conversation'],
+        operation: ['downloadAttachment'],
+        downloadMode: ['byId'],
+      },
+    },
+  },
+  {
+    displayName: 'Attachment',
+    name: 'attachmentId',
+    type: 'resourceLocator',
+    default: { mode: 'list', value: '' },
+    required: true,
+    description: 'The attachment to download',
+    modes: [
+      {
+        displayName: 'From List',
+        name: 'list',
+        type: 'list',
+        placeholder: 'Select an attachment...',
+        typeOptions: {
+          searchListMethod: 'searchAttachments',
+          searchable: true,
+        },
+      },
+      {
+        displayName: 'By ID',
+        name: 'id',
+        type: 'string',
+        placeholder: '12345',
+        validation: [{ type: 'regex', properties: { regex: '^[0-9]+$', errorMessage: 'Must be a number' } }],
+      },
+    ],
+    displayOptions: {
+      show: {
+        resource: ['conversation'],
+        operation: ['downloadAttachment'],
+        downloadMode: ['byId'],
+      },
+    },
+  },
+  {
+    displayName: 'Attachment URL',
+    name: 'attachmentUrl',
+    type: 'string',
+    default: '',
+    required: true,
+    placeholder: 'https://...',
+    description: 'The direct URL of the attachment to download',
+    displayOptions: {
+      show: {
+        resource: ['conversation'],
+        operation: ['downloadAttachment'],
+        downloadMode: ['byUrl'],
+      },
+    },
+  },
+  {
+    displayName: 'Output Binary Property',
+    name: 'binaryPropertyName',
+    type: 'string',
+    default: 'data',
+    required: true,
+    description: 'Name of the binary property to write the attachment data to',
+    displayOptions: {
+      show: {
+        resource: ['conversation'],
+        operation: ['downloadAttachment'],
+      },
+    },
+  },
+];
+
 const listMessagesFields: INodeProperties[] = [
   {
     displayName: 'Fetch At Least',
@@ -1084,6 +1204,7 @@ export const conversationDescription: INodeProperties[] = [
   ...sendFileFields,
   ...updateAttachmentMetaFields,
   ...listAttachmentsFields,
+  ...downloadAttachmentFields,
   ...listMessagesFields,
 ];
 

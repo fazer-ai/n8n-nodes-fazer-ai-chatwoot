@@ -6,6 +6,7 @@ export type ConversationOperation =
   | 'sendFile'
   | 'listMessages'
   | 'listAttachments'
+  | 'downloadAttachment'
   | 'assignAgent'
   | 'assignTeam'
   | 'addLabels'

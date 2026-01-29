@@ -66,6 +66,8 @@ export async function executeConversationOperation(
 			return listConversationMessages(context, itemIndex);
 		case 'listAttachments':
 			return listConversationAttachments(context, itemIndex);
+		case 'downloadAttachment':
+			return downloadAttachment(context, itemIndex);
 		case 'assignAgent':
 			return assignConversationAgent(context, itemIndex);
 		case 'assignTeam':
@@ -900,7 +902,7 @@ async function sendFileToConversation(
 		}
 	}
 
-	const credentials = await context.getCredentials('chatwootApi');
+	const credentials = await context.getCredentials('fazerAiChatwootApi');
 	let baseURL = credentials.url as string;
 	if (baseURL.endsWith('/')) {
 		baseURL = baseURL.slice(0, -1);
@@ -947,7 +949,7 @@ async function sendFileToConversation(
 
 	const result = await context.helpers.requestWithAuthentication.call(
 		context,
-		'chatwootApi',
+		'fazerAiChatwootApi',
 		{
 			method: 'POST',
 			uri: `${baseURL}/api/v1/accounts/${accountId}/conversations/${conversationId}/messages`,
@@ -970,16 +972,18 @@ async function listConversationAttachments(
 	const accountId = getAccountId.call(context, itemIndex);
 	const conversationId = getConversationId.call(context, itemIndex);
 
-	const result = await chatwootApiRequest.call(
+	const response = await chatwootApiRequest.call(
 		context,
 		'GET',
 		`/api/v1/accounts/${accountId}/conversations/${conversationId}/attachments`,
-	) as IDataObject[];
+	) as { payload?: IDataObject[] };
+
+	const attachments = response.payload || [];
 
 	return {
 		json: {
-			attachments: result,
-			total: result.length,
+			attachments,
+			total: attachments.length,
 		},
 	};
 }
@@ -1015,4 +1019,82 @@ async function updateAttachmentMeta(
 	) as IDataObject;
 
 	return { json: result };
+}
+
+async function downloadAttachment(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): Promise<INodeExecutionData> {
+	const downloadMode = context.getNodeParameter('downloadMode', itemIndex) as string;
+	const binaryPropertyName = context.getNodeParameter('binaryPropertyName', itemIndex, 'data') as string;
+
+	let fileUrl: string;
+	let attachment: IDataObject | undefined;
+
+	if (downloadMode === 'byUrl') {
+		fileUrl = context.getNodeParameter('attachmentUrl', itemIndex) as string;
+		if (!fileUrl) {
+			throw new NodeOperationError(
+				context.getNode(),
+				'Attachment URL is required',
+				{ itemIndex },
+			);
+		}
+	} else {
+		const accountId = getAccountId.call(context, itemIndex);
+		const conversationId = getConversationId.call(context, itemIndex);
+
+		const attachmentIdParam = context.getNodeParameter('attachmentId', itemIndex) as { mode: string; value: string };
+		const attachmentId = String(attachmentIdParam.value);
+
+		const response = await chatwootApiRequest.call(
+			context,
+			'GET',
+			`/api/v1/accounts/${accountId}/conversations/${conversationId}/attachments`,
+		) as { payload?: IDataObject[] };
+
+		const attachments = response.payload || [];
+
+		attachment = attachments.find(
+			(a) => String((a as IDataObject).id) === attachmentId,
+		) as IDataObject | undefined;
+
+		if (!attachment) {
+			throw new NodeOperationError(
+				context.getNode(),
+				`Attachment with ID ${attachmentId} not found in conversation`,
+				{ itemIndex },
+			);
+		}
+
+		fileUrl = attachment.data_url as string;
+		if (!fileUrl) {
+			throw new NodeOperationError(
+				context.getNode(),
+				'Attachment does not have a download URL',
+				{ itemIndex },
+			);
+		}
+	}
+
+	const fileName = decodeURIComponent(fileUrl.split('/').pop() || 'attachment');
+	const mimeType = (attachment?.file_type as string) || 'application/octet-stream';
+
+	const fileResponse = await context.helpers.httpRequest({
+		method: 'GET',
+		url: fileUrl,
+		encoding: 'arraybuffer',
+		returnFullResponse: true,
+	});
+
+	const binaryData = await context.helpers.prepareBinaryData(
+		Buffer.from(fileResponse.body as ArrayBuffer),
+		fileName,
+		mimeType,
+	);
+
+	return {
+		json: attachment ?? { url: fileUrl },
+		binary: { [binaryPropertyName]: binaryData },
+	};
 }
