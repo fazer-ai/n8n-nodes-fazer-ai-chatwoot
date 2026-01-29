@@ -304,6 +304,7 @@ pnpm install
 ## Authors
 
 **Cayo Oliveira** - [fazer.ai](https://fazer.ai)
+
 **Gabriel Jablonski** - [fazer.ai](https://fazer.ai)
 
 ---
