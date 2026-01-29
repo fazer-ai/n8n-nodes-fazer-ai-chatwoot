@@ -1,247 +1,305 @@
-![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
+# @fazer-ai/n8n-nodes-chatwoot
 
-# n8n-nodes-starter
+This is an n8n community node that lets you use [Chatwoot](https://www.chatwoot.com/) in your n8n workflows.
 
-This starter repository helps you build custom integrations for [n8n](https://n8n.io). It includes example nodes, credentials, the node linter, and all the tooling you need to get started.
-
-## Quick Start
+Chatwoot is an open-source customer engagement platform that helps businesses manage customer conversations across multiple channels. This node provides comprehensive integration with the Chatwoot API, allowing you to automate customer support workflows, manage contacts, handle conversations, and more.
 
 > [!TIP]
-> **New to building n8n nodes?** The fastest way to get started is with `npm create @n8n/node`. This command scaffolds a complete node package for you using the [@n8n/node-cli](https://www.npmjs.com/package/@n8n/node-cli).
+> For enhanced features and optimal performance, we recommend using [fazer.ai's Chatwoot](https://github.com/fazer-ai/chatwoot), which includes additional capabilities like Kanban boards, WhatsApp integration with Baileys/Z-API providers, and more webhook events.
+
+[n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
+
+[Installation](#installation)  
+[Nodes](#nodes)  
+[Operations](#operations)  
+[Credentials](#credentials)  
+[Compatibility](#compatibility)  
+[Usage](#usage)  
+[Resources](#resources)  
+[Development](#development)
+
+## Installation
+
+Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
+
+## Nodes
+
+This package includes two nodes:
+
+### Chatwoot fazer.ai
+
+The main node for interacting with the Chatwoot API. Supports all CRUD operations for managing your Chatwoot instance.
+
+### Chatwoot fazer.ai Trigger
+
+A webhook trigger node that listens for Chatwoot events. Automatically registers and manages webhooks in your Chatwoot instance.
+
+## Operations
+
+### Account
+
+| Operation | Description                                                     |
+| --------- | --------------------------------------------------------------- |
+| Get       | Retrieve detailed information about a specific Chatwoot account |
+
+### Contact
+
+| Operation                 | Description                                                                        |
+| ------------------------- | ---------------------------------------------------------------------------------- |
+| Create                    | Create a new contact with name, phone (E.164 format), email, and custom attributes |
+| Get                       | Get contact information                                                            |
+| Update                    | Update contact details                                                             |
+| Delete                    | Delete a contact                                                                   |
+| List                      | List contacts with pagination                                                      |
+| Search                    | Search for contacts by query                                                       |
+| Set Custom Attributes     | Set custom attributes on a contact                                                 |
+| Destroy Custom Attributes | Remove all custom attributes from a contact                                        |
+
+### Conversation
+
+| Operation                  | Description                                          |
+| -------------------------- | ---------------------------------------------------- |
+| Create                     | Create a new conversation for a contact              |
+| Get                        | Get a specific conversation                          |
+| List                       | List conversations with filters                      |
+| Send Message               | Send a text message in a conversation                |
+| Send File                  | Send a file/attachment in a conversation             |
+| List Messages              | List messages in a conversation with pagination      |
+| List Attachments           | List attachments in a conversation                   |
+| Assign Agent               | Assign an agent to a conversation                    |
+| Assign Team                | Assign a team to a conversation                      |
+| Add Labels                 | Append labels to a conversation (keeps existing)     |
+| Remove Labels              | Remove specific labels from a conversation           |
+| Update Labels              | Replace all labels on a conversation                 |
+| Toggle Status              | Change status (open, pending, resolved, snoozed)     |
+| Set Priority               | Set conversation priority                            |
+| Add Custom Attributes      | Add custom attributes (keeps existing)               |
+| Remove Custom Attributes   | Remove specific custom attributes                    |
+| Set Custom Attributes      | Replace all custom attributes                        |
+| Update Last Seen           | Update the last seen timestamp                       |
+| Update Presence            | Set presence status (off, typing, recording)         |
+| Mark Unread                | Mark conversation as unread                          |
+| Update Attachment Metadata | Update metadata on attachments (e.g., transcription) |
+
+### Custom Attribute
+
+| Operation | Description                                                                     |
+| --------- | ------------------------------------------------------------------------------- |
+| Create    | Create a custom attribute definition (text, number, date, list, checkbox, link) |
+| List      | List all custom attribute definitions                                           |
+| Delete    | Delete a custom attribute definition                                            |
+
+### Inbox
+
+| Operation               | Description                                       |
+| ----------------------- | ------------------------------------------------- |
+| Get                     | Get information about a specific inbox            |
+| List                    | List all inboxes in an account                    |
+| On WhatsApp ⚡          | Check if a phone number is registered on WhatsApp |
+| WhatsApp Disconnect ⚡  | Disconnect a WhatsApp inbox                       |
+| WhatsApp Get QR Code ⚡ | Get QR code for WhatsApp inbox connection         |
+
+> ⚡ These operations are only available with [fazer.ai's Chatwoot](https://github.com/fazer-ai/chatwoot)
+
+### Kanban Board ⚡
+
+| Operation      | Description                       |
+| -------------- | --------------------------------- |
+| Create         | Create a new Kanban board         |
+| Get            | Get a specific Kanban board       |
+| List           | List Kanban boards                |
+| Update         | Update a Kanban board             |
+| Delete         | Delete a Kanban board             |
+| Update Agents  | Update agents assigned to a board |
+| Update Inboxes | Update inboxes linked to a board  |
+
+### Kanban Step ⚡
+
+| Operation | Description                           |
+| --------- | ------------------------------------- |
+| Create    | Create a new step (column) in a board |
+| List      | List steps from a board               |
+| Update    | Update a step                         |
+| Delete    | Delete a step                         |
+
+### Kanban Task ⚡
+
+| Operation | Description                 |
+| --------- | --------------------------- |
+| Create    | Create a new task           |
+| Get       | Get a specific task         |
+| List      | List tasks from a board     |
+| Update    | Update a task               |
+| Move      | Move a task to another step |
+| Delete    | Delete a task               |
 
-**To create a new node package from scratch:**
+### Label
 
-```bash
-npm create @n8n/node
-```
+| Operation | Description        |
+| --------- | ------------------ |
+| Create    | Create a new label |
+| List      | List all labels    |
+| Update    | Update a label     |
+| Delete    | Delete a label     |
 
-**Already using this starter? Start developing with:**
+### Profile
 
-```bash
-npm run dev
-```
+| Operation | Description                              |
+| --------- | ---------------------------------------- |
+| Get       | Get the current user profile information |
 
-This starts n8n with your nodes loaded and hot reload enabled.
+### Team
 
-## What's Included
+| Operation        | Description                 |
+| ---------------- | --------------------------- |
+| Create           | Create a new team           |
+| Delete           | Delete a team               |
+| List             | List all teams              |
+| Get Team Members | Get all members of a team   |
+| Assign Agent     | Assign an agent to a team   |
+| Unassign Agent   | Remove an agent from a team |
 
-This starter repository includes two example nodes to learn from:
+## Trigger Events
 
-- **[Example Node](nodes/Example/)** - A simple starter node that shows the basic structure with a custom `execute` method
-- **[GitHub Issues Node](nodes/GithubIssues/)** - A complete, production-ready example built using the **declarative style**:
-  - **Low-code approach** - Define operations declaratively without writing request logic
-  - Multiple resources (Issues, Comments)
-  - Multiple operations (Get, Get All, Create)
-  - Two authentication methods (OAuth2 and Personal Access Token)
-  - List search functionality for dynamic dropdowns
-  - Proper error handling and typing
-  - Ideal for HTTP API-based integrations
+The **Chatwoot fazer.ai Trigger** node supports the following webhook events:
 
-> [!TIP]
-> The declarative/low-code style (used in GitHub Issues) is the recommended approach for building nodes that interact with HTTP APIs. It significantly reduces boilerplate code and handles requests automatically.
+| Event                       | Description                                      |
+| --------------------------- | ------------------------------------------------ |
+| Contact Created             | Triggered when a new contact is created          |
+| Contact Updated             | Triggered when a contact is updated              |
+| Conversation Created        | Triggered when a new conversation is created     |
+| Conversation Status Changed | Triggered when conversation status changes       |
+| Conversation Updated        | Triggered when a conversation is updated         |
+| Conversation Typing On      | Triggered when someone starts typing             |
+| Conversation Typing Off     | Triggered when someone stops typing              |
+| Message Created             | Triggered when a message is created              |
+| Message Updated             | Triggered when a message is updated              |
+| Message Incoming ⚡         | Triggered for incoming messages only             |
+| Message Outgoing ⚡         | Triggered for outgoing messages only             |
+| Kanban Task Created ⚡      | Triggered when a Kanban task is created          |
+| Kanban Task Updated ⚡      | Triggered when a Kanban task is updated          |
+| Kanban Task Deleted ⚡      | Triggered when a Kanban task is deleted          |
+| Provider Event Received ⚡  | Triggered when a provider event is received      |
+| Live Chat Widget Opened     | Triggered when a user opens the live chat widget |
 
-Browse these examples to understand both approaches, then modify them or create your own.
+> ⚡ These events are only available with [fazer.ai's Chatwoot](https://github.com/fazer-ai/chatwoot)
 
-## Finding Inspiration
+## Credentials
 
-Looking for more examples? Check out these resources:
+To authenticate with Chatwoot, you need:
 
-- **[npm Community Nodes](https://www.npmjs.com/search?q=keywords:n8n-community-node-package)** - Browse thousands of community-built nodes on npm using the `n8n-community-node-package` tag
-- **[n8n Built-in Nodes](https://github.com/n8n-io/n8n/tree/master/packages/nodes-base/nodes)** - Study the source code of n8n's official nodes for production-ready patterns and best practices
-- **[n8n Credentials](https://github.com/n8n-io/n8n/tree/master/packages/nodes-base/credentials)** - See how authentication is implemented for various services
+### 1. Chatwoot API URL
 
-These are excellent resources to understand how to structure your nodes, handle different API patterns, and implement advanced features.
+The base URL of your Chatwoot instance (e.g., `https://app.chatwoot.com` or your self-hosted URL).
 
-## Prerequisites
+### 2. Access Token
 
-Before you begin, install the following on your development machine:
+A Personal Access Token from your Chatwoot profile:
 
-### Required
+1. Log in to your Chatwoot dashboard
+2. Go to **Profile Settings** (click your avatar → Profile settings)
+3. Navigate all the way down to **Access Token**
+4. Copy your token
 
-- **[Node.js](https://nodejs.org/)** (v22 or higher) and npm
-  - Linux/Mac/WSL: Install via [nvm](https://github.com/nvm-sh/nvm)
-  - Windows: Follow [Microsoft's NodeJS guide](https://learn.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows)
-- **[git](https://git-scm.com/downloads)**
+The token is sent as the `Api-Access-Token` header with each request.
 
-### Recommended
+## Compatibility
 
-- Follow n8n's [development environment setup guide](https://docs.n8n.io/integrations/creating-nodes/build/node-development-environment/)
+- **Minimum n8n version:** 1.0.0
+- **Tested with:** n8n 1.x and 2.x
+- **Chatwoot version:** Compatible with Chatwoot v4.x and later
+- **fazer.ai Chatwoot:** Required for Kanban, WhatsApp provider operations, and additional webhook events
 
-> [!NOTE]
-> The `@n8n/node-cli` is included as a dev dependency and will be installed automatically when you run `npm install`. The CLI includes n8n for local development, so you don't need to install n8n globally.
+## Usage
 
-## Getting Started with this Starter
+### Basic Workflow: Auto-respond to New Conversations
 
-Follow these steps to create your own n8n community node package:
+1. Add a **Chatwoot fazer.ai Trigger** node
+2. Select your account and choose "Conversation Created" event
+3. Connect to a **Chatwoot fazer.ai** node
+4. Set resource to "Conversation" and operation to "Send Message"
+5. Use the conversation ID from the trigger output
 
-### 1. Create Your Repository
+### Working with Contacts
 
-[Generate a new repository](https://github.com/n8n-io/n8n-nodes-starter/generate) from this template, then clone it:
+The Contact resource supports E.164 phone number format validation (e.g., `+5511999999999`). You can also set social profiles and custom attributes when creating or updating contacts.
 
-```bash
-git clone https://github.com/<your-organization>/<your-repo-name>.git
-cd <your-repo-name>
-```
+### Using Resource Locators
 
-### 2. Install Dependencies
+All resources support two selection modes:
 
-```bash
-npm install
-```
+- **From List**: Browse and search available items (accounts, inboxes, conversations, etc.)
+- **By ID**: Enter the ID directly for dynamic workflows
 
-This installs all required dependencies including the `@n8n/node-cli`.
+### Custom Attributes
 
-### 3. Explore the Examples
+Custom attributes can be specified in three ways:
 
-Browse the example nodes in [nodes/](nodes/) and [credentials/](credentials/) to understand the structure:
+1. **Definition mode**: Select from existing attribute definitions
+2. **Key-pair mode**: Enter key-value pairs manually
+3. **JSON mode**: Provide a JSON object for complex structures
 
-- Start with [nodes/Example/](nodes/Example/) for a basic node
-- Study [nodes/GithubIssues/](nodes/GithubIssues/) for a real-world implementation
+### AI Tool Usage
 
-### 4. Build Your Node
-
-Edit the example nodes to fit your use case, or create new node files by copying the structure from [nodes/Example/](nodes/Example/).
-
-> [!TIP]
-> If you want to scaffold a completely new node package, use `npm create @n8n/node` to start fresh with the CLI's interactive generator.
-
-### 5. Configure Your Package
-
-Update `package.json` with your details:
-
-- `name` - Your package name (must start with `n8n-nodes-`)
-- `author` - Your name and email
-- `repository` - Your repository URL
-- `description` - What your node does
-
-Make sure your node is registered in the `n8n.nodes` array.
-
-### 6. Develop and Test Locally
-
-Start n8n with your node loaded:
-
-```bash
-npm run dev
-```
-
-This command runs `n8n-node dev` which:
-
-- Builds your node with watch mode
-- Starts n8n with your node available
-- Automatically rebuilds when you make changes
-- Opens n8n in your browser (usually http://localhost:5678)
-
-You can now test your node in n8n workflows!
-
-> [!NOTE]
-> Learn more about CLI commands in the [@n8n/node-cli documentation](https://www.npmjs.com/package/@n8n/node-cli).
-
-### 7. Lint Your Code
-
-Check for errors:
-
-```bash
-npm run lint
-```
-
-Auto-fix issues when possible:
-
-```bash
-npm run lint:fix
-```
-
-### 8. Build for Production
-
-When ready to publish:
-
-```bash
-npm run build
-```
-
-This compiles your TypeScript code to the `dist/` folder.
-
-### 9. Prepare for Publishing
-
-Before publishing:
-
-1. **Update documentation**: Replace this README with your node's documentation. Use [README_TEMPLATE.md](README_TEMPLATE.md) as a starting point.
-2. **Update the LICENSE**: Add your details to the [LICENSE](LICENSE.md) file.
-3. **Test thoroughly**: Ensure your node works in different scenarios.
-
-### 10. Publish to npm
-
-Publish your package to make it available to the n8n community:
-
-```bash
-npm publish
-```
-
-Learn more about [publishing to npm](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry).
-
-### 11. Submit for Verification (Optional)
-
-Get your node verified for n8n Cloud:
-
-1. Ensure your node meets the [requirements](https://docs.n8n.io/integrations/creating-nodes/deploy/submit-community-nodes/):
-   - Uses MIT license ✅ (included in this starter)
-   - No external package dependencies
-   - Follows n8n's design guidelines
-   - Passes quality and security review
-
-2. Submit through the [n8n Creator Portal](https://creators.n8n.io/nodes)
-
-**Benefits of verification:**
-
-- Available directly in n8n Cloud
-- Discoverable in the n8n nodes panel
-- Verified badge for quality assurance
-- Increased visibility in the n8n community
-
-## Available Scripts
-
-This starter includes several npm scripts to streamline development:
-
-| Script                | Description                                                      |
-| --------------------- | ---------------------------------------------------------------- |
-| `npm run dev`         | Start n8n with your node and watch for changes (runs `n8n-node dev`) |
-| `npm run build`       | Compile TypeScript to JavaScript for production (runs `n8n-node build`) |
-| `npm run build:watch` | Build in watch mode (auto-rebuild on changes)                    |
-| `npm run lint`        | Check your code for errors and style issues (runs `n8n-node lint`) |
-| `npm run lint:fix`    | Automatically fix linting issues when possible (runs `n8n-node lint --fix`) |
-| `npm run release`     | Create a new release (runs `n8n-node release`)                   |
-
-> [!TIP]
-> These scripts use the [@n8n/node-cli](https://www.npmjs.com/package/@n8n/node-cli) under the hood. You can also run CLI commands directly, e.g., `npx n8n-node dev`.
-
-## Troubleshooting
-
-### My node doesn't appear in n8n
-
-1. Make sure you ran `npm install` to install dependencies
-2. Check that your node is listed in `package.json` under `n8n.nodes`
-3. Restart the dev server with `npm run dev`
-4. Check the console for any error messages
-
-### Linting errors
-
-Run `npm run lint:fix` to automatically fix most common issues. For remaining errors, check the [n8n node development guidelines](https://docs.n8n.io/integrations/creating-nodes/).
-
-### TypeScript errors
-
-Make sure you're using Node.js v22 or higher and have run `npm install` to get all type definitions.
+This node is enabled as an n8n AI tool (`usableAsTool: true`), allowing it to be used with AI agents for intelligent automation workflows.
 
 ## Resources
 
-- **[n8n Node Documentation](https://docs.n8n.io/integrations/creating-nodes/)** - Complete guide to building nodes
-- **[n8n Community Forum](https://community.n8n.io/)** - Get help and share your nodes
-- **[@n8n/node-cli Documentation](https://www.npmjs.com/package/@n8n/node-cli)** - CLI tool reference
-- **[n8n Creator Portal](https://creators.n8n.io/nodes)** - Submit your node for verification
-- **[Submit Community Nodes Guide](https://docs.n8n.io/integrations/creating-nodes/deploy/submit-community-nodes/)** - Verification requirements and process
+- [n8n Community Nodes Documentation](https://docs.n8n.io/integrations/community-nodes/)
+- [Chatwoot API Documentation](https://developers.chatwoot.com/api-reference/introduction)
+- [fazer.ai Chatwoot Repository](https://github.com/fazer-ai/chatwoot)
+- [fazer.ai Website](https://fazer.ai)
 
-## Contributing
+## Development
 
-Have suggestions for improving this starter? [Open an issue](https://github.com/n8n-io/n8n-nodes-starter/issues) or submit a pull request!
+### Prerequisites
+
+- Node.js v22 or higher
+- pnpm package manager
+
+### Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/fazer-ai/n8n-nodes-fazer-ai-chatwoot.git
+cd n8n-nodes-fazer-ai-chatwoot
+
+# Install dependencies
+pnpm install
+```
+
+### Scripts
+
+| Command          | Description                           |
+| ---------------- | ------------------------------------- |
+| `pnpm build`     | Compile TypeScript sources to `dist/` |
+| `pnpm lint`      | Run ESLint                            |
+| `pnpm lint:fix`  | Run ESLint with auto-fix              |
+| `pnpm dev`       | Start development mode                |
+| `pnpm start`     | Start Docker development environment  |
+| `pnpm start:log` | Start Docker development with logs    |
+
+### Project Structure
+
+```
+├── credentials/          # Credential definitions
+├── nodes/Chatwoot/       # Node implementations
+│   ├── actions/          # Resource operations
+│   ├── methods/          # List search & load options
+│   └── shared/           # Shared utilities
+├── icons/                # Node icons
+└── dist/                 # Build output (published)
+```
 
 ## License
 
-[MIT](https://github.com/n8n-io/n8n-nodes-starter/blob/master/LICENSE.md)
+[MIT](LICENSE.md)
+
+## Authors
+
+**Cayo Oliveira** - [fazer.ai](https://fazer.ai)
+**Gabriel Jablonski** - [fazer.ai](https://fazer.ai)
+
+---
+
+Made with ❤️ by [fazer.ai](https://fazer.ai)
