@@ -100,6 +100,12 @@ const conversationOperations: INodeProperties[] = [
         action: 'Update conversation labels replacing existing labels',
       },
       {
+        name: 'List Labels',
+        value: 'listLabels',
+        description: 'List all labels of a conversation',
+        action: 'List conversation labels',
+      },
+      {
         name: 'Toggle Status',
         value: 'toggleStatus',
         description: 'Toggle conversation status between open, pending, resolved, and snoozed',
@@ -205,7 +211,7 @@ const conversationFields: INodeProperties[] = [
     displayOptions: {
       show: {
         ...showOnlyForConversation,
-        operation: ['list', 'get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'addCustomAttributes', 'removeCustomAttributes', 'setCustomAttributes', 'setPriority', 'sendMessage', 'sendFile', 'updateLastSeen', 'updatePresence', 'markUnread', 'listMessages', 'listAttachments', 'updateAttachmentMeta'],
+        operation: ['list', 'get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'listLabels', 'addCustomAttributes', 'removeCustomAttributes', 'setCustomAttributes', 'setPriority', 'sendMessage', 'sendFile', 'updateLastSeen', 'updatePresence', 'markUnread', 'listMessages', 'listAttachments', 'updateAttachmentMeta'],
       },
     },
   },
@@ -214,7 +220,7 @@ const conversationFields: INodeProperties[] = [
     displayOptions: {
       show: {
         ...showOnlyForConversation,
-        operation: ['get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'addCustomAttributes', 'removeCustomAttributes', 'setCustomAttributes', 'setPriority', 'sendMessage', 'sendFile', 'updateLastSeen', 'updatePresence', 'markUnread', 'listMessages', 'listAttachments', 'updateAttachmentMeta'],
+        operation: ['get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'listLabels', 'addCustomAttributes', 'removeCustomAttributes', 'setCustomAttributes', 'setPriority', 'sendMessage', 'sendFile', 'updateLastSeen', 'updatePresence', 'markUnread', 'listMessages', 'listAttachments', 'updateAttachmentMeta'],
       },
     },
   },
@@ -256,9 +262,21 @@ const conversationFields: INodeProperties[] = [
         default: 'all',
         options: [
           { name: 'All', value: 'all' },
+          { name: 'Assigned', value: 'assigned' },
           { name: 'Me', value: 'me' },
           { name: 'Unassigned', value: 'unassigned' },
         ],
+      },
+      {
+        // eslint-disable-next-line n8n-nodes-base/node-param-display-name-wrong-for-dynamic-multi-options
+        displayName: 'Labels',
+        name: 'labels',
+        type: 'multiOptions',
+        default: [],
+        description: 'Filter by labels. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+        typeOptions: {
+          loadOptionsMethod: 'loadLabelsWithTitleValueOptions',
+        },
       },
       {
         displayName: 'Page',
@@ -266,6 +284,13 @@ const conversationFields: INodeProperties[] = [
         type: 'number',
         default: 1,
         description: 'Page number for pagination',
+      },
+      {
+        displayName: 'Search',
+        name: 'q',
+        type: 'string',
+        default: '',
+        description: 'Filter conversations with messages containing this search term',
       },
       {
         displayName: 'Status',
@@ -279,6 +304,16 @@ const conversationFields: INodeProperties[] = [
           { name: 'Resolved', value: 'resolved' },
           { name: 'Snoozed', value: 'snoozed' },
         ],
+      },
+      {
+        displayName: 'Team Name or ID',
+        name: 'team_id',
+        type: 'options',
+        default: '',
+        description: 'Filter by team. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+        typeOptions: {
+          loadOptionsMethod: 'loadTeamsOptions',
+        },
       },
     ],
   },
@@ -725,12 +760,7 @@ const conversationFields: INodeProperties[] = [
         name: 'wait_before_sending',
         type: 'options',
         default: 'none',
-        description: 'Add a delay between messages when splitting. Also applies to first message.',
-        displayOptions: {
-          show: {
-            split_message: [true],
-          },
-        },
+        description: 'Add a delay before sending the message. When splitting, applies to each message.',
         options: [
           {
             name: 'No Delay',
@@ -753,14 +783,13 @@ const conversationFields: INodeProperties[] = [
         name: 'wait_time_seconds',
         type: 'number',
         default: 5,
-        description: 'Fixed time to wait between messages, in seconds (5s default)',
+        description: 'Fixed time to wait before sending, in seconds (5s default)',
         typeOptions: {
           minValue: 0,
           maxValue: 60,
         },
         displayOptions: {
           show: {
-            split_message: [true],
             wait_before_sending: ['fixed'],
           },
         },
@@ -770,10 +799,9 @@ const conversationFields: INodeProperties[] = [
         name: 'typing_while_waiting',
         type: 'boolean',
         default: true,
-        description: 'Whether to show typing indicator while waiting before sending each message',
+        description: 'Whether to show typing indicator while waiting before sending the message',
         displayOptions: {
           show: {
-            split_message: [true],
             wait_before_sending: ['fixed', 'dynamic'],
           },
         },
@@ -1201,11 +1229,37 @@ const listMessagesFields: INodeProperties[] = [
     },
     options: [
       {
-        displayName: 'Before Message ID',
+        displayName: 'Before Message',
         name: 'before',
-        type: 'number',
-        default: 0,
-        description: 'Fetch messages before this message ID (for pagination)',
+        type: 'resourceLocator',
+        default: { mode: 'list', value: '' },
+        description: 'Fetch messages before this message (for pagination)',
+        modes: [
+          {
+            displayName: 'From List',
+            name: 'list',
+            type: 'list',
+            typeOptions: {
+              searchListMethod: 'searchMessages',
+              searchable: true,
+            },
+          },
+          {
+            displayName: 'By ID',
+            name: 'id',
+            type: 'string',
+            placeholder: 'e.g. 12345',
+            validation: [
+              {
+                type: 'regex',
+                properties: {
+                  regex: '^[0-9]+$',
+                  errorMessage: 'Message ID must be a number',
+                },
+              },
+            ],
+          },
+        ],
       },
     ],
   },

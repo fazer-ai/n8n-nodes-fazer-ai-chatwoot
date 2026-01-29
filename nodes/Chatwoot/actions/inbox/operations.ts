@@ -12,6 +12,14 @@ export async function executeInboxOperation(
 		return getInbox(context, itemIndex);
   case 'list':
     return listInboxes(context, itemIndex);
+	case 'listAgents':
+		return listInboxAgents(context, itemIndex);
+	case 'addAgents':
+		return addInboxAgents(context, itemIndex);
+	case 'updateAgents':
+		return updateInboxAgents(context, itemIndex);
+	case 'removeAgents':
+		return removeInboxAgents(context, itemIndex);
 	case 'onWhatsapp':
 		return onWhatsapp(context, itemIndex);
 	case 'whatsappDisconnect':
@@ -47,6 +55,76 @@ async function getInbox(
 		context,
 		'GET',
 		`/api/v1/accounts/${accountId}/inboxes/${inboxId}`,
+	) as IDataObject;
+
+	return { json: result };
+}
+
+async function listInboxAgents(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): Promise<INodeExecutionData> {
+	const accountId = getAccountId.call(context, itemIndex);
+	const inboxId = getInboxId.call(context, itemIndex);
+
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/inbox_members/${inboxId}`,
+	) as IDataObject;
+
+	return { json: result };
+}
+
+async function addInboxAgents(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): Promise<INodeExecutionData> {
+	const accountId = getAccountId.call(context, itemIndex);
+	const inboxId = getInboxId.call(context, itemIndex);
+	const userIds = context.getNodeParameter('userIds', itemIndex) as number[];
+
+	const result = await chatwootApiRequest.call(
+		context,
+		'POST',
+		`/api/v1/accounts/${accountId}/inbox_members`,
+		{ inbox_id: inboxId, user_ids: userIds },
+	) as IDataObject;
+
+	return { json: result };
+}
+
+async function updateInboxAgents(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): Promise<INodeExecutionData> {
+	const accountId = getAccountId.call(context, itemIndex);
+	const inboxId = getInboxId.call(context, itemIndex);
+	const userIds = context.getNodeParameter('userIds', itemIndex) as number[];
+
+	const result = await chatwootApiRequest.call(
+		context,
+		'PATCH',
+		`/api/v1/accounts/${accountId}/inbox_members`,
+		{ inbox_id: inboxId, user_ids: userIds },
+	) as IDataObject;
+
+	return { json: result };
+}
+
+async function removeInboxAgents(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): Promise<INodeExecutionData> {
+	const accountId = getAccountId.call(context, itemIndex);
+	const inboxId = getInboxId.call(context, itemIndex);
+	const userIds = context.getNodeParameter('userIds', itemIndex) as number[];
+
+	const result = await chatwootApiRequest.call(
+		context,
+		'DELETE',
+		`/api/v1/accounts/${accountId}/inbox_members`,
+		{ inbox_id: inboxId, user_ids: userIds },
 	) as IDataObject;
 
 	return { json: result };

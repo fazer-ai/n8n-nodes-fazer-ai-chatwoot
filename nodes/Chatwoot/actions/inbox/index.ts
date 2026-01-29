@@ -19,6 +19,7 @@ const inboxOperations: INodeProperties[] = [
 		displayOptions: {
 			show: showOnlyForInbox,
 		},
+		// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 		options: [
 			{
 				name: 'Get',
@@ -31,6 +32,30 @@ const inboxOperations: INodeProperties[] = [
 				value: 'list',
 				description: 'List many inboxes in an account',
 				action: 'List inboxes',
+			},
+			{
+				name: 'List Agents',
+				value: 'listAgents',
+				description: 'List agents assigned to an inbox',
+				action: 'List agents in inbox',
+			},
+			{
+				name: 'Add Agents',
+				value: 'addAgents',
+				description: 'Add agents to an inbox',
+				action: 'Add agents to inbox',
+			},
+			{
+				name: 'Update Agents',
+				value: 'updateAgents',
+				description: 'Replace all agents in an inbox (removes agents not in the list)',
+				action: 'Update agents in inbox',
+			},
+			{
+				name: 'Remove Agents',
+				value: 'removeAgents',
+				description: 'Remove agents from an inbox',
+				action: 'Remove agents from inbox',
 			},
 			{
 				name: 'On WhatsApp',
@@ -97,7 +122,7 @@ const inboxFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForInbox,
-				operation: ['get'],
+				operation: ['get', 'listAgents', 'addAgents', 'updateAgents', 'removeAgents'],
 			},
 		},
 	},
@@ -121,6 +146,24 @@ const inboxFields: INodeProperties[] = [
 			show: {
 				...showOnlyForInbox,
 				operation: ['onWhatsapp'],
+			},
+		},
+	},
+	{
+		// eslint-disable-next-line n8n-nodes-base/node-param-display-name-wrong-for-dynamic-multi-options
+		displayName: 'Agents',
+		name: 'userIds',
+		type: 'multiOptions',
+		default: [],
+		required: true,
+		description: 'Select agents to add, update, or remove. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		typeOptions: {
+			loadOptionsMethod: 'loadAgentsOptions',
+		},
+		displayOptions: {
+			show: {
+				...showOnlyForInbox,
+				operation: ['addAgents', 'updateAgents', 'removeAgents'],
 			},
 		},
 	}

@@ -86,6 +86,8 @@ export async function executeConversationOperation(
 			return removeLabelsFromConversation(context, itemIndex);
 		case 'updateLabels':
 			return updateConversationLabels(context, itemIndex);
+		case 'listLabels':
+			return listConversationLabels(context, itemIndex);
 		case 'toggleStatus':
 			return toggleConversationStatus(context, itemIndex);
 		case 'setPriority':
@@ -117,7 +119,8 @@ async function listConversationMessages(
 	const options = context.getNodeParameter('listMessagesOptions', itemIndex, {}) as IDataObject;
 
 	const allMessages: IDataObject[] = [];
-	let beforeId = options.before as number | undefined;
+	const beforeParam = options.before as { mode: string; value: string } | undefined;
+	let beforeId = beforeParam?.value ? Number(beforeParam.value) : undefined;
 	let hasMore = true;
 
 	while (hasMore && allMessages.length < fetchAtLeast) {
@@ -215,6 +218,11 @@ async function listConversations(
 	if (filters.status) query.status = filters.status;
 	if (filters.assignee_type) query.assignee_type = filters.assignee_type;
 	if (filters.page) query.page = filters.page;
+	if (filters.q) query.q = filters.q;
+	if (filters.team_id) query.team_id = filters.team_id;
+	if (filters.labels && (filters.labels as string[]).length > 0) {
+		query.labels = (filters.labels as string[]).join(',');
+	}
 
 	const inboxId = getInboxId.call(context, itemIndex);
 	if (inboxId) {
@@ -307,6 +315,22 @@ async function updateConversationLabels(
 		'POST',
 		`/api/v1/accounts/${accountId}/conversations/${conversationId}/labels`,
 		{ labels },
+	) as IDataObject;
+
+	return { json: result };
+}
+
+async function listConversationLabels(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): Promise<INodeExecutionData> {
+	const accountId = getAccountId.call(context, itemIndex);
+	const conversationId = getConversationId.call(context, itemIndex);
+
+	const result = await chatwootApiRequest.call(
+		context,
+		'GET',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}/labels`,
 	) as IDataObject;
 
 	return { json: result };
@@ -857,12 +881,28 @@ async function sendMessageToConversation(
 		);
 	}
 
+	const waitMode = (additionalFields.wait_before_sending as string) ?? 'none';
+	const fixedWaitTime = (additionalFields.wait_time_seconds as number) ?? 5;
+	const showTypingWhileWaiting = (additionalFields.typing_while_waiting as boolean) ?? true;
+
+	let waitSeconds = 0;
+	if (waitMode !== 'none') {
+		waitSeconds = waitMode === 'fixed' ? fixedWaitTime : calculateDynamicWait(content);
+	}
+
+	const isZapiInbox = waitMode !== 'none' && showTypingWhileWaiting
+		? await detectZapiInbox(context, itemIndex, accountId)
+		: false;
+
 	const result = await sendSingleMessage(context, {
 		accountId,
 		conversationId,
 		content,
 		isPrivate: additionalFields.private as boolean,
 		contentAttributes,
+		waitSeconds,
+		showTypingWhileWaiting,
+		isZapiInbox,
 	});
 
 	return { json: result };

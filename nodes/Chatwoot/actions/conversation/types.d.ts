@@ -12,6 +12,7 @@ export type ConversationOperation =
   | 'addLabels'
   | 'removeLabels'
   | 'updateLabels'
+  | 'listLabels'
   | 'toggleStatus'
   | 'setPriority'
   | 'addCustomAttributes'
