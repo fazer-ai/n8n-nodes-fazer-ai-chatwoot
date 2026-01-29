@@ -1141,6 +1141,20 @@ const downloadAttachmentFields: INodeProperties[] = [
     },
   },
   {
+    displayName: 'Allow External URLs',
+    name: 'allowExternalUrls',
+    type: 'boolean',
+    default: false,
+    description: 'Whether to allow downloading from URLs outside the configured Chatwoot instance. Enable with caution as this could expose the workflow to untrusted content.',
+    displayOptions: {
+      show: {
+        resource: ['conversation'],
+        operation: ['downloadAttachment'],
+        downloadMode: ['byUrl'],
+      },
+    },
+  },
+  {
     displayName: 'Output Binary Property',
     name: 'binaryPropertyName',
     type: 'string',

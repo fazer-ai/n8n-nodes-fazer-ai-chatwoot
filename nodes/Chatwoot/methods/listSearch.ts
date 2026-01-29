@@ -564,9 +564,9 @@ export async function searchAttachments(
 		this,
 		'GET',
 		`/api/v1/accounts/${accountId}/conversations/${conversationId}/attachments`,
-	)) as ChatwootAttachment[] | { payload?: ChatwootAttachment[] };
+	)) as { payload?: ChatwootAttachment[] };
 
-	let attachments = ((response as { payload?: ChatwootAttachment[] }).payload || []).reverse();
+	let attachments = (response.payload || []).reverse();
 
 	if (messageId) {
 		attachments = attachments.filter((a) => String(a.message_id) === messageId);

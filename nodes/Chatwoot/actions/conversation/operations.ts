@@ -1040,6 +1040,28 @@ async function downloadAttachment(
 				{ itemIndex },
 			);
 		}
+
+		const credentials = await context.getCredentials('fazerAiChatwootApi');
+		const credentialUrl = new URL(credentials.url as string);
+		const attachmentUrl = new URL(fileUrl);
+
+		if (attachmentUrl.hostname !== credentialUrl.hostname) {
+			const allowExternalUrls = context.getNodeParameter('allowExternalUrls', itemIndex, false) as boolean;
+
+			if (!allowExternalUrls) {
+				throw new NodeOperationError(
+					context.getNode(),
+					`URL domain "${attachmentUrl.hostname}" does not match the configured Chatwoot instance "${credentialUrl.hostname}". Enable "Allow External URLs" to download from external sources.`,
+					{ itemIndex },
+				);
+			}
+
+			context.addExecutionHints({
+				message: `Downloaded from external domain "${attachmentUrl.hostname}" which differs from the configured Chatwoot instance. Ensure this content is from a trusted source.`,
+				type: 'warning',
+				location: 'outputPane',
+			});
+		}
 	} else {
 		const accountId = getAccountId.call(context, itemIndex);
 		const conversationId = getConversationId.call(context, itemIndex);
@@ -1077,15 +1099,40 @@ async function downloadAttachment(
 		}
 	}
 
-	const fileName = decodeURIComponent(fileUrl.split('/').pop() || 'attachment');
-	const mimeType = (attachment?.file_type as string) || 'application/octet-stream';
-
 	const fileResponse = await context.helpers.httpRequest({
 		method: 'GET',
 		url: fileUrl,
 		encoding: 'arraybuffer',
 		returnFullResponse: true,
 	});
+
+	// Extract filename from Content-Disposition header, URL query param, or URL path
+	let fileName = 'attachment';
+	const contentDisposition = fileResponse.headers?.['content-disposition'] as string | undefined;
+	if (contentDisposition) {
+		const filenameMatch = contentDisposition.match(/filename\*?=(?:UTF-8'')?["']?([^"';\n]+)["']?/i);
+		if (filenameMatch) {
+			fileName = decodeURIComponent(filenameMatch[1]);
+		}
+	}
+	if (fileName === 'attachment') {
+		try {
+			const urlObj = new URL(fileUrl);
+			const filenameParam = urlObj.searchParams.get('filename')
+				|| urlObj.searchParams.get('response-content-disposition')?.match(/filename="([^"]+)"/)?.[1];
+			if (filenameParam) {
+				fileName = decodeURIComponent(filenameParam);
+			} else {
+				fileName = decodeURIComponent(urlObj.pathname.split('/').pop() || 'attachment');
+			}
+		} catch {
+			fileName = decodeURIComponent(fileUrl.split('/').pop()?.split('?')[0] || 'attachment');
+		}
+	}
+
+	const mimeType = (attachment?.file_type as string)
+		|| (fileResponse.headers?.['content-type'] as string)?.split(';')[0]
+		|| 'application/octet-stream';
 
 	const binaryData = await context.helpers.prepareBinaryData(
 		Buffer.from(fileResponse.body as ArrayBuffer),
