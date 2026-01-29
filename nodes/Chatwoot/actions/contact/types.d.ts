@@ -5,5 +5,11 @@ export type ContactOperation =
 	| 'delete'
 	| 'list'
 	| 'search'
+	| 'listConversations'
+	| 'merge'
+	| 'listLabels'
+	| 'addLabels'
+	| 'updateLabels'
+	| 'removeLabels'
 	| 'setCustomAttributes'
 	| 'destroyCustomAttributes';

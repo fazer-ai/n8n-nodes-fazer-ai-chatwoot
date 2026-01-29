@@ -20,6 +20,7 @@
 - Stick to the declarative node style already in `Chatwoot.node.ts`.
 - Keep naming consistent with existing casing (`Chatwoot` is still the public-facing display name until TODOs are resolved).
 - Default to the `n8n-node` CLI wrappers defined in `package.json` (see the command list below) so tooling stays consistent across contributors.
+- Use `context.addExecutionHints` to surface non-critical warnings to users when appropriate.
 
 ## Scripts (`pnpm <command>`)
 

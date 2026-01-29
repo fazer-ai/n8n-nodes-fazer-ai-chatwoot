@@ -198,7 +198,12 @@ export async function searchContacts(
 		'GET',
 		endpoint,
 		undefined,
-		{ q: filter || '', page },
+		{
+			q: filter || '',
+			page,
+			sort: 'last_activity_at',
+			include_contact_inboxes: false,
+		},
 	)) as ChatwootPayloadResponse<ChatwootContact>;
 
 	const results = response.payload.map(
