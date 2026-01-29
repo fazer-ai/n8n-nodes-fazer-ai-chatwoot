@@ -2,6 +2,23 @@ import type { IDataObject, IExecuteFunctions, IHttpRequestOptions, ILoadOptionsF
 import { NodeApiError, NodeOperationError } from 'n8n-workflow';
 
 /**
+ * Helper to get the Chatwoot base URL from credentials (for building external links)
+ */
+export async function getChatwootBaseUrl(
+	this: IExecuteFunctions | ILoadOptionsFunctions | IHookFunctions,
+): Promise<string> {
+	const credentials = await this.getCredentials('fazerAiChatwootApi');
+	let baseURL = credentials.url as string;
+
+	// Remove trailing slash if present
+	if (baseURL.endsWith('/')) {
+		baseURL = baseURL.slice(0, -1);
+	}
+
+	return baseURL;
+}
+
+/**
  * Make an authenticated request to the Chatwoot API
  */
 export async function chatwootApiRequest(
@@ -11,13 +28,7 @@ export async function chatwootApiRequest(
 	body?: IDataObject,
 	query?: IDataObject,
 ): Promise<unknown> {
-	const credentials = await this.getCredentials('fazerAiChatwootApi');
-	let baseURL = credentials.url as string;
-
-	// Remove trailing slash if present
-	if (baseURL.endsWith('/')) {
-		baseURL = baseURL.slice(0, -1);
-	}
+	const baseURL = await getChatwootBaseUrl.call(this);
 
 	const options: IHttpRequestOptions = {
 		method,
@@ -183,21 +194,4 @@ export function getKanbanTaskId(this: IExecuteFunctions | ILoadOptionsFunctions,
  */
 export function getMessageId(this: IExecuteFunctions | ILoadOptionsFunctions, itemIndex: number): string {
 	return getResourceId.call(this, itemIndex, 'messageId');
-}
-
-/**
- * Helper to get the Chatwoot base URL from credentials (for building external links)
- */
-export async function getChatwootBaseUrl(
-	this: IExecuteFunctions | ILoadOptionsFunctions | IHookFunctions,
-): Promise<string> {
-	const credentials = await this.getCredentials('fazerAiChatwootApi');
-	let baseURL = credentials.url as string;
-
-	// Remove trailing slash if present
-	if (baseURL.endsWith('/')) {
-		baseURL = baseURL.slice(0, -1);
-	}
-
-	return baseURL;
 }
