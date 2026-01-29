@@ -21,4 +21,5 @@ export type ConversationOperation =
   | 'updateLastSeen'
   | 'updatePresence'
   | 'markUnread'
-  | 'updateAttachmentMeta';
+  | 'updateAttachmentMeta'
+  | 'deleteMessage';

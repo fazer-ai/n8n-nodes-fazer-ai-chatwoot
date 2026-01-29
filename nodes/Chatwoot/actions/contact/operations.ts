@@ -119,7 +119,7 @@ export async function executeContactOperation(
   context: IExecuteFunctions,
   operation: ContactOperation,
   itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData | INodeExecutionData[]> {
   switch (operation) {
     case 'create':
       return createContact(context, itemIndex);
@@ -393,7 +393,7 @@ async function destroyCustomAttributes(
 async function listContactConversations(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData[]> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const contactId = getContactId.call(context, itemIndex);
 
@@ -401,9 +401,10 @@ async function listContactConversations(
 		context,
 		'GET',
 		`/api/v1/accounts/${accountId}/contacts/${contactId}/conversations`,
-	) as IDataObject;
+	) as { payload?: IDataObject[] } | IDataObject[];
 
-	return { json: result };
+	const conversations = Array.isArray(result) ? result : (result.payload || []);
+	return conversations.map((conv) => ({ json: conv }));
 }
 
 async function mergeContacts(
@@ -442,7 +443,7 @@ async function mergeContacts(
 async function listContactLabels(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData[]> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const contactId = getContactId.call(context, itemIndex);
 
@@ -450,9 +451,10 @@ async function listContactLabels(
 		context,
 		'GET',
 		`/api/v1/accounts/${accountId}/contacts/${contactId}/labels`,
-	) as IDataObject;
+	) as { payload?: string[] } | string[];
 
-	return { json: result };
+	const labels = Array.isArray(result) ? result : (result.payload || []);
+	return labels.map((label) => ({ json: { label } }));
 }
 
 async function updateContactLabels(

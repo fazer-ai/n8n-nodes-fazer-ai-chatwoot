@@ -6,7 +6,7 @@ export async function executeKanbanStepOperation(
 	context: IExecuteFunctions,
 	operation: KanbanStepOperation,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData | INodeExecutionData[]> {
 	switch (operation) {
 		case 'create':
 			return createStep(context, itemIndex);
@@ -48,7 +48,7 @@ async function createStep(
 async function listSteps(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData[]> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const boardId = getKanbanBoardId.call(context, itemIndex);
 
@@ -56,9 +56,9 @@ async function listSteps(
 		context,
 		'GET',
 		`/api/v1/accounts/${accountId}/kanban/boards/${boardId}/steps`,
-	) as IDataObject;
+	) as IDataObject[];
 
-	return { json: result };
+	return result.map((step) => ({ json: step }));
 }
 
 async function updateStep(

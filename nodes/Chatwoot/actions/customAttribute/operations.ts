@@ -9,7 +9,7 @@ export async function executeCustomAttributeOperation(
 	context: IExecuteFunctions,
 	operation: CustomAttributeOperation,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData | INodeExecutionData[]> {
   switch (operation) {
     case 'create':
       return createCustomAttribute(context, itemIndex);
@@ -78,7 +78,7 @@ async function createCustomAttribute(
 async function listCustomAttributes(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData[]> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const attributeModel = context.getNodeParameter('attributeModel', itemIndex);
 
@@ -92,9 +92,9 @@ async function listCustomAttributes(
 		`/api/v1/accounts/${accountId}/custom_attribute_definitions`,
 		undefined,
 		query,
-	) as IDataObject;
+	) as IDataObject[];
 
-	return { json: result };
+	return result.map((attr) => ({ json: attr }));
 }
 
 async function removeCustomAttribute(

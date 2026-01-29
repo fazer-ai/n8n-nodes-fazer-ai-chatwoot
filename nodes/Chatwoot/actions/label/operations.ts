@@ -6,7 +6,7 @@ export async function executeLabelOperation(
 	context: IExecuteFunctions,
 	operation: LabelOperation,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData | INodeExecutionData[]> {
   switch (operation) {
     case 'create':
       return createLabel(context, itemIndex);
@@ -29,15 +29,18 @@ async function createLabel(
 	const title = rawTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 	const additionalFields = context.getNodeParameter('additionalFields', itemIndex) as IDataObject;
 
-	if (!additionalFields.color) {
-		additionalFields.color = `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
-	}
+	const body: IDataObject = {
+		title,
+		description: additionalFields.description ?? '',
+		show_on_sidebar: additionalFields.show_on_sidebar ?? true,
+		color: additionalFields.color || `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`,
+	};
 
 	const result = await chatwootApiRequest.call(
 		context,
 		'POST',
 		`/api/v1/accounts/${accountId}/labels`,
-		{ title, ...additionalFields },
+		body,
 	) as IDataObject;
 
 	return { json: result };
@@ -46,16 +49,16 @@ async function createLabel(
 async function listLabels(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData[]> {
 	const accountId = getAccountId.call(context, itemIndex);
 
 	const result = await chatwootApiRequest.call(
 		context,
 		'GET',
 		`/api/v1/accounts/${accountId}/labels`,
-	) as IDataObject;
+	) as IDataObject[];
 
-	return { json: result };
+	return result.map((label) => ({ json: label }));
 }
 
 async function updateLabel(
@@ -65,7 +68,12 @@ async function updateLabel(
 	const accountId = getAccountId.call(context, itemIndex);
 	const labelId = getLabelId.call(context, itemIndex);
 
-	const body: IDataObject = context.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
+	const additionalFields = context.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
+
+	const body = Object.fromEntries(
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		Object.entries(additionalFields).filter(([_, v]) => v != null),
+	) as IDataObject;
 
 	const result = await chatwootApiRequest.call(
 		context,

@@ -6,7 +6,7 @@ export async function executeKanbanTaskOperation(
 	context: IExecuteFunctions,
 	operation: KanbanTaskOperation,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData | INodeExecutionData[]> {
 	switch (operation) {
 		case 'create':
 			return createTask(context, itemIndex);
@@ -69,7 +69,7 @@ async function getTask(
 async function listTasks(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData[]> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const boardId = getKanbanBoardId.call(context, itemIndex);
 	const filters = context.getNodeParameter('taskFilters', itemIndex, {}) as IDataObject;
@@ -83,9 +83,9 @@ async function listTasks(
 			board_id: boardId,
 			...filters
 		},
-	) as IDataObject;
+	) as IDataObject[];
 
-	return { json: result };
+	return result.map((task) => ({ json: task }));
 }
 
 async function updateTask(

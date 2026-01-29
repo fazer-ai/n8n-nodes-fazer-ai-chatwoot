@@ -6,7 +6,7 @@ export async function executeTeamOperation(
 	context: IExecuteFunctions,
 	operation: TeamOperation,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData | INodeExecutionData[]> {
 	switch (operation) {
 		case 'create':
 			return createTeam(context, itemIndex);
@@ -63,22 +63,22 @@ async function deleteTeam(
 async function listTeams(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData[]> {
 	const accountId = getAccountId.call(context, itemIndex);
 
 	const result = await chatwootApiRequest.call(
 		context,
 		'GET',
 		`/api/v1/accounts/${accountId}/teams`,
-	) as IDataObject;
+	) as IDataObject[];
 
-	return { json: result };
+	return result.map((team) => ({ json: team }));
 }
 
 async function getTeamMembers(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData[]> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const teamId = getTeamId.call(context, itemIndex);
 
@@ -86,15 +86,15 @@ async function getTeamMembers(
 		context,
 		'GET',
 		`/api/v1/accounts/${accountId}/teams/${teamId}/team_members`,
-	) as IDataObject;
+	) as IDataObject[];
 
-	return { json: result };
+	return result.map((member) => ({ json: member }));
 }
 
 async function assignAgentToTeam(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData[]> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const teamId = getTeamId.call(context, itemIndex);
 	const agentId = getAgentId.call(context, itemIndex);
@@ -104,15 +104,15 @@ async function assignAgentToTeam(
 		'POST',
 		`/api/v1/accounts/${accountId}/teams/${teamId}/team_members`,
 		{ user_ids: [agentId] },
-	) as IDataObject;
+	) as IDataObject[];
 
-	return { json: result };
+	return result.map((member) => ({ json: member }));
 }
 
 async function unassignAgentFromTeam(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData[]> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const teamId = getTeamId.call(context, itemIndex);
 	const teamMemberId = getTeamMemberId.call(context, itemIndex);
@@ -132,7 +132,7 @@ async function unassignAgentFromTeam(
 		'PATCH',
 		`/api/v1/accounts/${accountId}/teams/${teamId}/team_members`,
 		{ user_ids: remainingMemberIds },
-	) as IDataObject;
+	) as IDataObject[];
 
-	return { json: result };
+	return result.map((member) => ({ json: member }));
 }

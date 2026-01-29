@@ -25,8 +25,25 @@ const profileOperations: INodeProperties[] = [
 	},
 ];
 
+const getProfileFields: INodeProperties[] = [
+	{
+		displayName: 'Show Access Token',
+		name: 'showAccessToken',
+		type: 'boolean',
+		default: false,
+		description: 'Whether to show the access token in the response. When disabled, the token is masked.',
+		displayOptions: {
+			show: {
+				...showOnlyForProfile,
+				operation: ['get'],
+			},
+		},
+	},
+];
+
 export const profileDescription: INodeProperties[] = [
 	...profileOperations,
+	...getProfileFields,
 ];
 
 export { executeProfileOperation } from './operations';

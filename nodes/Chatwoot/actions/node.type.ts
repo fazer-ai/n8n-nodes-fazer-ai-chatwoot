@@ -1,4 +1,5 @@
 import type { AccountOperation } from './account/types';
+import type { AgentOperation } from './agent/types';
 import type { ContactOperation } from './contact/types';
 import type { ConversationOperation } from './conversation/types';
 import type { CustomAttributeOperation } from './customAttribute/types';
@@ -12,6 +13,7 @@ import type { TeamOperation } from './team/types';
 
 export type ChatwootResources =
 	| 'account'
+	| 'agent'
 	| 'contact'
 	| 'conversation'
 	| 'customAttribute'
@@ -25,6 +27,7 @@ export type ChatwootResources =
 
 export type ChatwootOperations =
 	| AccountOperation
+	| AgentOperation
 	| ContactOperation
 	| ConversationOperation
 	| CustomAttributeOperation
@@ -38,6 +41,7 @@ export type ChatwootOperations =
 
 export type {
 	AccountOperation,
+	AgentOperation,
 	ContactOperation,
 	ConversationOperation,
 	CustomAttributeOperation,

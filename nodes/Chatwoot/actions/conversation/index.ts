@@ -58,6 +58,12 @@ const conversationOperations: INodeProperties[] = [
         action: 'List messages in conversation',
       },
       {
+        name: 'Delete Message',
+        value: 'deleteMessage',
+        description: 'Delete a message and its attachments from conversation',
+        action: 'Delete message from conversation',
+      },
+      {
         name: 'List Attachments',
         value: 'listAttachments',
         description: 'List attachments in conversation',
@@ -211,7 +217,7 @@ const conversationFields: INodeProperties[] = [
     displayOptions: {
       show: {
         ...showOnlyForConversation,
-        operation: ['list', 'get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'listLabels', 'addCustomAttributes', 'removeCustomAttributes', 'setCustomAttributes', 'setPriority', 'sendMessage', 'sendFile', 'updateLastSeen', 'updatePresence', 'markUnread', 'listMessages', 'listAttachments', 'updateAttachmentMeta'],
+        operation: ['list', 'get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'listLabels', 'addCustomAttributes', 'removeCustomAttributes', 'setCustomAttributes', 'setPriority', 'sendMessage', 'sendFile', 'updateLastSeen', 'updatePresence', 'markUnread', 'listMessages', 'listAttachments', 'updateAttachmentMeta', 'deleteMessage'],
       },
     },
   },
@@ -220,7 +226,7 @@ const conversationFields: INodeProperties[] = [
     displayOptions: {
       show: {
         ...showOnlyForConversation,
-        operation: ['get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'listLabels', 'addCustomAttributes', 'removeCustomAttributes', 'setCustomAttributes', 'setPriority', 'sendMessage', 'sendFile', 'updateLastSeen', 'updatePresence', 'markUnread', 'listMessages', 'listAttachments', 'updateAttachmentMeta'],
+        operation: ['get', 'toggleStatus', 'assignAgent', 'assignTeam', 'addLabels', 'removeLabels', 'updateLabels', 'listLabels', 'addCustomAttributes', 'removeCustomAttributes', 'setCustomAttributes', 'setPriority', 'sendMessage', 'sendFile', 'updateLastSeen', 'updatePresence', 'markUnread', 'listMessages', 'listAttachments', 'updateAttachmentMeta', 'deleteMessage'],
       },
     },
   },
@@ -1070,6 +1076,42 @@ const updateAttachmentMetaFields: INodeProperties[] = [
 
 const listAttachmentsFields: INodeProperties[] = [];
 
+const deleteMessageFields: INodeProperties[] = [
+  {
+    displayName: 'Message',
+    name: 'messageId',
+    type: 'resourceLocator',
+    default: { mode: 'list', value: '' },
+    required: true,
+    description: 'The message to delete',
+    modes: [
+      {
+        displayName: 'From List',
+        name: 'list',
+        type: 'list',
+        placeholder: 'Select a message...',
+        typeOptions: {
+          searchListMethod: 'searchMessages',
+          searchable: true,
+        },
+      },
+      {
+        displayName: 'By ID',
+        name: 'id',
+        type: 'string',
+        placeholder: '12345',
+        validation: [{ type: 'regex', properties: { regex: '^[0-9]+$', errorMessage: 'Must be a number' } }],
+      },
+    ],
+    displayOptions: {
+      show: {
+        resource: ['conversation'],
+        operation: ['deleteMessage'],
+      },
+    },
+  },
+];
+
 const downloadAttachmentFields: INodeProperties[] = [
   {
     displayName: 'Download Mode',
@@ -1272,6 +1314,7 @@ export const conversationDescription: INodeProperties[] = [
   ...sendFileFields,
   ...updateAttachmentMetaFields,
   ...listAttachmentsFields,
+  ...deleteMessageFields,
   ...downloadAttachmentFields,
   ...listMessagesFields,
 ];

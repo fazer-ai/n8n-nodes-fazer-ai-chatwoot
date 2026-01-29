@@ -6,7 +6,7 @@ export async function executeInboxOperation(
   context: IExecuteFunctions,
   operation: InboxOperation,
   itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData | INodeExecutionData[]> {
   switch (operation) {
 	case 'get':
 		return getInbox(context, itemIndex);
@@ -32,16 +32,17 @@ export async function executeInboxOperation(
 async function listInboxes(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData[]> {
 	const accountId = getAccountId.call(context, itemIndex);
 
 	const result = await chatwootApiRequest.call(
 		context,
 		'GET',
 		`/api/v1/accounts/${accountId}/inboxes`,
-	) as IDataObject;
+	) as { payload?: IDataObject[] } | IDataObject[];
 
-	return { json: result };
+	const inboxes = Array.isArray(result) ? result : (result.payload || []);
+	return inboxes.map((inbox) => ({ json: inbox }));
 }
 
 async function getInbox(
@@ -63,7 +64,7 @@ async function getInbox(
 async function listInboxAgents(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData[]> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const inboxId = getInboxId.call(context, itemIndex);
 
@@ -71,9 +72,10 @@ async function listInboxAgents(
 		context,
 		'GET',
 		`/api/v1/accounts/${accountId}/inbox_members/${inboxId}`,
-	) as IDataObject;
+	) as { payload?: IDataObject[] } | IDataObject[];
 
-	return { json: result };
+	const agents = Array.isArray(result) ? result : (result.payload || []);
+	return agents.map((agent) => ({ json: agent }));
 }
 
 async function addInboxAgents(

@@ -15,11 +15,17 @@ export async function executeProfileOperation(
 async function getProfile(
 	context: IExecuteFunctions,
 ): Promise<INodeExecutionData> {
+	const showAccessToken = context.getNodeParameter('showAccessToken', 0, false) as boolean;
+
 	const result = await chatwootApiRequest.call(
 		context,
 		'GET',
 		'/api/v1/profile',
 	) as IDataObject;
+
+	if (!showAccessToken && result.access_token) {
+		result.access_token = '********';
+	}
 
 	return { json: result };
 }

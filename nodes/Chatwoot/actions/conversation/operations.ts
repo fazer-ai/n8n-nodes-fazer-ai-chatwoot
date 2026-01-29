@@ -58,7 +58,7 @@ export async function executeConversationOperation(
 	context: IExecuteFunctions,
 	operation: ConversationOperation,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData | INodeExecutionData[]> {
 	switch (operation) {
 		case 'create':
 			return createConversation(context, itemIndex);
@@ -106,13 +106,15 @@ export async function executeConversationOperation(
 			return markConversationUnread(context, itemIndex);
 		case 'updateAttachmentMeta':
 			return updateAttachmentMeta(context, itemIndex);
+		case 'deleteMessage':
+			return deleteMessage(context, itemIndex);
 	}
 }
 
 async function listConversationMessages(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData[]> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const conversationId = getConversationId.call(context, itemIndex);
 	const fetchAtLeast = context.getNodeParameter('fetchAtLeast', itemIndex, 20) as number;
@@ -149,12 +151,7 @@ async function listConversationMessages(
 		}
 	}
 
-	return {
-		json: {
-			messages: allMessages,
-			total: allMessages.length,
-		},
-	};
+	return allMessages.map((msg) => ({ json: msg }));
 }
 
 async function createConversation(
@@ -323,7 +320,7 @@ async function updateConversationLabels(
 async function listConversationLabels(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData[]> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const conversationId = getConversationId.call(context, itemIndex);
 
@@ -331,9 +328,10 @@ async function listConversationLabels(
 		context,
 		'GET',
 		`/api/v1/accounts/${accountId}/conversations/${conversationId}/labels`,
-	) as IDataObject;
+	) as { payload?: string[] } | string[];
 
-	return { json: result };
+	const labels = Array.isArray(result) ? result : (result.payload || []);
+	return labels.map((label) => ({ json: { label } }));
 }
 
 async function addLabelsToConversation(
@@ -1016,7 +1014,7 @@ async function sendFileToConversation(
 async function listConversationAttachments(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData[]> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const conversationId = getConversationId.call(context, itemIndex);
 
@@ -1028,12 +1026,7 @@ async function listConversationAttachments(
 
 	const attachments = response.payload || [];
 
-	return {
-		json: {
-			attachments,
-			total: attachments.length,
-		},
-	};
+	return attachments.map((attachment) => ({ json: attachment }));
 }
 
 async function updateAttachmentMeta(
@@ -1191,5 +1184,30 @@ async function downloadAttachment(
 	return {
 		json: attachment ?? { url: fileUrl },
 		binary: { [binaryPropertyName]: binaryData },
+	};
+}
+
+async function deleteMessage(
+	context: IExecuteFunctions,
+	itemIndex: number,
+): Promise<INodeExecutionData> {
+	const accountId = getAccountId.call(context, itemIndex);
+	const conversationId = getConversationId.call(context, itemIndex);
+
+	const messageIdParam = context.getNodeParameter('messageId', itemIndex) as { mode: string; value: string };
+	const messageId = messageIdParam.value;
+
+	await chatwootApiRequest.call(
+		context,
+		'DELETE',
+		`/api/v1/accounts/${accountId}/conversations/${conversationId}/messages/${messageId}`,
+	);
+
+	return {
+		json: {
+			success: true,
+			messageId: Number(messageId),
+			deleted: true,
+		},
 	};
 }

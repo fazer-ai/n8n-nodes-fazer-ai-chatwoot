@@ -6,7 +6,7 @@ export async function executeKanbanBoardOperation(
 	context: IExecuteFunctions,
 	operation: KanbanBoardOperation,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData | INodeExecutionData[]> {
 	switch (operation) {
 		case 'create':
 			return createBoard(context, itemIndex);
@@ -68,7 +68,7 @@ async function getBoard(
 async function listBoards(
 	context: IExecuteFunctions,
 	itemIndex: number,
-): Promise<INodeExecutionData> {
+): Promise<INodeExecutionData[]> {
 	const accountId = getAccountId.call(context, itemIndex);
 	const sort = context.getNodeParameter('sort', itemIndex);
 	const order = context.getNodeParameter('order', itemIndex);
@@ -79,9 +79,9 @@ async function listBoards(
 		`/api/v1/accounts/${accountId}/kanban/boards`,
 		undefined,
 		{sort, order},
-	) as IDataObject;
+	) as IDataObject[];
 
-	return { json: result };
+	return result.map((board) => ({ json: board }));
 }
 
 async function updateBoard(

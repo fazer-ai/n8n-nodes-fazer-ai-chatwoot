@@ -9,6 +9,7 @@ import {
 import type {
 	ChatwootResources,
 	AccountOperation,
+	AgentOperation,
 	ContactOperation,
 	ConversationOperation,
 	CustomAttributeOperation,
@@ -23,6 +24,7 @@ import type {
 
 import { profileDescription, executeProfileOperation } from './actions/profile';
 import { accountDescription, executeAccountOperation } from './actions/account';
+import { agentDescription, executeAgentOperation } from './actions/agent';
 import { inboxDescription, executeInboxOperation } from './actions/inbox';
 import { contactDescription, executeContactOperation } from './actions/contact';
 import { conversationDescription, executeConversationOperation } from './actions/conversation';
@@ -72,6 +74,11 @@ export class Chatwoot implements INodeType {
 						name: 'Account',
 						value: 'account',
 						description: 'Manage Chatwoot accounts',
+					},
+					{
+						name: 'Agent',
+						value: 'agent',
+						description: 'Manage agents in account',
 					},
 					{
 						name: 'Contact',
@@ -128,6 +135,7 @@ export class Chatwoot implements INodeType {
 			},
 			...profileDescription,
 			...accountDescription,
+			...agentDescription,
 			...inboxDescription,
 			...contactDescription,
 			...conversationDescription,
@@ -157,13 +165,16 @@ export class Chatwoot implements INodeType {
 
 		for (let i = 0; i < items.length; i++) {
 			try {
-				let responseData: INodeExecutionData;
+				let responseData: INodeExecutionData | INodeExecutionData[];
 				switch (resource) {
 					case 'profile':
 						responseData = await executeProfileOperation(this, operation as ProfileOperation);
 						break;
 					case 'account':
 						responseData = await executeAccountOperation(this, operation as AccountOperation, i);
+						break;
+					case 'agent':
+						responseData = await executeAgentOperation(this, operation as AgentOperation, i);
 						break;
 					case 'inbox':
 						responseData = await executeInboxOperation(this, operation as InboxOperation, i);
@@ -194,7 +205,11 @@ export class Chatwoot implements INodeType {
 						break;
 				}
 
-				returnData.push(responseData);
+				if (Array.isArray(responseData)) {
+					returnData.push(...responseData);
+				} else {
+					returnData.push(responseData);
+				}
 			} catch (error) {
 				if (this.continueOnFail()) {
 					returnData.push({
