@@ -1,5 +1,8 @@
 # @fazer-ai/n8n-nodes-chatwoot
 
+[![npm version](https://img.shields.io/npm/v/@fazer-ai/n8n-nodes-chatwoot.svg)](https://www.npmjs.com/package/@fazer-ai/n8n-nodes-chatwoot)
+[![npm downloads](https://img.shields.io/npm/dm/@fazer-ai/n8n-nodes-chatwoot.svg)](https://www.npmjs.com/package/@fazer-ai/n8n-nodes-chatwoot)
+
 This is an n8n community node that lets you use [Chatwoot](https://www.chatwoot.com/) in your n8n workflows.
 
 Chatwoot is an open-source customer engagement platform that helps businesses manage customer conversations across multiple channels. This node provides comprehensive integration with the Chatwoot API, allowing you to automate customer support workflows, manage contacts, handle conversations, and more.
