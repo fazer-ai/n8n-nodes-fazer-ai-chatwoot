@@ -22,6 +22,12 @@ Chatwoot is an open-source customer engagement platform that helps businesses ma
 
 Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
 
+Use this package name to install:
+
+```
+@fazer-ai/n8n-nodes-chatwoot
+```
+
 ## Nodes
 
 This package includes two nodes:
