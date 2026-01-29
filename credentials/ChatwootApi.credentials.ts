@@ -10,7 +10,7 @@ import {
  * Credential definition for Chatwoot personal access tokens.
  */
 export class ChatwootApi implements ICredentialType {
-	name = 'chatwootApi';
+	name = 'fazerAiChatwootApi';
 	displayName = 'Chatwoot fazer.ai API';
 	documentationUrl = 'https://developers.chatwoot.com/api-reference/introduction#application-apis';
 

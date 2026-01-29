@@ -11,7 +11,7 @@ export async function chatwootApiRequest(
 	body?: IDataObject,
 	query?: IDataObject,
 ): Promise<unknown> {
-	const credentials = await this.getCredentials('chatwootApi');
+	const credentials = await this.getCredentials('fazerAiChatwootApi');
 	let baseURL = credentials.url as string;
 
 	// Remove trailing slash if present
@@ -35,7 +35,7 @@ export async function chatwootApiRequest(
 	}
 
 	try {
-		return await this.helpers.httpRequestWithAuthentication.call(this, 'chatwootApi', options);
+		return await this.helpers.httpRequestWithAuthentication.call(this, 'fazerAiChatwootApi', options);
 	} catch (error) {
 		throw new NodeApiError(this.getNode(), error as JsonObject, {
 			message: `Chatwoot API error: ${(error as Error).message}`,

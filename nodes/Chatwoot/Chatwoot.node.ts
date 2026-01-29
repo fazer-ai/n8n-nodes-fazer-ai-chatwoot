@@ -53,7 +53,7 @@ export class Chatwoot implements INodeType {
 		outputs: [NodeConnectionTypes.Main],
 		credentials: [
 			{
-				name: 'chatwootApi',
+				name: 'fazerAiChatwootApi',
 				required: true,
 			},
 		],
