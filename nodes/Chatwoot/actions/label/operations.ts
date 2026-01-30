@@ -72,7 +72,7 @@ async function updateLabel(
 
 	const body = Object.fromEntries(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		Object.entries(additionalFields).filter(([_, v]) => v != null),
+		Object.entries(additionalFields).filter(([_, v]) => v !== undefined && v !== null && v !== ''),
 	) as IDataObject;
 
 	const result = await chatwootApiRequest.call(

@@ -105,7 +105,7 @@ const agentFields: INodeProperties[] = [
 		],
 		default: 'agent',
 		required: true,
-		description: 'Whether its administrator or agent',
+		description: "Whether it's an agent or administrator",
 		displayOptions: {
 			show: {
 				...showOnlyForAgent,
