@@ -304,6 +304,8 @@ export async function loadContactsOptions(
     this,
     'GET',
     `/api/v1/accounts/${accountId}/contacts`,
+    undefined,
+    { sort: '-last_activity_at' },
   )) as ChatwootPayloadResponse<ChatwootContact> | ChatwootContact[];
   const contacts =
     (response as ChatwootPayloadResponse<ChatwootContact>).payload ||

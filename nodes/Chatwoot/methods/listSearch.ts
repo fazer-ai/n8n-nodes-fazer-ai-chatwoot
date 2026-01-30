@@ -214,7 +214,7 @@ export async function searchContacts(
 		{
 			q: filter || '',
 			page,
-			sort: 'last_activity_at',
+			sort: '-last_activity_at',
 			include_contact_inboxes: false,
 		},
 	)) as ChatwootPayloadResponse<ChatwootContact>;

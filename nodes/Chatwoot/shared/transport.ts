@@ -57,6 +57,8 @@ export async function chatwootApiRequest(
 				const data = context.data as Record<string, unknown>;
 				if (Array.isArray(data.errors)) {
 					apiErrors = data.errors;
+				} else if (typeof data.error === 'string') {
+					apiErrors = [data.error];
 				}
 			}
 		}

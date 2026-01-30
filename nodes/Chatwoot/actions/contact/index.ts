@@ -296,7 +296,7 @@ const contactFields: INodeProperties[] = [
     displayName: 'Sort Order',
     name: 'sortOrder',
     type: 'options',
-    default: 'asc',
+    default: 'desc',
     description: 'Order to sort contacts',
     displayOptions: {
       show: {

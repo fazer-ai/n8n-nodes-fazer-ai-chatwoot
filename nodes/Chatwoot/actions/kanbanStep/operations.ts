@@ -1,4 +1,5 @@
 import type { IDataObject, IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
 import { chatwootApiRequest, getAccountId, getKanbanBoardId, getKanbanStepId } from '../../shared/transport';
 import type { KanbanStepOperation } from './types';
 
@@ -78,6 +79,14 @@ async function updateStep(
 	if (updateFields.description) step.description = updateFields.description;
 	if (updateFields.color) step.color = updateFields.color;
 	if (updateFields.cancelled !== undefined) step.cancelled = updateFields.cancelled;
+
+	if (Object.keys(step).length === 0) {
+		throw new NodeOperationError(
+			context.getNode(),
+			'At least one field must be provided to update the step',
+			{ itemIndex },
+		);
+	}
 
 	const result = await chatwootApiRequest.call(
 		context,

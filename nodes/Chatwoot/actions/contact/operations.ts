@@ -310,7 +310,7 @@ async function listContacts(
 	const accountId = getAccountId.call(context, itemIndex);
 	const page = context.getNodeParameter('page', itemIndex, 1);
 	const sort = context.getNodeParameter('sort', itemIndex, 'last_activity_at') as string;
-	const sortOrder = context.getNodeParameter('sortOrder', itemIndex, 'asc') as string;
+	const sortOrder = context.getNodeParameter('sortOrder', itemIndex, 'desc') as string;
 	const includeContactInboxes = context.getNodeParameter('includeContactInboxes', itemIndex, false) as boolean;
 
 	const sortValue = sortOrder === 'desc' ? `-${sort}` : sort;
