@@ -1,5 +1,5 @@
-import type { IDataObject, IExecuteFunctions, IHttpRequestOptions, ILoadOptionsFunctions, IHookFunctions, JsonObject } from 'n8n-workflow';
-import { NodeApiError, NodeOperationError } from 'n8n-workflow';
+import type { IDataObject, IExecuteFunctions, IHttpRequestOptions, ILoadOptionsFunctions, IHookFunctions } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
 
 /**
  * Helper to get the Chatwoot base URL from credentials (for building external links)
@@ -48,9 +48,26 @@ export async function chatwootApiRequest(
 	try {
 		return await this.helpers.httpRequestWithAuthentication.call(this, 'fazerAiChatwootApi', options);
 	} catch (error) {
-		throw new NodeApiError(this.getNode(), error as JsonObject, {
-			message: `Chatwoot API error: ${(error as Error).message}`,
-		});
+		const err = error as Error & Record<string, unknown>;
+		let apiErrors: string[] | undefined;
+
+		if (err.context && typeof err.context === 'object') {
+			const context = err.context as Record<string, unknown>;
+			if (context.data && typeof context.data === 'object') {
+				const data = context.data as Record<string, unknown>;
+				if (Array.isArray(data.errors)) {
+					apiErrors = data.errors;
+				}
+			}
+		}
+
+		if (apiErrors && apiErrors.length > 0) {
+			const errorMessage = apiErrors.join('; ');
+			err.description = err.message;
+			err.message = errorMessage;
+		}
+
+		throw error;
 	}
 }
 
