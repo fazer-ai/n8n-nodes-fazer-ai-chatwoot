@@ -110,7 +110,7 @@ Supported types: text, number, currency, percent, link, date, list, checkbox.
 | WhatsApp Disconnect ⚡  | Disconnect a WhatsApp inbox                       |
 | WhatsApp Get QR Code ⚡ | Get QR code for WhatsApp inbox connection         |
 
-> ⚡ These operations are only available with [fazer.ai's Chatwoot](https://github.com/fazer-ai/chatwoot)
+> ⚡ These operations require [fazer.ai's Chatwoot](https://github.com/fazer-ai/chatwoot)
 
 ### Kanban Board ⚡
 
@@ -224,7 +224,7 @@ The **Chatwoot fazer.ai Trigger** node supports the following webhook events:
 | Provider Event Received ⚡  | Triggered when a provider event is received      |
 | Live Chat Widget Opened     | Triggered when a user opens the live chat widget |
 
-> ⚡ These events are only available with [fazer.ai's Chatwoot](https://github.com/fazer-ai/chatwoot)
+> ⚡ These events require [fazer.ai's Chatwoot](https://github.com/fazer-ai/chatwoot)
 
 ## Credentials
 

@@ -7,7 +7,7 @@ import type { INodeProperties } from 'n8n-workflow';
  */
 export function chatwootFazerAiOnlyOperation(operationName: string): INodeProperties {
 	return {
-		displayName: `The ${operationName} operation is only available on <a href="https://github.com/fazer-ai/chatwoot/pkgs/container/chatwoot" target="_blank">Chatwoot fazer.ai</a>`,
+		displayName: `The ${operationName} operation requires <a href="https://github.com/fazer-ai/chatwoot/pkgs/container/chatwoot" target="_blank">Chatwoot fazer.ai</a>. If your instance already runs it, this works normally.`,
 		name: 'fazerAiNotice',
 		type: 'notice',
 		default: '',
@@ -296,10 +296,10 @@ export const webhookEventsSelector: INodeProperties = {
 
 /**
  * Shared notice for all internal chat resources, signaling that the feature
- * is only available on the Chatwoot fazer.ai fork.
+ * requires the Chatwoot fazer.ai fork.
  */
 export const internalChatNotice: INodeProperties = {
-	displayName: 'Internal chat is only available on <a href="https://github.com/fazer-ai/chatwoot/pkgs/container/chatwoot" target="_blank">Chatwoot fazer.ai</a>',
+	displayName: 'Internal chat requires <a href="https://github.com/fazer-ai/chatwoot/pkgs/container/chatwoot" target="_blank">Chatwoot fazer.ai</a>. These resources work normally on instances that run it.',
 	name: 'fazerAiNotice',
 	type: 'notice',
 	default: '',
