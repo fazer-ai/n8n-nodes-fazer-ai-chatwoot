@@ -143,7 +143,7 @@ export class ChatwootTrigger implements INodeType {
 			accountSelector,
 			webhookEventsSelector,
 			{
-				displayName: `These events require <a href="https://github.com/fazer-ai/chatwoot/pkgs/container/chatwoot" target="_blank">Chatwoot fazer.ai</a> and are not available in the standard Chatwoot release`,
+				displayName: `These events require <a href="https://github.com/fazer-ai/chatwoot/pkgs/container/chatwoot" target="_blank">Chatwoot fazer.ai</a>. If your instance runs it, they'll be delivered normally.`,
 				name: 'notice',
 				type: 'notice',
 				default: '',

@@ -117,22 +117,22 @@ export class Chatwoot implements INodeType {
 					{
 						name: 'Internal Chat Category',
 						value: 'internalChatCategory',
-						description: 'Manage internal chat categories (fazer.ai only)',
+						description: 'Manage internal chat categories (requires Chatwoot fazer.ai)',
 					},
 					{
 						name: 'Internal Chat Channel',
 						value: 'internalChatChannel',
-						description: 'Manage internal chat channels and DMs (fazer.ai only)',
+						description: 'Manage internal chat channels and DMs (requires Chatwoot fazer.ai)',
 					},
 					{
 						name: 'Internal Chat Member',
 						value: 'internalChatMember',
-						description: 'Manage members of internal chat channels (fazer.ai only)',
+						description: 'Manage members of internal chat channels (requires Chatwoot fazer.ai)',
 					},
 					{
 						name: 'Internal Chat Message',
 						value: 'internalChatMessage',
-						description: 'Manage internal chat messages, polls, reactions, and drafts (fazer.ai only)',
+						description: 'Manage internal chat messages, polls, reactions, and drafts (requires Chatwoot fazer.ai)',
 					},
 					{
 						name: 'Kanban Board',
